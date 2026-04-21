@@ -63,6 +63,22 @@
         </button>
     </div>
 
+    <div class="col-md-2 link menu-item" id="divAssociacaoMarcantes">
+        <button type="button" class="menu-card">
+            <div class="icon">
+                <i class="fa fa-link"></i>
+            </div>
+
+            <div class="title">
+                Associacao de Marcantes
+            </div>
+
+            <div class="action">
+                <i class="fa fa-sign-in-alt"></i> Acessar
+            </div>
+        </button>
+    </div>
+
 </div>
 
 
@@ -85,6 +101,10 @@
 
     $('#divCompartilhaScannerSaída').click(function () {
         location.href = "@Url.Content("~/CompartilhaScanner/AutorizacaoSaida")";
+    });
+
+    $('#divAssociacaoMarcantes').click(function () {
+        location.href = "@Url.Content("~/AssociacaoMarcantes/Index")";
     });
 
 </script>
