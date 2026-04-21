@@ -1,0 +1,263 @@
+﻿@model  Romaneio.Models.ConsultaViewModel
+
+@using Romaneio.Extensions
+
+
+@{
+    ViewBag.Title = "Consultar";
+}
+<br />
+<h3 class="page-title">
+    <i class="glyphicon glyphicon-list-alt"></i>
+    Consultar Contêineres
+</h3>
+
+@using (Html.BeginForm("Consultar", "Consultar", FormMethod.Get))
+{
+    <div class="card-custom">
+        <div class="row">
+            <div class="col-md-3">
+                <label>Contêiner</label>
+                @Html.TextBox("ID_CONTEINER_FILTRO", null, new { @class = "form-control" })
+            </div>
+
+            <div class="col-md-2">
+                <label>&nbsp;</label>
+                <button type="submit" class="btn btn-primary-custom btn-block">Pesquisar</button>
+            </div>
+
+            <div class="col-md-5"></div>
+
+            <div class="col-md-2 text-right">
+                <label>&nbsp;</label><br />
+                <a href="@Url.Action("Consultar", "Fechamentos", new { PATIO = Model.Patio })"
+                   class="btn btn-outline-primary btn-sm">
+                    Consultar Fechamentos
+                </a>
+            </div>
+        </div>
+    </div>
+}
+@using (Html.BeginForm())
+{
+    <div class="card-custom mt-3">
+
+        <div class="table-responsive">
+            <table class="table table-hover table-custom">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Contêiner</th>
+                        <th>Tam.</th>
+                        <th>Tipo</th>
+                        <th>Entrada</th>
+                        <th>Agendamento</th>
+                        <th>Lacre Origem</th>
+                        <th>Lacre IPA</th>
+                        <th>Viagem</th>
+                        <th>Boletim</th>
+                        <th>DDA</th>
+                        <th>Solicitado</th>
+                        <th>Abertura</th>
+                        <th>Fechamento</th>
+                        <th>SIGVIG</th>
+                        <th>Posição</th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var linha in Model.Itens)
+                    {
+                        <tr class="sem-quebra">
+                            <td>
+                                <a href="javascript:divexpandcollapse('div-@linha.AUTONUM_CNTR');">
+                                    <img id="img-div-@linha.AUTONUM_CNTR"
+                                         src="@Url.Content("~/Content/imagens/plus.png")" />
+                                </a>
+                            </td>
+
+                            <td>@linha.ID_CONTEINER</td>
+                            <td>@linha.TAMANHO</td>
+                            <td>@linha.DESCR_TIPO</td>
+                            <td>@linha.DT_ENTRADA.DataFormatada()</td>
+                            <td>@linha.DT_AGENDAMENTO.DataFormatada()</td>
+                            <td>@linha.LACRE_ORIGEM</td>
+                            <td>@linha.LACRE_IPA</td>
+                            <td>@linha.VIAGEM</td>
+                            <td>@linha.BOL_DESUNIT</td>
+                            <td>@linha.DDA</td>
+                            <td>@linha.SOLICITADO</td>
+                            <td>@linha.ABERTURA.DataFormatada()</td>
+                            <td>@linha.FECHAMENTO.DataFormatada()</td>
+                            <td>@linha.DESCRICAO_SIGVIG</td>
+                            <td>@linha.POSICAO</td>
+
+                            <td>
+                                <a href="@Url.Action("CadastrarAcrescimo", "Cadastrar", new { cntr = linha.AUTONUM_CNTR })"
+                                   class="btn btn-sm btn-outline-warning"
+                                   onclick="return confirm('Deseja realmente inserir acréscimo?');">
+                                    Incluir
+                                </a>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="17">
+                                <div id="div-@linha.AUTONUM_CNTR" class="expand-area"></div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+}
+
+<div class="pagination mt-3">
+    @if (Model.PaginaAtual > 1)
+    {
+        <a href="@Url.Action("Consultar", new { page = Model.PaginaAtual - 1 })">«</a>
+    }
+
+    <span>Página @Model.PaginaAtual de @Model.TotalPaginas</span>
+
+    @if (Model.PaginaAtual < Model.TotalPaginas)
+    {
+        <a href="@Url.Action("Consultar", new { page = Model.PaginaAtual + 1 })">»</a>
+    }
+</div>
+
+<div class="modal fade" id="Modal" tabindex="-1" aria-labelledby="modalTabelaLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            </div>
+            <div class="modal-body" id="modal-body">
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script language="JavaScript" type="text/javascript" src="~/Content/js/jquery-3.3.1.js"></script>
+@*<script language="JavaScript" type="text/javascript" src="~/Content/js/bootstrap.js"></script>*@
+<script language="JavaScript" type="text/javascript" src="~/Content/js/bootstrap.min.js"></script>
+
+<script>
+
+function divexpandcollapse(divname) {
+
+    var div = document.getElementById(divname);
+    var img = document.getElementById('img-' + divname);
+
+    if (window.getComputedStyle(div).display === "none") {
+
+        div.style.display = "inline";
+        img.src = "../Content/imagens/minus.png";
+
+        var cntr = divname.replace("div-", "");
+
+        $.ajax({
+            url: '@Url.Action("Lotes", "Consultar")',
+            type: 'GET',
+            data: { cntr: cntr },
+            success: function (data) {
+                $('#' + divname).html(data);
+            },
+            error: function () {
+                alert("Erro ao carregar os detalhes do produto.");
+            }
+        });
+
+    } else {
+        div.style.display = "none";
+        img.src = "../Content/imagens/plus.png";
+    }
+}
+
+
+
+
+
+
+            function abrirRelacaoUnidades(button) {
+            var lote = $(button).data('id');
+            $.ajax({
+            url: '@Url.Action("RelacaoUnidades", "Consultar")', // Chama a action no controller
+            type: 'GET',
+            data: { lote: lote },
+                success: function (data) {
+                    console.log(data);
+            $('#modal-body').html(data);
+            $('#Modal').modal('show');
+            },
+            error: function () {
+            alert("Erro ao carregar os detalhes do produto.");
+            }
+            });
+            }
+
+            function abrirNCM(button) {
+            var lote = $(button).data('id');
+            console.log("lote :   " + lote);
+
+            $.ajax({
+            url: '@Url.Action("NCM", "Consultar")', // Chama a action no controller
+            type: 'GET',
+            data: { lote: lote },
+            success: function (data) {
+            $('#modal-body').html(data);
+            $('#Modal').modal('show');
+            },
+            error: function () {
+            alert("Erro ao carregar os detalhes do produto.");
+            }
+            });
+            }
+
+            function abrirDescricao(button) {
+            var lote = $(button).data('id');
+            $.ajax({
+            url: '@Url.Action("Descricao", "Consultar")', // Chama a action no controller
+            type: 'GET',
+            data: { lote: lote },
+            success: function (data) {
+            $('#modal-body').html(data);
+            $('#Modal').modal('show');
+            },
+            error: function () {
+            alert("Erro ao carregar os detalhes do produto.");
+            }
+            });
+            }
+
+            function abrirLocalizacao(button) {
+            var lote = $(button).data('id');
+            $.ajax({
+            url: '@Url.Action("Localizacao", "Consultar")', // Chama a action no controller
+            type: 'GET',
+            data: { lote: lote },
+            success: function (data) {
+            $('#modal-body').html(data);
+            $('#Modal').modal('show');
+            },
+            error: function () {
+            alert("Erro ao carregar os detalhes do produto.");
+            }
+            });
+            }
+
+
+
+</script>
+
+
+<br />

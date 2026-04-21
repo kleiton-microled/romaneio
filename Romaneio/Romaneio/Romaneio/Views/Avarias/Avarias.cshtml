@@ -1,0 +1,176 @@
+﻿@model Romaneio.Models.ViewModels.AvariasRomaneioViewModel
+
+@{
+    ViewBag.Title = "Avarias";
+}
+
+<h2 style="color: #8a730b !important;">&nbsp;&nbsp;<i class="glyphicon glyphicon-edit"></i>&nbsp;&nbsp;Avarias</h2>
+
+<a href="@Url.Action("Cadastrar", "Cadastrar", new { AUTONUM_ROMANEIO = Model.AUTONUM_ROMANEIO})" class="btn btn-secondary btn-sm" style="float:right"> &nbsp;Voltar</a>
+<br />
+<br />
+
+@if (TempData["MensagemErro"] != null)
+{
+    <br />
+    <div class="alert alert-danger" role="alert" id="alert-error">
+        <button type="button" class="btn btn-danger btn-sm close-alert" data-bs-dismiss="alert" arial-label="close" onclick="closeAlert('alert-error')">X</button>
+        @TempData["MensagemErro"]
+    </div>
+}
+
+
+@if (TempData["MensagemSucesso"] != null)
+{
+    <br />
+    <div class="alert alert-success" role="alert" id="alert-success">
+        <button type="button" class="btn btn-success btn-sm close-alert" aria-label="close" onclick="closeAlert('alert-success')">X</button>
+        @TempData["MensagemSucesso"]
+    </div>
+}
+
+<br />
+@using (Html.BeginForm("SalvarAvaria", "Avarias", FormMethod.Post))
+{
+    <div class="row">
+        <div class="col-md-2">
+            <label>Romaneio:</label>
+            @Html.EditorFor(model => model.AUTONUM_ROMANEIO, new { htmlAttributes = new { @class = "form-control", @readonly = "@readonly" } })
+        </div>
+        <div class="col-md-2">
+            <label>Pátio:</label>
+            @Html.EditorFor(model => model.PATIO, new { htmlAttributes = new { @class = "form-control", @readonly = "@readonly" } })
+        </div>
+        <div class="col-md-2">
+            <label>Lote:</label>
+            @Html.EditorFor(model => model.LOTE, new { htmlAttributes = new { @class = "form-control", @readonly = "@readonly" } })
+        </div>
+        <div class="col-md-2">
+            <label>Conteiner:</label>
+            @Html.EditorFor(model => model.ID_CONTEINER, new { htmlAttributes = new { @class = "form-control", @readonly = "@readonly" } })
+        </div>
+        <div class="col-md-2">
+            <label>Item:</label>
+            @Html.EditorFor(model => model.ITEM, new { htmlAttributes = new { @class = "form-control", @readonly = "@readonly" } })
+        </div>
+        <div class="col-md-2" style="display:none">
+            @Html.EditorFor(model => model.AUTONUM_CNTR, new { htmlAttributes = new { @class = "form-control data", @readonly = "@readonly" } })
+            @Html.EditorFor(model => model.AUTONUM_CS, new { htmlAttributes = new { @class = "form-control data", @readonly = "@readonly" } })
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+            <label>Tipo:</label>
+            @Html.DropDownListFor(model => model.TIPO, new MultiSelectList(Model.LISTA_TIPO, "AUTONUM", "DESCRICAO"), string.Empty, new { @class = "form-control total", id = "ddlArmazem" })
+        </div>
+        <div class="col-md-2">
+            <label>Local:</label>
+            @Html.DropDownListFor(model => model.LOCAL, new MultiSelectList(Model.LISTA_LOCAL, "AUTONUM", "DESCRICAO"), string.Empty, new { @class = "form-control total", id = "ddlArmazem" })
+        </div>
+        <div class="col-md-4">
+            <label>Complemento:</label>
+            @Html.DropDownListFor(model => model.COMPLEMENTO, new MultiSelectList(Model.LISTA_COMPLEMENTO, "AUTONUM", "DESCRICAO"), string.Empty, new { @class = "form-control total", id = "ddlArmazem" })
+        </div>
+        <div class="col-md-4">
+            <label>Providencia:</label>
+            @Html.DropDownListFor(model => model.PROVIDENCIA, new MultiSelectList(Model.LISTA_PROVIDENCIA, "AUTONUM", "DESCRICAO"), string.Empty, new { @class = "form-control total", id = "ddlArmazem" })
+        </div>
+        <div class="col-md-4">
+            <label>Qtd. Avariada:</label>
+            @Html.TextBox("QTD", null, new { @class = "form-control", id = "txtPosicao" })
+        </div>
+        <div class="col-md-4">
+            <label>Peso:</label>
+            @Html.TextBox("PESO", null, new { @class = "form-control", id = "txtPosicao" })
+        </div>
+        <div class="col-md-4">
+            <label>Complemento IPA:</label>
+            @Html.TextBox("COMPLEMENTO_IPA", null, new { @class = "form-control", id = "txtPosicao" })
+        </div>
+        <div class="col-md-2">
+            <label style="color:white">.</label>
+            <button type="submit" class="btn btn-block btn-success">Salvar</button>
+        </div>
+
+    </div>
+
+}
+<br />
+<br />
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>TIPO</th>
+            <th>LOCAL</th>
+            <th>PROVIDENCIA</th>
+            <th>COMPLEMENTO</th>
+            <th>QTD</th>
+            <th>PESO</th>
+            <th>COMPLEMENTO_IPA</th>
+            <th>DT_AVARIA</th>
+            <th> </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.LISTA_AVARIAS)
+        {
+        <tr>
+            <td>@item.DESCR_TIPO</td>
+            <td>@item.DESCR_LOCAL</td>
+            <td>@item.DESCR_PROVIDENCIA</td>
+            <td>@item.DESCR_COMPLEMENTO</td>
+            <td>@item.QTD</td>
+            <td>@item.PESO</td>
+            <td>@item.COMPLEMENTO_IPA</td>
+            <td>@item.DT_AVARIA</td>
+            <td><button type="button" class="btn btn-danger" data-autonum-romaneio="@item.AUTONUM_ROMANEIO" data-autonum="@item.AUTONUM_ROMANEIO_AVARIAS" onclick="Excluir(this)">Excluir</button></td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+<script language="JavaScript" type="text/javascript" src="~/Content/js/jquery-3.3.1.js"></script>
+<script language="JavaScript" type="text/javascript" src="~/Content/js/bootstrap.min.js"></script>
+
+
+<script>
+
+    function closeAlert(alertId) {
+        var alert = document.getElementById(alertId);
+        alert.style.display = 'none';
+    }
+ 
+
+    function Excluir(button) {
+
+        var row = $(button).closest("tr");
+
+        // Pega o ID do item para ser excluído
+        var AUTONUM_ROMANEIO_AVARIAS = $(button).data("autonum");
+        var AUTONUM_ROMANEIO = $(button).data("autonum-romaneio");
+ 
+        console.log("linha: " + row);
+        console.log("AUTONUM_ROMANEIO: " + AUTONUM_ROMANEIO);
+        console.log("AUTONUM_ROMANEIO_AVARIAS: " + AUTONUM_ROMANEIO_AVARIAS);
+ 
+        // Faz a requisição AJAX para o controller
+        $.ajax({
+            url: '@Url.Action("ExcluirAvaria", "Avarias")', // Chama a ação ExcluirItem no controller Item
+            type: 'POST',
+            data: { AUTONUM_ROMANEIO_AVARIAS: AUTONUM_ROMANEIO_AVARIAS, AUTONUM_ROMANEIO: AUTONUM_ROMANEIO}, // Envia o ID do item para o controller
+            success: function(response) {
+                if (response.success) {
+                    // Se a exclusão for bem-sucedida, remove a linha da tabela
+                    row.remove();
+                } else {
+                    alert(response.message || "Erro ao excluir o item.");
+                }
+            },
+            error: function() {
+                alert("Erro ao comunicar com o servidor.");
+            }
+        });
+    }
+
+</script>

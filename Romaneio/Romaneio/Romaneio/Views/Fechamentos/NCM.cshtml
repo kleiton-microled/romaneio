@@ -1,0 +1,31 @@
+﻿@model  IEnumerable<Romaneio.Models.NCMViewModel>
+
+@{
+    ViewBag.Title = "NCM";
+}
+
+<h2>NCM</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>UN</th>
+            <th>ONU</th>
+            <th>NCM</th>
+            <th>DESCRIÇÃO</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>@item.UN</td>
+            <td>@item.ONU</td>
+            <td>@item.NCM</td>
+            <td>@item.DESCR_NCM</td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+

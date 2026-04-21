@@ -1,0 +1,90 @@
+﻿
+@{
+    ViewBag.Title = "Home";
+}
+
+<div class="row menu-grid">
+
+    <div class="col-md-2 link menu-item" id="divRomaneio">
+        <button type="button" class="menu-card">
+            <div class="icon">
+                <i class="fa fa-calendar-alt"></i>
+            </div>
+
+            <div class="title">Romaneio de Desova</div>
+
+            <div class="action">
+                <i class="fa fa-sign-in-alt"></i> Acessar
+            </div>
+        </button>
+    </div>
+
+    <div class="col-md-2 link menu-item" id="divMovimentacaoCS">
+        <button type="button" class="menu-card">
+            <div class="icon">
+                <i class="fa fa-calendar"></i>
+            </div>
+
+            <div class="title">Movimentação Carga Solta</div>
+
+            <div class="action">
+                <i class="fa fa-sign-in-alt"></i> Acessar
+            </div>
+        </button>
+    </div>
+
+    <div class="col-md-2 link menu-item" id="divCLA">
+        <button type="button" class="menu-card">
+            <div class="icon">
+                <i class="fa fa-cogs"></i>
+            </div>
+
+            <div class="title">Manutenção de CLA</div>
+
+            <div class="action">
+                <i class="fa fa-sign-in-alt"></i> Acessar
+            </div>
+        </button>
+    </div>
+
+    <div class="col-md-2 link menu-item" id="divCompartilhaScannerSaída">
+        <button type="button" class="menu-card">
+            <div class="icon">
+                <i class="fa fa-cogs"></i>
+            </div>
+
+            <div class="title">
+                Compartilha Scanner (Saída)
+            </div>
+
+            <div class="action">
+                <i class="fa fa-sign-in-alt"></i> Acessar
+            </div>
+        </button>
+    </div>
+
+</div>
+
+
+<script>
+    $('#divRomaneio').click(function () {
+        location.href = "@Url.Content("~/Consultar/Consultar")";
+    });
+
+    $('#divEstufagem').click(function () {
+        location.href = "@Url.Content("~/Estufagem/Index")";
+    });
+
+    $('#divMovimentacaoCS').click(function () {
+        location.href = "@Url.Content("~/MovimentacaoCS/Index")";
+    });
+
+    $('#divCLA').click(function () {
+        location.href = "@Url.Content("~/ManutencaoCLA/Index")";
+    });
+
+    $('#divCompartilhaScannerSaída').click(function () {
+        location.href = "@Url.Content("~/CompartilhaScanner/AutorizacaoSaida")";
+    });
+
+</script>

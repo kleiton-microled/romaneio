@@ -1,0 +1,309 @@
+﻿@model  Romaneio.Models.FotosRomaneio
+@{
+    ViewBag.Title = "Fotos";
+}
+
+<!-- Header da Modal -->
+<div class="modal-header">
+    <h2 style="color: #8a730b !important;">   📸 Fotos Processo</h2>
+        <a href="@Url.Action("ConsultarFotos", "Fotos", new { AUTONUM_ROMANEIO = Model.AUTONUM_ROMANEIO})" class="btn btn-secondary btn-sm" style="float:right"> &nbsp;Voltar</a>
+
+</div>
+@using (Html.BeginForm("SalvarFoto", "Fotos", FormMethod.Post))
+{
+    <div id="divAuxiliares" style="display:none"> 
+
+    @Html.EditorFor(model => model.AUTONUM_ROMANEIO, new { htmlAttributes = new { @class = "form-control  ", @readonly = "@readonly" } })
+
+    @Html.TextBox("FOTO", null, new { @class = "form-control", id = "txtImagemBase64" })
+   
+    </div>
+    <div class="modal-body"> 
+        <form id="fotosForm">
+            <div class="row">
+                <div class="col-md-8">
+                    <div id="imgCamera"></div>
+                </div>
+                <br />
+
+                <div class="col-md-4">
+                    @*<div class="col-sm-offset-3 col-md-8">
+            <a href="#" onclick="TirarFoto();" id="btnTirarFoto" class="btn btn-success">Bater Foto </a>
+            <a href="#" onclick="Resetar();" id="btnResetarFoto" class="btn btn-danger" style="float:right">Resetar</a>
+        </div>*@
+                    <br />
+                    <br />
+                    <label class="form-label">Tipo Foto</label>
+                    @Html.DropDownListFor(model => model.ID_TIPO_FOTO, new MultiSelectList(Model.LISTA_TIPO_FOTO, "AUTONUM", "DESCRICAO"), string.Empty, new { @class = "form-control total" })
+
+                    <br />
+
+                    <label class="form-label">Descrição</label>
+                    @Html.TextBox("DESCRICAO", null, new { @class = "form-control" })
+
+                    <br />
+
+                    <label class="form-label">Observação</label>
+                    @Html.TextArea("OBSERVACAO", null, new { @class = "form-control" })
+
+                    <br />
+                    <div class="col-md-12">
+                        <a href="#" onclick="TirarFoto();" id="btnTirarFoto" class="btn btn-success">📸 Bater Foto </a>
+                        <a href="#" onclick="Resetar();" id="btnResetarFoto" class="btn btn-warning">❌ Resetar</a>
+                        <button type="submit" class="btn  btn-primary">💾 Salvar Foto</button>
+                    </div>
+                </div>
+
+                </div>
+            @*<div class="row">
+                <div class="col-md-2">
+                    <a href="#" onclick="TirarFoto();" id="btnTirarFoto" style="margin-right: 100px" class="btn btn-success btn-block">Bater Foto </a>
+                </div>
+                <div class="col-md-2">
+                        <a href="#" onclick="Resetar();" id="btnResetarFoto" class="btn btn-danger btn-block">Resetar</a>
+                 </div>
+
+           </div>*@
+
+
+</form>
+    </div>
+}
+
+
+
+<script type="text/javascript" src="~/Content/js/jquery.min.js"></script>
+<script type="text/javascript" src="~/Content/js/moment-with-locales.js"></script>
+<script type="text/javascript" src="~/Content/js/webcam.min.js"></script>
+
+
+
+
+<script type="text/javascript">
+
+    var previousOrientation = window.orientation;
+    var checkOrientation;
+
+    $(document).ready(function () {
+        try {
+
+            AbrirCamera();
+
+
+        } catch (e) {
+            console.log(e);
+        }
+
+    });
+
+
+    function TirarFoto() {
+        Webcam.snap(function (foto) {
+            var imagemBase64 = foto.toString().replace('data:image/jpeg;base64,', '');
+            $('#txtImagemBase64').val(imagemBase64);
+            $('#imgCamera')
+                .removeClass('invisivel')
+                .html('<img src="' + foto + '" />');
+        });
+    }
+
+
+
+
+    function Resetar() {
+        $('#txtImagemBase64').val('');
+        AbrirCamera();
+    }
+
+
+
+    function AbrirCamera() {
+
+
+
+        if (window.screen.height < window.screen.width) {
+            Webcam.set({
+                width: 700,
+                height: 680,
+                image_format: 'jpeg',
+                enable_flash: true,
+            });
+            Webcam.set('constraints', {
+                facingMode: 'environment',
+                width: 700,
+                height: 680,
+                image_format: 'jpeg',
+                enable_flash: true,
+            });
+
+            Webcam.attach('#imgCamera');
+            $('#imgCamera')
+                .css('width', '700px')
+                .css('height', '680px');
+        }
+
+        else {
+            Webcam.set({
+                width: 680,
+                height: 700,
+                image_format: 'jpeg',
+                enable_flash: true,
+            });
+            Webcam.set('constraints', {
+                facingMode: 'environment',
+                width: 680,
+                height: 700,
+                image_format: 'jpeg',
+                enable_flash: true,
+            });
+            Webcam.attach('#imgCamera');
+            $('#imgCamera')
+                .css('width', '680px')
+                .css('height', '700px');
+        }
+
+
+    }
+
+
+    var previousOrientation = window.orientation;
+    var checkOrientation = function () {
+        if (window.orientation !== previousOrientation) {
+            previousOrientation = window.orientation;
+            // orientation changed, do your magic here
+            AbrirCamera()
+        }
+    };
+
+
+    window.addEventListener("resize", checkOrientation, false);
+    window.addEventListener("orientationchange", checkOrientation, false);
+
+    // (optional) Android doesn't always fire orientationChange on 180 degree turns
+    setInterval(checkOrientation, 2000);
+
+
+
+</script>
+
+
+@*<script>
+
+        function abrirCamera() {
+            const modalRef = this.modalService.open(CameraModalComponent, { size: 'xl', backdrop: 'static', centered: true });
+            modalRef.componentInstance.types = this.photosTypes;
+
+            modalRef.componentInstance.fotoCapturada.subscribe((resultado: FotoCapturada) => {
+                this.adicionarFoto(resultado);
+            });
+        };
+
+        function adicionarFoto(resultado: FotoCapturada) {
+            let ultimaFoto = this.fotos.length > 0 ? this.fotos[this.fotos.length - 1] : null;
+            let id = ultimaFoto?.id ?? this.nextId++;
+            const novaFoto: Foto = {
+                id: id,
+                descricao: "",
+                observacao: "",
+                idTipoFoto: resultado.tipo,
+                typeDescription: resultado.tipoDescription,
+                imagemBase64: resultado.imagemBase64,
+                talieId: null,
+                imagemPath: null,
+                idTipoProcesso: resultado.tipoProcesso,
+                containerId: null
+            };
+
+            this.fotos.push(novaFoto);
+
+            this.salvarFotoEmitter.emit(novaFoto);
+        };
+
+        function excluirFoto(id: number) {
+            let foto = this.fotos.find(foto => foto.id === id);
+            if (foto) {
+                this.excluirFotoEmitter.emit(foto);
+                this.fotos = this.fotos.filter(foto => foto.id !== id);
+            }
+
+        };
+
+        function fecharModal(): void {
+            this.activeModal.dismiss();
+        };
+
+        function abrirModalEdicao(foto: Foto) {
+            this.fotoEditando = foto;
+            this.fotosForm.patchValue({
+                descricao: foto.descricao,
+                observacao: foto.observacao
+            });
+            this.modalRef = this.modalService.open(this.editPhotoModal, { size: 'md', backdrop: 'static' });
+        };
+
+        function salvarEdicao() {
+            if (this.fotoEditando) {
+                this.fotoEditando.descricao = this.fotosForm.value.descricao;
+                this.fotoEditando.observacao = this.fotosForm.value.observacao;
+
+                this.salvarAlteracaoFotoEmitter.emit(this.fotoEditando);
+            }
+            this.fecharModalEdicao();
+        };
+
+        function salvarFotos() : void {
+            // this.salvarFotosEmitter.emit(this.fotos);
+        };
+
+        function fecharModalEdicao() {
+            if (this.modalRef) {
+                console.log(this.modalRef);
+                this.modalRef.close(); // 🔥 Fecha apenas a modal de edição
+            }
+        };
+
+
+
+
+
+
+        function abrirCamera() {
+            navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+                this.stream = stream;
+                const video = this.videoElement.nativeElement;
+                this.renderer.setProperty(video, 'srcObject', stream);
+                video.play();
+            }).catch(err => {
+                console.error("Erro ao acessar a câmera:", err);
+                this.activeModal.dismiss();
+            });
+        };
+
+        function capturarFoto() {
+            const video = this.videoElement.nativeElement;
+            const canvas = this.canvasElement.nativeElement;
+            const context = canvas.getContext('2d');
+
+            if (context) {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                const fotoBase64 = canvas.toDataURL('image/png');
+                let d = this.types.find(x => x.id == this.tipoSelecionado);
+
+                this.fotoCapturada.emit({ imagemBase64: fotoBase64, tipo: d?.id ?? 0, tipoDescription: d?.descricao ?? '', tipoProcesso: d?.codigo ?? 0 });
+            }
+
+            this.fecharCamera();
+        };
+
+        function fecharCamera() {
+            if (this.stream) {
+                this.stream.getTracks().forEach(track => track.stop());
+                this.stream = null;
+            }
+            this.activeModal.dismiss();
+        };
+
+    </script>*@

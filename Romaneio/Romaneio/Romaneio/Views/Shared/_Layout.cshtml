@@ -1,0 +1,85 @@
+﻿@{ var currentQueryString = Request.QueryString; }
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Meu Aplicativo ASP.NET</title>
+
+    @Styles.Render("~/Content/css/site.css")
+    @Styles.Render("~/Content/css/bootstrap.min.css")
+
+    @Scripts.Render("~/Content/js/jquery-3.3.1.js")
+    @Scripts.Render("~/Content/plugins/jquery-url/jquery-url.js")
+    @Scripts.Render("~/Content/plugins/jquery-validate/jquery.validate.js")
+    @Scripts.Render("~/Content/plugins/jquery-validate/jquery.validate.unobtrusive.js")
+
+
+</head>
+<body>
+
+    <div class="page-container">
+
+        <!-- CONTEÚDO PRINCIPAL -->
+        <div class="content-wrap">
+
+            <!-- NAVBAR -->
+            <div class="navbar navbar-expand-lg navbar-light">
+                <div class="container-fluid">
+
+                    <img src="../Content/imagens/fav-banddecmar.png" style="padding-left:20px;padding-right:20px" />
+
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <div class="collapse navbar-collapse" id="navbarNav">
+
+                        <ul class="navbar-nav">
+                            @if (Session["Logado"] != null)
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" href="@Url.Action("Home", "Home", new { PATIO = currentQueryString["PATIO"] })">
+                                        Início
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+
+                        <!-- DIREITA -->
+                        <ul class="navbar-nav ml-auto">
+                            @if (Session["Logado"] != null)
+                            {
+                                <li class="nav-item">
+                                    @Html.ActionLink("Sair", "Index", "Home", null, new { @class = "nav-link" })
+                                </li>
+                            }
+                        </ul>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- BODY -->
+            <div class="body-content">
+                @RenderBody()
+            </div>
+
+        </div>
+
+        <!-- FOOTER FIXO -->
+        <footer class="footer">
+            <div class="footer-line"></div>
+
+            <div class="footer-content">
+                <span>© Microled Informática</span>
+                <span class="footer-divider">•</span>
+                <span>@DateTime.Now.Year</span>
+            </div>
+        </footer>
+
+    </div>
+
+</body>
+</html>

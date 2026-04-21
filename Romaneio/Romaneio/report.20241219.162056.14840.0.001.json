@@ -1,0 +1,371 @@
+
+{
+  "header": {
+    "reportVersion": 1,
+    "event": "Allocation failed - JavaScript heap out of memory",
+    "trigger": "FatalError",
+    "filename": "report.20241219.162056.14840.0.001.json",
+    "dumpEventTime": "2024-12-19T16:20:56Z",
+    "dumpEventTimeStamp": "1734636056888",
+    "processId": 14840,
+    "cwd": "C:\\Users\\Grace\\Dropbox\\Band .NET\\Romaneio\\Romaneio",
+    "commandLine": [
+      "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\MSBuild\\Microsoft\\VisualStudio\\NodeJs\\node.exe",
+      "--expose-gc",
+      "--max_old_space_size=3072",
+      "C:\\Program Files (x86)\\Microsoft SDKs\\TypeScript\\3.8\\tsserver.js",
+      "--cancellationPipeName",
+      "\\\\.\\pipe\\tsserver-cancellation-ProjectHost-14668",
+      "--useSingleInferredProject",
+      "--locale",
+      "pt-BR",
+      "--suppressDiagnosticEvents",
+      "--enableTelemetry",
+      "--allowLocalPluginLoads",
+      "--npmLocation",
+      "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\MSBuild\\Microsoft\\VisualStudio\\NodeJs\\npm.cmd",
+      "--globalPlugins",
+      "@vsintellicode/typescript-intellicode-plugin",
+      "--pluginProbeLocations",
+      "C:\\PROGRAM FILES (X86)\\MICROSOFT VISUAL STUDIO\\2019\\COMMUNITY\\COMMON7\\IDE\\EXTENSIONS\\MICROSOFT\\INTELLICODE\\TypeScriptAssets",
+      "--typingSafeListLocation",
+      "c:\\program files (x86)\\microsoft visual studio\\2019\\community\\common7\\ide\\commonextensions\\microsoft\\typescript\\typingSafeList.json",
+      "--eventPort",
+      "60533"
+    ],
+    "nodejsVersion": "v12.13.1",
+    "wordSize": 32,
+    "arch": "ia32",
+    "platform": "win32",
+    "componentVersions": {
+      "node": "12.13.1",
+      "v8": "7.7.299.13-node.16",
+      "uv": "1.33.1",
+      "zlib": "1.2.11",
+      "brotli": "1.0.7",
+      "ares": "1.15.0",
+      "modules": "72",
+      "nghttp2": "1.39.2",
+      "napi": "5",
+      "llhttp": "1.1.4",
+      "http_parser": "2.8.0",
+      "openssl": "1.1.1d",
+      "cldr": "35.1",
+      "icu": "64.2",
+      "tz": "2019c",
+      "unicode": "12.1"
+    },
+    "release": {
+      "name": "node",
+      "lts": "Erbium",
+      "headersUrl": "https://nodejs.org/download/release/v12.13.1/node-v12.13.1-headers.tar.gz",
+      "sourceUrl": "https://nodejs.org/download/release/v12.13.1/node-v12.13.1.tar.gz",
+      "libUrl": "https://nodejs.org/download/release/v12.13.1/win-x86/node.lib"
+    },
+    "osName": "Windows_NT",
+    "osRelease": "10.0.19045",
+    "osVersion": "Windows 10 Home",
+    "osMachine": "i686",
+    "cpus": [
+      {
+        "model": "Intel(R) Core(TM) i7-4510U CPU @ 2.00GHz",
+        "speed": 2594,
+        "user": 9739140,
+        "nice": 0,
+        "sys": 10480859,
+        "idle": 6397703,
+        "irq": 265437
+      },
+      {
+        "model": "Intel(R) Core(TM) i7-4510U CPU @ 2.00GHz",
+        "speed": 2594,
+        "user": 9793984,
+        "nice": 0,
+        "sys": 9790875,
+        "idle": 7032531,
+        "irq": 86296
+      },
+      {
+        "model": "Intel(R) Core(TM) i7-4510U CPU @ 2.00GHz",
+        "speed": 2594,
+        "user": 10533390,
+        "nice": 0,
+        "sys": 9911359,
+        "idle": 6172640,
+        "irq": 77828
+      },
+      {
+        "model": "Intel(R) Core(TM) i7-4510U CPU @ 2.00GHz",
+        "speed": 2594,
+        "user": 10504578,
+        "nice": 0,
+        "sys": 8563468,
+        "idle": 7549343,
+        "irq": 59531
+      }
+    ],
+    "networkInterfaces": [
+      {
+        "name": "Ethernet 7",
+        "internal": false,
+        "mac": "00:09:0f:aa:00:01",
+        "address": "fe80::c78c:d315:4abb:dc10",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "family": "IPv6",
+        "scopeid": 15
+      },
+      {
+        "name": "Ethernet 7",
+        "internal": false,
+        "mac": "00:09:0f:aa:00:01",
+        "address": "10.212.136.1",
+        "netmask": "255.255.255.255",
+        "family": "IPv4"
+      },
+      {
+        "name": "OpenVPN TAP-Windows6",
+        "internal": false,
+        "mac": "00:ff:9e:cb:e2:9d",
+        "address": "fe80::7861:c0a4:185d:978",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "family": "IPv6",
+        "scopeid": 28
+      },
+      {
+        "name": "OpenVPN TAP-Windows6",
+        "internal": false,
+        "mac": "00:ff:9e:cb:e2:9d",
+        "address": "10.150.12.4",
+        "netmask": "255.255.255.0",
+        "family": "IPv4"
+      },
+      {
+        "name": "Ethernet",
+        "internal": false,
+        "mac": "ec:f4:bb:f5:26:03",
+        "address": "192.168.0.175",
+        "netmask": "255.255.255.0",
+        "family": "IPv4"
+      },
+      {
+        "name": "Loopback Pseudo-Interface 1",
+        "internal": true,
+        "mac": "00:00:00:00:00:00",
+        "address": "::1",
+        "netmask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff",
+        "family": "IPv6",
+        "scopeid": 0
+      },
+      {
+        "name": "Loopback Pseudo-Interface 1",
+        "internal": true,
+        "mac": "00:00:00:00:00:00",
+        "address": "127.0.0.1",
+        "netmask": "255.0.0.0",
+        "family": "IPv4"
+      }
+    ],
+    "host": "DELLNOTE2"
+  },
+  "javascriptStack": {
+    "message": "No stack.",
+    "stack": [
+      "Unavailable."
+    ]
+  },
+  "nativeStack": [
+    {
+      "pc": "0x01414468",
+      "symbol": ""
+    }
+  ],
+  "javascriptHeap": {
+    "totalMemory": 110518272,
+    "totalCommittedMemory": 110518272,
+    "usedMemory": 107704516,
+    "availableMemory": 3139323652,
+    "memoryLimit": 3246391296,
+    "heapSpaces": {
+      "read_only_space": {
+        "memorySize": 262144,
+        "committedMemory": 262144,
+        "capacity": 262008,
+        "used": 22100,
+        "available": 239908
+      },
+      "new_space": {
+        "memorySize": 1048576,
+        "committedMemory": 1048576,
+        "capacity": 1048032,
+        "used": 1047992,
+        "available": 40
+      },
+      "old_space": {
+        "memorySize": 81334272,
+        "committedMemory": 81334272,
+        "capacity": 81275040,
+        "used": 79526296,
+        "available": 1748744
+      },
+      "code_space": {
+        "memorySize": 1736704,
+        "committedMemory": 1736704,
+        "capacity": 1469984,
+        "used": 1262368,
+        "available": 207616
+      },
+      "map_space": {
+        "memorySize": 528384,
+        "committedMemory": 528384,
+        "capacity": 527928,
+        "used": 321640,
+        "available": 206288
+      },
+      "large_object_space": {
+        "memorySize": 25559040,
+        "committedMemory": 25559040,
+        "capacity": 25522104,
+        "used": 25522104,
+        "available": 0
+      },
+      "code_large_object_space": {
+        "memorySize": 49152,
+        "committedMemory": 49152,
+        "capacity": 2016,
+        "used": 2016,
+        "available": 0
+      },
+      "new_large_object_space": {
+        "memorySize": 0,
+        "committedMemory": 0,
+        "capacity": 1048032,
+        "used": 0,
+        "available": 1048032
+      }
+    }
+  },
+  "resourceUsage": {
+    "userCpuSeconds": 72.656,
+    "kernelCpuSeconds": 25.875,
+    "cpuConsumptionPercent": 1.48524,
+    "maxRss": 156024832,
+    "pageFaults": {
+      "IORequired": 177851,
+      "IONotRequired": 0
+    },
+    "fsActivity": {
+      "reads": 4391,
+      "writes": 2028
+    }
+  },
+  "libuv": [
+  ],
+  "environmentVariables": {
+    "ALLUSERSPROFILE": "C:\\ProgramData",
+    "APPDATA": "C:\\Users\\Grace\\AppData\\Roaming",
+    "caminho": "C:\\oraclexe\\app\\oracle\\product\\11.2.0\\server\\bin;",
+    "CommonProgramFiles": "C:\\Program Files (x86)\\Common Files",
+    "CommonProgramFiles(x86)": "C:\\Program Files (x86)\\Common Files",
+    "CommonProgramW6432": "C:\\Program Files\\Common Files",
+    "COMPUTERNAME": "DELLNOTE2",
+    "ComSpec": "C:\\WINDOWS\\system32\\cmd.exe",
+    "DriverData": "C:\\Windows\\System32\\Drivers\\DriverData",
+    "FPS_BROWSER_APP_PROFILE_STRING": "Internet Explorer",
+    "FPS_BROWSER_USER_PROFILE_STRING": "Default",
+    "FP_NO_HOST_CHECK": "NO",
+    "HOMEDRIVE": "C:",
+    "HOMEPATH": "\\Users\\Grace",
+    "IIS_BIN": "C:\\Program Files (x86)\\IIS Express",
+    "IIS_DRIVE": "C:",
+    "IIS_SITES_HOME": "C:\\Users\\Grace\\Documents\\My Web Sites",
+    "IIS_USER_HOME": "C:\\Users\\Grace\\Documents\\IISExpress",
+    "LOCALAPPDATA": "C:\\Users\\Grace\\AppData\\Local",
+    "LOGONSERVER": "\\\\DELLNOTE2",
+    "MicroledSimulador": "0",
+    "MSBuildLoadMicrosoftTargetsReadOnly": "true",
+    "NUMBER_OF_PROCESSORS": "4",
+    "OneDrive": "C:\\Users\\Grace\\OneDrive",
+    "OneDriveConsumer": "C:\\Users\\Grace\\OneDrive",
+    "OS": "Windows_NT",
+    "Path": "C:\\Program Files (x86)\\RSA SecurID Token Common;C:\\Program Files\\RSA SecurID Token Common;C:\\app\\Grace\\product\\11.2.0\\client_2\\bin;C:\\app\\Grace\\product\\11.2.0\\client_1\\bin;C:\\ProgramData\\Oracle\\Java\\javapath;c:\\Program Files (x86)\\Intel\\iCLS Client\\;c:\\Program Files\\Intel\\iCLS Client\\;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\;c:\\Program Files (x86)\\ATI Technologies\\ATI.ACE\\Core-Static;C:\\Program Files\\Intel\\Intel(R) Management Engine Components\\DAL;C:\\Program Files\\Intel\\Intel(R) Management Engine Components\\IPT;C:\\Program Files (x86)\\Intel\\Intel(R) Management Engine Components\\DAL;C:\\Program Files (x86)\\Intel\\Intel(R) Management Engine Components\\IPT;C:\\Program Files\\dotnet\\;C:\\WINDOWS\\System32\\OpenSSH\\;C:\\Program Files (x86)\\Microsoft SQL Server\\150\\DTS\\Binn\\;C:\\Program Files\\Microsoft SQL Server\\130\\Tools\\Binn\\;C:\\Program Files\\Microsoft SQL Server\\Client SDK\\ODBC\\110\\Tools\\Binn\\;C:\\Program Files (x86)\\Microsoft SQL Server\\120\\Tools\\Binn\\;C:\\Program Files\\Microsoft SQL Server\\120\\Tools\\Binn\\;C:\\Program Files\\Microsoft SQL Server\\120\\DTS\\Binn\\;C:\\Program Files\\Microsoft\\Web Platform Installer\\;C:\\Program Files\\Microsoft SQL Server\\Client SDK\\ODBC\\170\\Tools\\Binn\\;C:\\php;c:\\Program Files (x86)\\Microsoft SQL Server\\110\\Tools\\Binn\\;c:\\Program Files\\Microsoft SQL Server\\110\\Tools\\Binn\\;c:\\Program Files\\Microsoft SQL Server\\110\\DTS\\Binn\\;c:\\Program Files (x86)\\Microsoft SQL Server\\110\\Tools\\Binn\\ManagementStudio\\;c:\\Program Files (x86)\\Microsoft SQL Server\\110\\DTS\\Binn\\;C:\\Program Files\\Git\\cmd;C:\\Program Files\\RSA SecurID Token Common\\",
+    "PATHEXT": ".COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC",
+    "PkgDefApplicationConfigFile": "C:\\Users\\Grace\\AppData\\Local\\Microsoft\\VisualStudio\\16.0_545daa56\\devenv.exe.config",
+    "PROCESSOR_ARCHITECTURE": "x86",
+    "PROCESSOR_ARCHITEW6432": "AMD64",
+    "PROCESSOR_IDENTIFIER": "Intel64 Family 6 Model 69 Stepping 1, GenuineIntel",
+    "PROCESSOR_LEVEL": "6",
+    "PROCESSOR_REVISION": "4501",
+    "ProgramData": "C:\\ProgramData",
+    "ProgramFiles": "C:\\Program Files (x86)",
+    "ProgramFiles(x86)": "C:\\Program Files (x86)",
+    "ProgramW6432": "C:\\Program Files",
+    "PSModulePath": "C:\\WINDOWS\\system32\\WindowsPowerShell\\v1.0\\Modules\\;C:\\Program Files (x86)\\Microsoft SQL Server\\120\\Tools\\PowerShell\\Modules\\;c:\\Program Files (x86)\\Microsoft SQL Server\\110\\Tools\\PowerShell\\Modules\\",
+    "PUBLIC": "C:\\Users\\Public",
+    "ServiceHubLogSessionKey": "3EB44894",
+    "SESSIONNAME": "Console",
+    "SystemDrive": "C:",
+    "SystemRoot": "C:\\WINDOWS",
+    "TEMP": "C:\\Users\\Grace\\AppData\\Local\\Temp",
+    "ThreadedWaitDialogDpiContext": "-1",
+    "TMP": "C:\\Users\\Grace\\AppData\\Local\\Temp",
+    "USERDOMAIN": "DELLNOTE2",
+    "USERDOMAIN_ROAMINGPROFILE": "DELLNOTE2",
+    "USERNAME": "Juliane",
+    "USERPROFILE": "C:\\Users\\Grace",
+    "VisualStudioDir": "C:\\Users\\Grace\\Dropbox\\My PC (DELLNOTE2)\\Documents\\Visual Studio 2019",
+    "VisualStudioEdition": "Microsoft Visual Studio Community 2019",
+    "VisualStudioVersion": "16.0",
+    "VSAPPIDDIR": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Common7\\IDE\\",
+    "VSAPPIDNAME": "devenv.exe",
+    "VSLANG": "1046",
+    "VSSKUEDITION": "Community",
+    "windir": "C:\\WINDOWS",
+    "_CSRUN_DISABLE_WORKAROUNDS": "1",
+    "__PSLockDownPolicy": "0"
+  },
+  "sharedObjects": [
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\MSBuild\\Microsoft\\VisualStudio\\NodeJs\\node.exe",
+    "C:\\WINDOWS\\SYSTEM32\\ntdll.dll",
+    "C:\\WINDOWS\\System32\\KERNEL32.DLL",
+    "C:\\Program Files\\Avast Software\\Avast\\x86\\aswhook.dll",
+    "C:\\WINDOWS\\System32\\KERNELBASE.dll",
+    "C:\\WINDOWS\\System32\\WS2_32.dll",
+    "C:\\WINDOWS\\System32\\RPCRT4.dll",
+    "C:\\WINDOWS\\System32\\ADVAPI32.dll",
+    "C:\\WINDOWS\\System32\\msvcrt.dll",
+    "C:\\WINDOWS\\System32\\sechost.dll",
+    "C:\\WINDOWS\\System32\\bcrypt.dll",
+    "C:\\WINDOWS\\System32\\USER32.dll",
+    "C:\\WINDOWS\\System32\\win32u.dll",
+    "C:\\WINDOWS\\System32\\GDI32.dll",
+    "C:\\WINDOWS\\System32\\gdi32full.dll",
+    "C:\\WINDOWS\\System32\\msvcp_win.dll",
+    "C:\\WINDOWS\\System32\\ucrtbase.dll",
+    "C:\\WINDOWS\\System32\\PSAPI.DLL",
+    "C:\\WINDOWS\\System32\\CRYPT32.dll",
+    "C:\\WINDOWS\\SYSTEM32\\dbghelp.dll",
+    "C:\\WINDOWS\\SYSTEM32\\IPHLPAPI.DLL",
+    "C:\\WINDOWS\\SYSTEM32\\USERENV.dll",
+    "C:\\WINDOWS\\SYSTEM32\\WINMM.dll",
+    "C:\\WINDOWS\\System32\\IMM32.DLL",
+    "C:\\WINDOWS\\SYSTEM32\\powrprof.dll",
+    "C:\\WINDOWS\\SYSTEM32\\UMPDC.dll",
+    "C:\\WINDOWS\\SYSTEM32\\CRYPTBASE.DLL",
+    "C:\\WINDOWS\\system32\\uxtheme.dll",
+    "C:\\WINDOWS\\System32\\combase.dll",
+    "C:\\WINDOWS\\system32\\mswsock.dll",
+    "C:\\WINDOWS\\SYSTEM32\\kernel.appcore.dll",
+    "C:\\WINDOWS\\System32\\bcryptprimitives.dll",
+    "\\\\?\\C:\\Program Files (x86)\\Microsoft SDKs\\TypeScript\\3.8\\node_modules\\@microsoft\\typescript-etw\\bin\\ia32\\typescript-etw.node",
+    "C:\\WINDOWS\\System32\\NSI.dll",
+    "C:\\WINDOWS\\SYSTEM32\\dhcpcsvc6.DLL",
+    "C:\\WINDOWS\\SYSTEM32\\dhcpcsvc.DLL",
+    "C:\\WINDOWS\\SYSTEM32\\DNSAPI.dll",
+    "C:\\Windows\\System32\\rasadhlp.dll",
+    "C:\\WINDOWS\\System32\\fwpuclnt.dll",
+    "C:\\WINDOWS\\system32\\napinsp.dll",
+    "C:\\WINDOWS\\system32\\pnrpnsp.dll",
+    "C:\\WINDOWS\\system32\\NLAapi.dll",
+    "C:\\WINDOWS\\System32\\winrnr.dll"
+  ]
+}
