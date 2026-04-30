@@ -18,6 +18,36 @@
         $("#alert-container").empty();
     }
 
+    function showLoteNaoEncontradoAlert() {
+        if (window.Swal && typeof window.Swal.fire === "function") {
+            window.Swal.fire({
+                icon: "warning",
+                title: "Lote nao encontrado",
+                text: "Nenhum item foi encontrado para o lote informado.",
+                confirmButtonText: "OK"
+            });
+            return;
+        }
+
+        window.alert("Lote nao encontrado");
+    }
+
+    function isItensVazio(itens) {
+        if (!itens) {
+            return true;
+        }
+
+        if (Array.isArray(itens)) {
+            return itens.length === 0;
+        }
+
+        if (typeof itens.length === "number") {
+            return itens.length === 0;
+        }
+
+        return Object.keys(itens).length === 0;
+    }
+
     function post(url, data, onSuccess) {
         $.ajax({
             url: url,
@@ -92,9 +122,15 @@
                 return;
             }
 
+            var loteInformado = ($("#txtLote").val() || "").trim();
+            var itens = response.itens || [];
             state.modoExp = response.modoExp;
             $("#lblExp").toggle(!!state.modoExp);
-            renderCargas(response.itens || []);
+            renderCargas(itens);
+
+            if (response.loteNaoEncontrado || (loteInformado && isItensVazio(itens))) {
+                showLoteNaoEncontradoAlert();
+            }
         });
     }
 

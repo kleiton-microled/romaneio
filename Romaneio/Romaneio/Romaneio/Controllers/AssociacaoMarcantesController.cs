@@ -1,6 +1,7 @@
 using Romaneio.Interfaces;
 using Romaneio.Models.ViewModels;
 using System;
+using System.Linq;
 using System.Web.Mvc;
 
 namespace Romaneio.Controllers
@@ -47,11 +48,14 @@ namespace Romaneio.Controllers
             }
 
             var resultado = _associacaoMarcantesRepositorio.Filtrar(lote, cntr);
+            var loteNaoEncontrado = lote.HasValue &&
+                                    (resultado.ITENS == null || !resultado.ITENS.Cast<object>().Any());
             return Json(new
             {
                 success = true,
                 modoExp = resultado.MODO_EXP,
-                itens = resultado.ITENS
+                itens = resultado.ITENS,
+                loteNaoEncontrado = loteNaoEncontrado
             });
         }
 
