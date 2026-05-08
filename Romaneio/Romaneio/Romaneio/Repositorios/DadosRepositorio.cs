@@ -41,7 +41,7 @@ namespace Romaneio.Repositorios
             {
                 var parametros = new DynamicParameters();
                 parametros.Add("usuario", usuario, direction: ParameterDirection.Input);
-                return con.Query<Login>(@"SELECT USUARIO, SENHA, NOME, CPF FROM SGIPA..TB_CAD_USUARIOS WHERE USUARIO = @usuario", parametros, commandTimeout: Config.QueryTimeoutInSeconds()).FirstOrDefault();
+                return con.Query<Login>(@"SELECT AUTONUM, USUARIO, SENHA, NOME, CPF, ISNULL(flag_carregamento_marcante_bip, 0) AS FLAG_CARREGAMENTO_MARCANTE_BIP FROM SGIPA..TB_CAD_USUARIOS WHERE USUARIO = @usuario", parametros, commandTimeout: Config.QueryTimeoutInSeconds()).FirstOrDefault();
             }
         }
 

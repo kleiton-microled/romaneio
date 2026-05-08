@@ -1,0 +1,179 @@
+@model Romaneio.Models.ViewModels.CarregamentoCargaSoltaViewModel
+
+@{
+    ViewBag.Title = "Carregamento Carga Solta";
+}
+
+<h3 class="page-title">
+    <i class="glyphicon glyphicon-import"></i>
+    Carregamento Carga Solta - Armazem
+</h3>
+
+<div id="alert-container"></div>
+
+<div class="card-custom">
+
+    <div class="row">
+        <div class="col-md-9">
+            <label>Veiculo (placa cavalo)</label>
+            <select id="ddlVeiculo" class="form-control">
+                <option value="">Selecione</option>
+                @foreach (var veiculo in Model.VEICULOS)
+                {
+                    <option value="@veiculo.PLACA_C">@veiculo.DISPLAY</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label style="color:white">.</label>
+            <button id="btnAtualizarVeiculos" type="button" class="btn btn-default btn-block">
+                <i class="glyphicon glyphicon-refresh"></i> Atualizar veiculos
+            </button>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="row">
+        <div class="col-md-7">
+            <label>Ordens de Carregamento</label>
+            <div class="table-responsive">
+                <table class="table table-bordered table-condensed table-hover" id="tblOrdens">
+                    <thead>
+                        <tr>
+                            <th>OC</th>
+                            <th>Lote</th>
+                            <th>Item</th>
+                            <th>Qtde</th>
+                            <th>Carregada</th>
+                            <th>Embalagem</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <label>Carregamentos da OC</label>
+            <div class="table-responsive">
+                <table class="table table-bordered table-condensed" id="tblCarregamentos">
+                    <thead>
+                        <tr>
+                            <th>Marcante</th>
+                            <th>Qtde</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="row">
+        <div class="col-md-3">
+            <label>Marcante</label>
+            <input type="text" id="txtMarcante" maxlength="9" class="form-control"
+                   autocomplete="off" placeholder="000000000" />
+        </div>
+        <div class="col-md-1">
+            <label>Lote</label>
+            <input type="text" id="txtLote" class="form-control" readonly />
+        </div>
+        <div class="col-md-2">
+            <label>Qtde</label>
+            <input type="number" id="txtQtde" min="1" maxlength="6" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            <label>Local</label>
+            <input type="text" id="txtLocal" class="form-control" readonly />
+        </div>
+        <div class="col-md-3">
+            <label>Armazem</label>
+            <input type="text" id="txtArmazem" class="form-control" readonly />
+        </div>
+    </div>
+
+    <div class="row mt-2">
+        <div class="col-md-12">
+            <div id="txtCritica" class="alert alert-info" style="display:none;"></div>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="row">
+        <div class="col-md-2">
+            <button id="btnLocais" type="button" class="btn btn-default btn-block">[F1] Locais</button>
+        </div>
+        <div class="col-md-2">
+            <button id="btnDocumentos" type="button" class="btn btn-info btn-block" disabled>[F2] Documentos</button>
+        </div>
+        <div class="col-md-2">
+            <button id="btnLimpar" type="button" class="btn btn-warning btn-block">[F3] Limpar</button>
+        </div>
+        <div class="col-md-2">
+            <button id="btnCarregar" type="button" class="btn btn-success btn-block" disabled>[F4] Carregar</button>
+        </div>
+        <div class="col-md-2">
+            <button id="btnCancelar" type="button" class="btn btn-danger btn-block" disabled>[F5] Cancelar</button>
+        </div>
+        <div class="col-md-2">
+            <button id="btnSair" type="button" class="btn btn-default btn-block">[ESC] Sair</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Locais (F1) -->
+<div class="modal fade" id="modalLocais" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Locais disponiveis para a Ordem de Carregamento</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped table-bordered" id="tblLocais">
+                    <thead>
+                        <tr>
+                            <th>Marcante</th>
+                            <th>Qtde</th>
+                            <th>Local</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    window.carregamentoCsConfig = {
+        urls: {
+            listarVeiculos: '@Url.Action("ListarVeiculos", "CarregamentoCargaSolta")',
+            listarOrdens: '@Url.Action("ListarOrdens", "CarregamentoCargaSolta")',
+            listarCarregamentos: '@Url.Action("ListarCarregamentos", "CarregamentoCargaSolta")',
+            listarLocais: '@Url.Action("ListarLocais", "CarregamentoCargaSolta")',
+            buscarMarcante: '@Url.Action("BuscarMarcante", "CarregamentoCargaSolta")',
+            carregar: '@Url.Action("Carregar", "CarregamentoCargaSolta")',
+            cancelar: '@Url.Action("Cancelar", "CarregamentoCargaSolta")',
+            documento: '@Url.Action("Documento", "CarregamentoCargaSolta")',
+            sair: '@Url.Action("Home", "Home")'
+        },
+        bipagem: {
+            obrigatoria: @(Model.BIPAGEM_OBRIGATORIA ? "true" : "false"),
+            bloquearAposValidar: @(Model.BIPAGEM_BLOQUEAR_APOS_VALIDAR ? "true" : "false")
+        }
+    };
+</script>
+<script language="JavaScript" type="text/javascript" src="~/Content/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script language="JavaScript" type="text/javascript" src="~/Content/js/carregamento-carga-solta.js"></script>

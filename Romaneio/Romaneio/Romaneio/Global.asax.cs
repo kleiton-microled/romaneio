@@ -36,6 +36,7 @@ namespace Romaneio
             container.RegisterType<ICompartilhaScannerRepositorio, CompartilhaScannerRepositorio>(new HierarchicalLifetimeManager());
             container.RegisterType<IAssociacaoMarcantesRepositorio, AssociacaoMarcantesRepositorio>(new HierarchicalLifetimeManager());
             container.RegisterType<IConsultaLiberacaoCarregamentoRepositorio, ConsultaLiberacaoCarregamentoRepositorio>(new HierarchicalLifetimeManager());
+            container.RegisterType<ICarregamentoCargaSoltaRepositorio, CarregamentoCargaSoltaRepositorio>(new HierarchicalLifetimeManager());
 
             // Registrando o controller
             DependencyResolver.SetResolver(new UnityDependencyResolver(container));

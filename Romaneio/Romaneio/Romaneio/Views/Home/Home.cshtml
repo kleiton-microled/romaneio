@@ -95,6 +95,22 @@
         </button>
     </div>
 
+    <div class="col-md-2 link menu-item" id="divCarregamentoCargaSolta">
+        <button type="button" class="menu-card">
+            <div class="icon">
+                <i class="fa fa-truck"></i>
+            </div>
+
+            <div class="title">
+                Carregamento Carga Solta
+            </div>
+
+            <div class="action">
+                <i class="fa fa-sign-in-alt"></i> Acessar
+            </div>
+        </button>
+    </div>
+
 </div>
 
 
@@ -125,6 +141,10 @@
 
     $('#divConsultaLiberacaoCarregamento').click(function () {
         location.href = "@Url.Content("~/ConsultaLiberacaoCarregamento/Index")";
+    });
+
+    $('#divCarregamentoCargaSolta').click(function () {
+        location.href = "@Url.Content("~/CarregamentoCargaSolta/Index")";
     });
 
 </script>
