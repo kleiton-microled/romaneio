@@ -1,0 +1,589 @@
+﻿@model Romaneio.Models.LoteViewModel
+
+@{
+    ViewBag.Title = "Cadastrar";
+}
+
+<h3 class="page-title">
+    <i class="glyphicon glyphicon-edit"></i> Cadastro
+</h3>
+
+@if (TempData["MensagemErro"] != null)
+{
+    <div class="alert alert-danger" id="alert-error">
+        <button type="button" class="close-alert" onclick="closeAlert('alert-error')">×</button>
+        @TempData["MensagemErro"]
+    </div>
+}
+
+@if (TempData["MensagemSucesso"] != null)
+{
+    <div class="alert alert-success" id="alert-success">
+        <button type="button" class="close-alert" onclick="closeAlert('alert-success')">×</button>
+        @TempData["MensagemSucesso"]
+    </div>
+}
+
+@using (Html.BeginForm("SalvarDados", "Cadastrar", FormMethod.Post))
+{
+    <div class="card-custom">
+
+        <!-- ===== HEADER ===== -->
+        <div class="section-title">Dados do Romaneio</div>
+
+        <div class="row form-row">
+            <div class="col-md-3" style="display:none">
+                @Html.CheckBoxFor(model => model.FLAG_HUB, new { id = "ckbHub", @class = "ckb" })
+                @Html.EditorFor(model => model.AUTONUM_ROMANEIO_BREAK_BULK, new { htmlAttributes = new { @class = "form-control", @readonly = "@readonly" } })
+            </div>
+        </div>
+
+        <!-- ===== LINHA 1 ===== -->
+        <div class="row form-row">
+
+            <div class="col-md-1">
+                <label>Romaneio</label>
+                @Html.EditorFor(model => model.AUTONUM_ROMANEIO, new { htmlAttributes = new { @class = "form-control", @readonly = "@readonly" } })
+            </div>
+
+            <div class="col-md-2">
+                <label>Conteiner</label>
+                @Html.EditorFor(model => model.ID_CONTEINER, new { htmlAttributes = new { @class = "form-control", @readonly = "@readonly" } })
+                @Html.EditorFor(model => model.AUTONUM_CNTR, new { htmlAttributes = new { @class = "invisivel", id = "txtCntr" } })
+            </div>
+
+            <div class="col-md-2">
+                <label>Lote</label>
+                @Html.DropDownListFor(model => model.LOTE, new MultiSelectList(Model.LISTA_LOTES, "AUTONUM", "LOTE"), "", new { @class = "form-control", id = "ddlLote" })
+            </div>
+
+            <div class="col-md-3">
+                <label>Item</label>
+                @Html.DropDownListFor(model => model.ITEM, new MultiSelectList(Model.LISTA_ITENS, "ITEM", "DESCR"), "", new { @class = "form-control", id = "ddlItem" })
+            </div>
+
+            <div class="col-md-2 checkbox-block">
+                <label>Sem Avaria</label>
+                @Html.CheckBoxFor(model => model.FL_SEM_AVARIA, new { @class = "ckb", id = "ckbSemAvaria" })
+            </div>
+
+            <div class="col-md-2 checkbox-block">
+                <label>CrossDocking</label>
+                @Html.CheckBoxFor(model => model.FLAG_CD, new { @class = "ckb", id = "ckbCrossDocking" })
+            </div>
+
+            <div class="col-md-3" id="divCntrDestino">
+                <label>Container Destino</label>
+                @Html.DropDownListFor(model => model.AUTONUM_CNTR_DESTINO, new MultiSelectList(Model.LISTA_CNTR_DESTINO, "AUTONUM", "ID_CONTEINER"), "", new { @class = "form-control", id = "ddlCntrDestino" })
+            </div>
+        </div>
+
+        <!-- ===== DADOS ===== -->
+        <div id="divDados">
+
+            <div class="section-title">Datas e Responsáveis</div>
+
+            <div class="row form-row">
+                <div class="col-md-2">
+                    <label>Início</label>
+                    @Html.EditorFor(model => model.INICIO, new { htmlAttributes = new { @class = "form-control data", @readonly = "@readonly" } })
+                </div>
+
+                <div class="col-md-2">
+                    <label>Demurrage</label>
+                    @Html.EditorFor(model => model.DEMURRAGE, new { htmlAttributes = new { @class = "form-control data" } })
+                </div>
+
+                <div class="col-md-2">
+                    <label>Término</label>
+                    @Html.EditorFor(model => model.TERMINO, new { htmlAttributes = new { @class = "form-control data", @readonly = "@readonly", id = "txtTermino" } })
+                </div>
+
+                <div class="col-md-3">
+                    <label>Solicitado</label>
+                    @Html.DropDownListFor(model => model.SOLICITANTE, new MultiSelectList(Model.TIPOS_SOLICITANTES, "AUTONUM", "DESCRICAO"), "", new { @class = "form-control" })
+                </div>
+
+                <div class="col-md-3">
+                    <label>Conferente</label>
+                    @Html.EditorFor(model => model.CONFERENTE, new { htmlAttributes = new { @class = "form-control", @readonly = "@readonly" } })
+                </div>
+            </div>
+
+            <div class="row form-row">
+                <div class="col-md-3">
+                    <label>Fiscal</label>
+                    @Html.EditorFor(model => model.FISCAL, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+
+                <div class="col-md-2">
+                    <label>Patio</label>
+                    @Html.EditorFor(model => model.EMPRESA, new { htmlAttributes = new { @class = "form-control", @readonly = "@readonly" } })
+                    @Html.EditorFor(model => model.PATIO, new { htmlAttributes = new { @class = "form-control", style = "display:none;" } })
+                </div>
+
+                <div class="col-md-2">
+                    <label>NCM's'</label>
+                    @Html.EditorFor(model => model.NCM, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+
+                <div class="col-md-3">
+                    <label>Local</label>
+                    @Html.EditorFor(model => model.LOCAL, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+                <div class="col-md-2">
+                    <label>SubClasse</label>
+                    @Html.EditorFor(model => model.SUB_CLASSE, new { htmlAttributes = new { @class = "form-control total", @readonly = "@readonly" } })
+                </div>
+
+            </div>
+
+            <!-- ===== MAIS CAMPOS ===== -->
+            <div class="section-title">Carga</div>
+
+            <div class="row form-row">
+                <div class="col-md-2">
+                    <label>Tipo</label>
+                    @Html.DropDownListFor(model => model.DESOVA, new MultiSelectList(Model.TIPOS_DESOVA, "AUTONUM", "DESCRICAO"), "", new { @class = "form-control" })
+                </div>
+                <div class="col-md-1">
+                    <label>Inspeção Mapa</label> 
+                    @Html.EditorFor(model => model.INSPECAO_MAPA, new { htmlAttributes = new { @class = "form-control data" } })
+                </div>
+
+                <div class="col-md-1">
+                    <label>Volume(m³)</label>
+                    @Html.EditorFor(model => model.VOLUME, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+
+                <div class="col-md-1">
+                    <label>Peso Bruto</label>
+                    @Html.EditorFor(model => model.PESO_BRUTO, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+
+                <div class="col-md-1">
+                    <label>Peso Apurado</label>
+                    @Html.EditorFor(model => model.PESO_APURADO, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+
+                <div class="col-md-2">
+                    <label>IMO</label>
+                    @Html.EditorFor(model => model.IMO, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+                <div class="col-md-1">
+                    <label>UNDG</label>
+                    @Html.EditorFor(model => model.UNDG, new { htmlAttributes = new { @class = "form-control  " } })
+                </div>
+                <div class="col-md-3">
+                    <label>Gênero</label>
+                    @Html.DropDownListFor(model => model.GENERO, new MultiSelectList(Model.TIPOS_GENERO, "AUTONUM", "DESCRICAO"), string.Empty, new { @class = "form-control total" })
+                </div>
+
+            </div>
+            <div class="row form-row">
+                <div class="col-md-1">
+                    <label>Quantidade</label>
+                    @Html.EditorFor(model => model.QUANTIDADE, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+                <div class="col-md-2">
+                    <label>Embalagens</label>
+                    @Html.DropDownListFor(model => model.EMBALAGEM, new MultiSelectList(Model.TIPOS_EMBALAGENS, "AUTONUM", "DESCRICAO"), string.Empty, new { @class = "form-control" })
+                </div>
+
+                <div class="col-md-5">
+                    <label>Mercadoria</label>
+                    @Html.EditorFor(model => model.MERCADORIA, new { htmlAttributes = new { @class = "form-control total" } })
+                </div>
+                <div class="col-md-2">
+                    <label>Marca</label>
+                    @Html.EditorFor(model => model.MARCA, new { htmlAttributes = new { @class = "form-control  " } })
+                </div>
+                <div class="col-md-2">
+                    <label>Localização</label>
+                    @Html.EditorFor(model => model.LOCALIZACAO, new { htmlAttributes = new { @class = "form-control  " } })
+                </div>
+
+            </div>
+            <div class="row" id="divHub">
+                <div class="col-md-2">
+                    HUB
+                     @Html.EditorFor(model => model.HUB, new { htmlAttributes = new { @class = "form-control", id = "txtCidadeHub", @readonly = "@readonly" } })
+                </div>
+                <div class="col-md-2">
+                     Cidade HUB 
+                     @Html.EditorFor(model => model.CIDADE_HUB, new { htmlAttributes = new { @class = "form-control", id = "txtCidadeHub", @readonly = "@readonly" } })
+                </div>
+                <div class="col-md-1">
+                    <br />
+                    <a class="btn btn-block btn-primary" id="btnCLA" href="@Url.Action("ConsultaCLARomaneio", "ManutencaoCLA", new {AUTONUM_ROMANEIO = Model.AUTONUM_ROMANEIO })">CLA</a>
+                </div>
+            </div>
+
+            <!-- ===== DESCRIÇÃO ===== -->
+            <div class="section-title">Descrição</div>
+
+            <div class="row form-row">
+                <div class="col-md-12">
+                    @Html.TextAreaFor(model => model.DESCRICAO, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+            </div>
+
+            <!-- ===== AVARIAS ===== -->
+            <div class="section-title">Avarias</div>
+
+            <div class="row form-row">
+                <div class="col-md-3">
+                    @Html.CheckBoxFor(model => model.FL_OUTRA_AVARIA, new { id = "ckbOutros" }) OUTRA AVARIA
+                    @Html.EditorFor(model => model.DESCR_OUTRA_AVARIA, new { htmlAttributes = new { id = "txtOutraAvaria", @class = "form-control" } })
+                </div>
+
+                <div class="col-md-3">
+                    @Html.CheckBoxFor(model => model.FL_FALTA, new { id = "ckbFalta" }) FALTA
+                    @Html.EditorFor(model => model.DESCR_FALTA, new { htmlAttributes = new { id = "txtFalta", @class = "form-control" } })
+                </div>
+
+                <div class="col-md-3">
+                    @Html.CheckBoxFor(model => model.FL_ACRESCIMO, new { id = "ckbAcrescimo" }) ACRÉSCIMO
+                    @Html.EditorFor(model => model.DESCR_ACRESCIMO, new { htmlAttributes = new { id = "txtAcrescimo", @class = "form-control" } })
+                </div>
+
+                <div class="col-md-3">
+                    @Html.CheckBoxFor(model => model.FL_AGUARDANDO_RECONHECIMENTO, new { id = "ckbAguardandoReconhecimento" }) AGUARDANDO RECONHECIMENTO
+                    @Html.EditorFor(model => model.DESCR_AGUARDANDO_RECONHECIMENTO, new { htmlAttributes = new { id = "txtAguardandoReconhecimento", @class = "form-control" } })
+                </div>
+            </div>
+
+            <!-- ===== OBS ===== -->
+            <div class="row form-row">
+                <div class="col-md-12">
+                    <label>Observações</label>
+                    @Html.TextAreaFor(model => model.OBS, new { @class = "form-control" })
+                </div>
+            </div>
+
+            <!-- ===== BOTÕES ===== -->
+            <div class="form-actions" id="divBotoes">
+                <button type="submit" class="btn btn-success btn-block">Salvar</button>
+
+                <a class="btn btn-warning btn-block" href="@Url.Action("Cadastrar", "Cadastrar", new {lote = Model.LOTE , cntr = Model.AUTONUM_CNTR })">
+                    Limpar
+                </a>
+
+                <a class="btn btn-info btn-block" href="@Url.Action("Finalizar", "Cadastrar", new {patio = Model.PATIO ,lote = Model.LOTE , termino = Model.TERMINO, autonum_romaneio = Model.AUTONUM_ROMANEIO , cntr = Model.AUTONUM_CNTR , item = Model.ITEM })">
+                    Finalizar
+                </a>
+
+                <a class="btn btn-secondary btn-block" id="btnAvarias" href="@Url.Action("ConsultarAvarias", "Avarias", new {AUTONUM_ROMANEIO = Model.AUTONUM_ROMANEIO })">
+                    Avarias
+                </a>
+                @*<div class="col-md-offset-6 col-sm-2">
+            <a class="btn btn-block btn-secondary" href="@Url.Action("ConsultarFotos", "Fotos", new {AUTONUM_ROMANEIO = Model.AUTONUM_ROMANEIO })">Fotos</a>
+        </div>*@
+
+            </div>
+
+        </div>
+        </div>
+}
+
+<div class="modal fade" id="Modal" tabindex="-1" aria-labelledby="modalTabelaLabel" aria-hidden="true">
+    <div class="modal-dialog  modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+            </div>
+            <div class="modal-body" id="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script language="JavaScript" type="text/javascript" src="~/Content/js/jquery-3.3.1.js"></script>
+<script language="JavaScript" type="text/javascript" src="~/Content/js/bootstrap.min.js"></script>
+
+<script>
+    $('#ddlItem').change(function () {
+        CarregaDadosItem();
+        console.log("ddlItem");
+
+        var elementos = document.getElementById("divDados");
+        elementos.style.display = "block";
+     
+    });
+
+     $('#ddlLote').change(function () {
+         CarregaDadosLote();
+         console.log("ddlLote");
+         var elementos = document.getElementById("divDados");
+         elementos.style.display = "block";
+     });
+
+    function CarregaDadosLote() {
+        var cntr = document.getElementById('txtCntr').value;
+        var lote = document.getElementById('ddlLote').value;
+        var item = 0;
+        var url = '/Cadastrar/Cadastrar?cntr=' + cntr + '&lote=' + lote + '&item=' + item;
+        window.location.href = url
+
+    }
+
+     function CarregaDadosItem() {
+         var cntr = document.getElementById('txtCntr').value;
+         var lote = document.getElementById('ddlLote').value;
+         var item = document.getElementById('ddlItem').value;
+         var url = '/Cadastrar/Cadastrar?cntr=' + cntr + '&lote=' + lote + '&item=' + item;
+         window.location.href = url
+
+     }
+
+    $(document).ready(function () {
+
+        var item = document.getElementById('ddlItem').value;
+        var divDados = document.getElementById("divDados");
+
+        if (item != "") {
+            divDados.style.display = "block";
+        } else {
+            divDados.style.display = "none";
+        }
+
+
+        var termino = document.getElementById("txtTermino").value;
+        if (termino == "") {
+            console.log("aqui");
+            $('#divBotoes').show();
+        }
+        else {
+            console.log("ali");
+            $('#divBotoes').hide();
+        }
+
+
+        if ($("#ckbHub").is(':checked') == true) {
+             $('#divHub').show();
+        } else {
+             $('#divHub').hide();
+        }
+
+
+      // ----------------------------------------------------------------------------------- //
+
+        var ckbSemAvaria = document.getElementById('ckbSemAvaria');
+        var ckbFalta = document.getElementById('ckbFalta');
+        var ckbAcrescimo = document.getElementById('ckbAcrescimo');
+        var ckbOutros = document.getElementById('ckbOutros');
+        var ckbAguardandoReconhecimento = document.getElementById('ckbAguardandoReconhecimento');
+
+
+       // ----------------------------------------------------------------------------------- //
+
+        $(ckbSemAvaria).click(function () {
+            if (ckbSemAvaria.checked) {
+                document.getElementById('btnAvarias').style.display = 'none';
+
+                ckbFalta.checked = false;
+                document.getElementById('txtFalta').value = "";
+                document.getElementById('txtFalta').setAttribute('readonly', false);
+
+                ckbAcrescimo.checked = false;
+                document.getElementById('txtAcrescimo').value = "";
+                document.getElementById('txtAcrescimo').setAttribute('readonly', false);
+
+                ckbOutros.checked = false;
+                document.getElementById('txtOutraAvaria').value = "";
+                document.getElementById('txtOutraAvaria').setAttribute('readonly', false);
+
+                ckbAguardandoReconhecimento.checked = false;
+                document.getElementById('txtAguardandoReconhecimento').value = "";
+                document.getElementById('txtAguardandoReconhecimento').setAttribute('readonly', false);
+            }
+            else {
+                document.getElementById('btnAvarias').style.display = 'block';
+                document.getElementById('txtFalta').removeAttribute('readonly');
+                document.getElementById('txtAcrescimo').removeAttribute('readonly');
+                document.getElementById('txtOutraAvaria').removeAttribute('readonly');
+                document.getElementById('txtAguardandoReconhecimento').removeAttribute('readonly');
+
+            }
+        });
+
+        if ($("#ckbSemAvaria").is(':checked') == true) {
+            document.getElementById('btnAvarias').style.display = 'none';
+
+            ckbFalta.checked = false;
+            document.getElementById('txtFalta').value = "";
+            document.getElementById('txtFalta').setAttribute('readonly', false);
+
+            ckbAcrescimo.checked = false;
+            document.getElementById('txtAcrescimo').value = "";
+            document.getElementById('txtAcrescimo').setAttribute('readonly', false);
+
+            ckbOutros.checked = false;
+            document.getElementById('txtOutraAvaria').value = "";
+            document.getElementById('txtOutraAvaria').setAttribute('readonly', false);
+
+            ckbAguardandoReconhecimento.checked = false;
+            document.getElementById('txtAguardandoReconhecimento').value = "";
+            document.getElementById('txtAguardandoReconhecimento').setAttribute('readonly', false);
+
+        }
+        else {
+            document.getElementById('btnAvarias').style.display = 'block';
+            document.getElementById('txtFalta').removeAttribute('readonly');
+            document.getElementById('txtAcrescimo').removeAttribute('readonly');
+            document.getElementById('txtOutraAvaria').removeAttribute('readonly');
+            document.getElementById('txtAguardandoReconhecimento').removeAttribute('readonly');
+        }
+
+
+        // ----------------------------------------------------------------------------------- //
+
+        $(ckbFalta).click(function () {
+            if (ckbFalta.checked) {
+                ckbSemAvaria.checked = false;
+                document.getElementById('txtFalta').removeAttribute('readonly');
+            }
+            else {
+
+                document.getElementById('txtFalta').setAttribute('readonly', false);
+            }
+        });
+
+        if ($("#ckbFalta").is(':checked') == false) {
+            document.getElementById('txtFalta').setAttribute('readonly', false);
+        }
+        else {
+            ckbSemAvaria.checked = false;
+            document.getElementById('txtFalta').removeAttribute('readonly');
+        }
+
+
+        // ----------------------------------------------------------------------------------- //
+
+        $(ckbAcrescimo).click(function () {
+            if (ckbAcrescimo.checked) {
+                ckbSemAvaria.checked = false;
+                document.getElementById('txtAcrescimo').removeAttribute('readonly');
+            }
+            else {
+                document.getElementById('txtAcrescimo').setAttribute('readonly', false);
+            }
+        });
+
+        if ($("#ckbAcrescimo").is(':checked') == false) {
+            document.getElementById('txtAcrescimo').setAttribute('readonly', false);
+        }
+        else {
+            ckbSemAvaria.checked = false;
+            document.getElementById('txtAcrescimo').removeAttribute('readonly');
+        }
+
+        // ----------------------------------------------------------------------------------- //
+
+        $(ckbOutros).click(function () {
+            if (ckbOutros.checked) {
+                ckbSemAvaria.checked = false;
+                document.getElementById('txtOutraAvaria').removeAttribute('readonly');
+            }
+            else {
+                document.getElementById('txtOutraAvaria').setAttribute('readonly', false);
+            }
+        });
+
+        if ($("#ckbOutros").is(':checked') == false) {
+            document.getElementById('txtOutraAvaria').setAttribute('readonly', false);
+        }
+        else {
+            ckbSemAvaria.checked = false;
+            document.getElementById('txtOutraAvaria').removeAttribute('readonly');
+        }
+
+        // ----------------------------------------------------------------------------------- //
+
+        $(ckbAguardandoReconhecimento).click(function () {
+            if (ckbAguardandoReconhecimento.checked) {
+                ckbSemAvaria.checked = false;
+                document.getElementById('txtAguardandoReconhecimento').removeAttribute('readonly');
+            }
+            else {
+                document.getElementById('txtAguardandoReconhecimento').setAttribute('readonly', false);
+            }
+        });
+
+        if ($("#ckbAguardandoReconhecimento").is(':checked') == false) {
+            document.getElementById('txtAguardandoReconhecimento').setAttribute('readonly', false);
+        }
+        else {
+            ckbSemAvaria.checked = false;
+            document.getElementById('txtAguardandoReconhecimento').removeAttribute('readonly');
+        }
+
+
+        // ----------------------------------------------------------------------------------- //
+
+        var ckbCrossDocking = document.getElementById('ckbCrossDocking'); // $('#divHub').show();
+
+        $(ckbCrossDocking).click(function () {
+            if (ckbCrossDocking.checked) {
+                 $('#divCntrDestino').show();
+            }
+            else {
+                $('#divCntrDestino').hide();
+                $('#ddlCntrDestino').val(0);
+
+            }
+        });
+
+        if ($("#ckbCrossDocking").is(':checked') == false) {
+            $('#divCntrDestino').hide();
+            $('#ddlCntrDestino').val(0);
+
+        }
+        else {
+             $('#divCntrDestino').show();
+        }
+
+    });
+
+    function closeAlert(alertId) {
+        var alert = document.getElementById(alertId);
+        alert.style.display = 'none';
+    }
+
+
+    @*function abrirPosicionamento(button) {
+        var romaneio = $(button).data('romaneio');
+        var inicio = $(button).data('inicio');
+        var termino = $(button).data('termino');
+        var item = $(button).data('item');
+
+        if (romaneio == "" || inicio == "") {
+            alert("Lote não iniciado!");
+        }
+        else if (termino != "") {
+            alert("Lote finalizado!");
+        }
+        else {
+
+
+
+            $.ajax({
+            url: '@Url.Action("Posicionamento", "Cadastrar")', // Chama a action no controller
+            type: 'GET',
+                data: { patio: patio, cntr: cntr, lote: lote, item: item},
+            success: function (data) {
+            $('#modal-body').html(data);
+            $('#Modal').modal('show');
+            },
+            error: function () {
+            alert("Erro ao carregar dados.");
+            }
+            });
+            }
+
+    }*@
+
+</script>

@@ -1,0 +1,21 @@
+﻿@model  Romaneio.Classes.LocalizacaoDTO
+
+@{
+    ViewBag.Title = "Localicação";
+}
+
+    <h2>Localicação</h2><br />
+
+@using (Html.BeginForm())
+{<div class="row">
+     <div class="col-md-6">
+         Local:
+         @Html.EditorFor(model => model.Local, new { htmlAttributes = new { @class = "form-control  ", @readonly = "@readonly" } })
+     </div>
+    <div class="col-md-6">
+        Sub Classe:
+        @Html.EditorFor(model => model.SubClasse, new { htmlAttributes = new { @class = "form-control  ", @readonly = "@readonly" } })
+    </div>
+</div>
+     
+}

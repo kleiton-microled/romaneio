@@ -1,0 +1,272 @@
+﻿@model Romaneio.Models.LoteViewModel
+
+@{
+    ViewBag.Title = "CLA";
+}
+
+<div class="page-title">
+    <h2><i class="glyphicon glyphicon-wrench"></i> Manutenção de CLA</h2>
+</div>
+
+<div class="card-custom">
+
+    <div class="row mb-2">
+        <div class="col-md-12 text-right">
+            <a href="@Url.Action("Cadastrar", "Cadastrar", new { AUTONUM_ROMANEIO = Model.AUTONUM_ROMANEIO})"
+               class="btn btn-secondary btn-sm" id="btnVoltar">
+                <i class="glyphicon glyphicon-arrow-left"></i> Voltar
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["MensagemErro"] != null)
+    {
+        <div class="alert alert-danger" role="alert" id="alert-error">
+            <button type="button" class="btn btn-danger btn-sm close-alert"
+                    onclick="closeAlert('alert-error')">
+                X
+            </button>
+            @TempData["MensagemErro"]
+        </div>
+    }
+
+    @if (TempData["MensagemSucesso"] != null)
+    {
+        <div class="alert alert-success" role="alert" id="alert-success">
+            <button type="button" class="btn btn-success btn-sm close-alert"
+                    onclick="closeAlert('alert-success')">
+                X
+            </button>
+            @TempData["MensagemSucesso"]
+        </div>
+    }
+
+    @using (Html.BeginForm("SalvarDados", "ManutencaoCLA", FormMethod.Post))
+    {
+        <!-- ===== FILTROS ===== -->
+        <div class="card-custom mb-3" id="divCabecalho">
+            <div class="card-header">Filtros</div>
+
+            <div class="row">
+                <div class="col-md-2">
+                    <label>Lote:</label>
+                    @Html.EditorFor(model => model.LOTE, new { htmlAttributes = new { @class = "form-control", id = "txtLote" } })
+                    @Html.EditorFor(model => model.AUTONUM_CS, new { htmlAttributes = new { @class = "invisivel form-control", id = "txtAutonumCS" } })
+                    @Html.EditorFor(model => model.AUTONUM_BREAK_BULK, new { htmlAttributes = new { @class = "invisivel form-control", id = "txtBreakBulk" } })
+                    @Html.EditorFor(model => model.AUTONUM_ROMANEIO, new { htmlAttributes = new { @class = "invisivel form-control ", id = "txtRomaneio" } })
+                </div>
+
+                <div class="col-md-6">
+                    <label>Item:</label>
+                    @Html.DropDownListFor(model => model.ITEM,
+                        new MultiSelectList(Model.LISTA_ITENS, "ITEM", "DESCR"),
+                        string.Empty,
+                        new { @class = "form-control total", id = "ddlItem" })
+                </div>
+
+                <div class="col-md-2">
+                    <label>&nbsp;</label>
+                    <a class="btn btn-warning btn-block"
+                       href="@Url.Action("Index","ManutencaoCLA")">
+                        Limpar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== DADOS ===== -->
+        <div class="card-custom mb-3">
+            <div class="card-header">Dados do CLA</div>
+
+            <div class="row">
+                <div class="col-md-1">
+                    <label>Qtd. CLA:</label>
+                    @Html.EditorFor(model => model.QUANTIDADE_CLA, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+                <div class="col-md-1">
+                    <label>Peso:</label>
+                    @Html.EditorFor(model => model.PESO, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+                <div class="col-md-2">
+                    <label>Comprimento:</label>
+                    @Html.EditorFor(model => model.COMPRIMENTO, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+
+                <div class="col-md-2">
+                    <label>Largura:</label>
+                    @Html.EditorFor(model => model.LARGURA, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+
+                <div class="col-md-2">
+                    <label>Altura:</label>
+                    @Html.EditorFor(model => model.ALTURA, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+
+                <div class="col-md-2" id="divSalvarCLA">
+                    <label>&nbsp;</label>
+                    <div>
+                        <button type="submit" name="acao" value="Salvar"
+                                id="btnSalvarCLA"
+                                class="btn btn-success btn-block">
+                            Salvar
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-2" id="divSalvarCLARomaneio">
+                    <label>&nbsp;</label>
+                    <div>
+                        <button type="submit" name="acao" value="SalvarRomaneio"
+                                id="btnSalvarCLARomaneio"
+                                class="btn btn-primary btn-block">
+                            Salvar Romaneio
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- ===== TABELA ===== -->
+    <div class="card-custom">
+        <div class="card-header">Lista de CLA</div>
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-custom">
+                <thead>
+                    <tr>
+                        <th>AUTONUM_BREAK_BULK</th>
+                        <th>PESO</th>
+                        <th>QTD</th>
+                        <th>COMPRIMENTO</th>
+                        <th>LARGURA</th>
+                        <th>ALTURA</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.LISTA_CLA)
+                    {
+                    <tr>
+                        <td>@item.AUTONUM_BREAK_BULK</td>
+                        <td>@item.PESO</td>
+                        <td>@item.QUANTIDADE</td>
+                        <td>@item.COMPRIMENTO</td>
+                        <td>@item.LARGURA</td>
+                        <td>@item.ALTURA</td>
+
+                        <td>
+                            <button type="button"
+                                    class="btn btn-warning btn-sm"
+                                    data-autonum="@item.AUTONUM_BREAK_BULK"
+                                    onclick="Editar(this)">
+                                Editar
+                            </button>
+                        </td>
+
+                        <td>
+                            <button type="button"
+                                    class="btn btn-danger btn-sm"
+                                    data-autonum="@item.AUTONUM_BREAK_BULK"
+                                    onclick="Excluir(this)">
+                                Excluir
+                            </button>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+ 
+@*<script src="~/Content/js/jquery-3.3.1.js"></script>
+    <script src="~/Content/js/bootstrap.min.js"></script>*@
+
+<script>
+    $.validator.methods.number = function (value, element) {
+        return this.optional(element) || /^-?\d+(,\d+)?$/.test(value);
+    };
+
+    $(document).ready(function () {
+        var Romaneio = document.getElementById('txtRomaneio').value;
+        if (Romaneio > 0) {
+            $('#divCabecalho').hide();
+            $('#divSalvarCLA').hide();
+            $('#divSalvarCLARomaneio').show();
+            $('#btnVoltar').show();
+        } else {
+            $('#divCabecalho').show();
+            $('#divSalvarCLA').show();
+            $('#divSalvarCLARomaneio').hide();
+            $('#btnVoltar').hide();
+        }
+    });
+
+    $('#txtLote').change(function () {
+        CarregaDados();
+    });
+
+    $('#ddlItem').change(function () {
+        CarregaDados();
+    });
+
+    function CarregaDados() {
+        var lote = document.getElementById('txtLote').value;
+        var item = document.getElementById('ddlItem').value;
+        var url = '/ManutencaoCLA/Index?LOTE=' + lote + '&ITEM=' + item;
+        window.location.href = url
+    }
+
+    function Editar(button) {
+        var lote = document.getElementById('txtLote').value;
+        var item = document.getElementById('ddlItem').value;
+        var autonum = $(button).data("autonum");
+        var url = "";
+        var Romaneio = document.getElementById('txtRomaneio').value;
+
+        if (Romaneio > 0) {
+            url = '/ManutencaoCLA/ConsultaCLARomaneio?AUTONUM_ROMANEIO=' + Romaneio + '&AUTONUM_BREAK_BULK=' + autonum;
+        } else {
+            url = '/ManutencaoCLA/Index?LOTE=' + lote + '&ITEM=' + item + '&AUTONUM_BREAK_BULK=' + autonum;
+        }
+
+        window.location.href = url
+    }
+
+    function Excluir(button) {
+        var row = $(button).closest("tr");
+        var AUTONUM_BREAK_BULK = $(button).data("autonum");
+
+        var url = "";
+        var Romaneio = document.getElementById('txtRomaneio').value;
+
+        if (Romaneio > 0) {
+            url = '@Url.Action("ExcluirCLARomaneio", "ManutencaoCLA")'
+        } else {
+            url = '@Url.Action("ExcluirCLA", "ManutencaoCLA")'
+        }
+
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: { AUTONUM_BREAK_BULK: AUTONUM_BREAK_BULK },
+            success: function (response) {
+                if (response.success) {
+                    row.remove();
+                } else {
+                    alert(response.message || "Erro ao excluir o item.");
+                }
+            },
+            error: function () {
+                alert("Erro ao comunicar com o servidor.");
+            }
+        });
+    }
+
+    function closeAlert(alertId) {
+        var alert = document.getElementById(alertId);
+        alert.style.display = 'none';
+    }
+</script>

@@ -1,0 +1,517 @@
+﻿/* =========================================================
+   BASE
+========================================================= */
+/* ===== FUNDO GLOBAL ===== */
+body {
+    background: linear-gradient(135deg, #f4f6fb, #e9edf5);
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+}
+
+input {
+    text-transform: uppercase;
+}
+
+code {
+    font-size: 80%;
+}
+
+/* =========================================================
+   LAYOUT (FOOTER FIX CORRETO)
+========================================================= */
+.page-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.content-wrap {
+    flex: 1;
+}
+
+.body-content {
+    margin: 20px;
+}
+
+/* =========================================================
+   NAVBAR
+========================================================= */
+.navbar {
+    padding-left: 20px;
+    padding-right: 20px;
+    border-bottom: 4px solid #8a730b !important;
+    background-color: aliceblue !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.navbar-nav .nav-item a {
+    color: #2f3640;
+    font-weight: 500;
+    transition: 0.2s;
+}
+
+    .navbar-nav .nav-item a:hover {
+        color: #3498db;
+    }
+
+/* =========================================================
+   FOOTER (NOVO PADRÃO)
+========================================================= */
+.footer {
+    background: transparent;
+    padding: 20px 0;
+}
+
+.footer-content {
+    text-align: center;
+    font-size: 13px;
+    color: #999;
+    letter-spacing: 0.3px;
+}
+
+.footer-divider {
+    margin: 0 8px;
+    color: #ccc;
+}
+
+/* =========================================================
+   TIPOGRAFIA
+========================================================= */
+.text-center {
+    text-align: center;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-vertical-center {
+    vertical-align: middle;
+}
+
+/* =========================================================
+   FORMULÁRIOS
+========================================================= */
+.form-group {
+    margin-bottom: 8px;
+}
+
+    .form-group label {
+        margin-bottom: 3px;
+    }
+
+.control-label {
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.form-control {
+    padding: 6px 6px !important;
+    border-radius: 6px;
+}
+
+/* =========================================================
+   INPUTS
+========================================================= */
+input[type="text"]:focus {
+    background-color: #FAFAD2;
+}
+
+/* =========================================================
+   TABELAS
+========================================================= */
+.table > tbody > tr > td {
+    vertical-align: middle;
+}
+
+.table-custom {
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.gridViewHeader {
+    background-color: #337ab7;
+    color: #FFFFFF;
+}
+
+.sem-quebra {
+    white-space: nowrap !important;
+}
+
+/* =========================================================
+   BOTÕES
+========================================================= */
+input[type=submit] {
+    font-size: 13px;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+/* =========================================================
+   UTILIDADES (MARGENS)
+========================================================= */
+.mr-1 {
+    margin-right: 10px;
+}
+
+.mr-2 {
+    margin-right: 20px;
+}
+
+.mr-3 {
+    margin-right: 30px;
+}
+
+.mr-4 {
+    margin-right: 40px;
+}
+
+.mr-5 {
+    margin-right: 50px;
+}
+
+.ml-1 {
+    margin-left: 10px;
+}
+
+.ml-2 {
+    margin-left: 20px;
+}
+
+.ml-3 {
+    margin-left: 30px;
+}
+
+.ml-4 {
+    margin-left: 40px;
+}
+
+.ml-5 {
+    margin-left: 50px;
+}
+
+/* =========================================================
+   COMPONENTES
+========================================================= */
+.card-custom {
+    background: #fff;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+}
+
+.destacar-texto {
+    font-weight: bold;
+    color: red;
+    background-color: #FFF68F;
+}
+
+.linha-colorida {
+    margin-top: 10px;
+    background-color: #c8daf4;
+    font-size: 12px;
+    width: 100%;
+    margin-right: 15px;
+    font-weight: 600;
+    padding: 4px;
+}
+
+/* =========================================================
+   MODAL LOADING
+========================================================= */
+.updateModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: gray;
+    opacity: 0.7;
+    z-index: 999;
+}
+
+.updateModalBox {
+    background-color: #ffffff;
+    border: 1px solid #B2B2B2;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 290px;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+/* =========================================================
+   PAGINAÇÃO
+========================================================= */
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+    .pagination a {
+        color: #007bff;
+        padding: 8px 16px;
+        margin: 0 4px;
+        text-decoration: none;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .pagination span {
+        padding: 8px 16px;
+        margin: 0 4px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background-color: #f1f1f1;
+        color: #6c757d;
+    }
+
+/* =========================================================
+   LINKS
+========================================================= */
+.link-bootstrap3 {
+    color: #007bff !important;
+    text-decoration: underline;
+}
+
+    .link-bootstrap3:hover {
+        color: #0056b3 !important;
+    }
+
+/* =========================================================
+   OUTROS
+========================================================= */
+.invisivel {
+    display: none !important;
+}
+
+.input-100-p {
+    width: 100%;
+}
+
+.ckb {
+    transform: scale(1.0);
+    margin-right: 6px;
+     width: 60%;
+   height: 30px;
+    padding: 6px 12px;
+    font-size: 14px;
+}
+
+input[type="checkbox"].ckbTable {
+    width: 100%;
+    height: 30px;
+    padding: 6px 12px;
+    font-size: 14px;
+}
+
+.total {
+    width: 100% !important;
+    max-width: 100% !important
+}
+
+.tableFixHead {
+    overflow-y: auto;
+    max-height: 400px;
+    overflow-x: auto;
+    max-width: 100%;
+}
+
+textarea {
+    width: 100%;
+    max-width: 100%;
+}
+
+.tableFixHead {
+    overflow-y: auto;
+    max-height: 600px;
+    overflow-x: auto;
+    max-width: 100%;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center; /* Centraliza a paginação */
+    margin-top: 20px;
+}
+
+    .pagination a {
+        color: #007bff;
+        padding: 8px 16px;
+        margin: 0 4px;
+        text-decoration: none;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+        .pagination a:hover {
+            background-color: #f1f1f1;
+            color: #0056b3;
+        }
+
+        .pagination a:active {
+            background-color: #ddd;
+        }
+
+    .pagination span {
+        padding: 8px 16px;
+        margin: 0 4px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background-color: #f1f1f1;
+        color: #6c757d;
+    }
+
+    .pagination .disabled {
+        pointer-events: none;
+        color: #ccc;
+    }
+
+    .pagination .active {
+        font-weight: bold;
+        background-color: #007bff;
+        color: white;
+    }
+
+
+.page-title {
+    color: #2f3640;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.mt-3 {
+    margin-top: 20px;
+}
+
+.expand-area {
+    display: none;
+    padding: 10px;
+}
+
+
+/* ===== GRID ===== */
+.menu-grid {
+    margin-top: 20px;
+}
+
+/* ===== ITEM ===== */
+.menu-item {
+    margin-bottom: 25px;
+}
+
+/* ===== CARD ===== */
+.menu-card {
+    width: 100%;
+    height: 100px;
+    border: none;
+    border-radius: 16px;
+    background: linear-gradient(145deg, #ffffff, #f0f2f5);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255,255,255,0.6);
+    transition: all 0.3s ease;
+}
+
+    /* ===== HOVER ===== */
+    .menu-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12), 0 5px 15px rgba(0, 0, 0, 0.08);
+    }
+
+    /* ===== ÍCONE ===== */
+    .menu-card .icon i {
+        font-size: 36px;
+        color: #17a2b8;
+        margin-bottom: 10px;
+    }
+
+    /* ===== TÍTULO ===== */
+    .menu-card .title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #2f3640;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    /* ===== AÇÃO ===== */
+    .menu-card .action {
+        font-size: 13px;
+        color: #17a2b8;
+        opacity: 0.8;
+    }
+
+    /* ===== HOVER DETALHES ===== */
+    .menu-card:hover .action {
+        opacity: 1;
+    }
+
+/* ===== CARD HEADER ===== */
+.card-header {
+    font-size: 18px;
+    font-weight: 600;
+    background: #ffffff;
+    border-bottom: 1px solid #eee;
+}
+
+/* ===== FUNDO ===== */
+/*  body {
+        background-color: #f5f6fa;
+    }*/
+
+.menu-card {
+    border-top: 4px solid #3498db;
+    background-color: #f5f6fa;
+}
+
+.form-row {
+    margin-bottom: 15px;
+}
+
+.section-title {
+    font-weight: 600;
+    margin: 25px 0 15px;
+    color: #2f3640;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+}
+
+.checkbox-block {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 25px;
+}
+
+.close-alert {
+    float: right;
+    border: none;
+    background: transparent;
+    font-size: 16px;
+}
+
+.page-title {
+    color: #8a730b !important;
+}

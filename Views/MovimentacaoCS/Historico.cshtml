@@ -1,0 +1,31 @@
+﻿@model  IEnumerable<Romaneio.Models.Historico>
+
+@using Romaneio.Extensions
+
+@{
+    ViewBag.Title = "Historico";
+}
+
+<h2>Historico</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>DATA</th>
+            <th>LOCAL</th>
+            <th>ARMAZEM</th>
+         </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>@item.DATA</td>
+            <td>@item.LOCAL</td>
+            <td>@item.ARMAZEM</td>
+         </tr>
+        }
+    </tbody>
+</table>
+
+

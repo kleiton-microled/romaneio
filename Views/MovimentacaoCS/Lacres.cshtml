@@ -1,0 +1,71 @@
+﻿@model IEnumerable<Romaneio.Models.Lacres>
+
+<h2>Lacres</h2>
+
+@using (Html.BeginForm("InsereLacreCT", "MovimentacaoCS", FormMethod.Post, new { id = "formLacre" }))
+{
+    <div class="row">
+        <div class="col-md-5">
+            <input type="text" id="txtLacre" name="LACRE" class="form-control" />
+            <input type="hidden" name="AUTONUM_ARMAZENS_IPA" value="@ViewBag.AutonumArmazem" />
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-block btn-success">Adicionar Lacre</button>
+        </div>
+    </div>
+
+    <br />
+
+    <div id="tabelaLacres">
+        <div class="row padding-bottom">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>AUTONUM_LACRE</th>
+                        <th>LACRE</th>
+                        <th>DT_LANCAMENTO</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                    <tr>
+                        <td>@item.AUTONUM</td>
+                        <td>@item.LACRE</td>
+                        <td>@item.DT_LANCAMENTO</td>
+                        <td><button type="button" class="btn btn-danger" data-autonum="@item.AUTONUM" onclick="Excluir(this)">Excluir</button></td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+<script>
+         function Excluir(button) {
+
+        var row = $(button).closest("tr");
+        var AUTONUM_LACRE = $(button).data("autonum");
+ 
+        $.ajax({
+            url: '@Url.Action("ExcluirLacreCT", "MovimentacaoCS")', 
+            type: 'POST',
+            data: { AUTONUM_LACRE: AUTONUM_LACRE }, 
+            success: function(response) {
+                if (response.success) {
+                    row.remove();
+                    alert("Deletado com sucesso!");
+
+                } else {
+                    alert(response.message || "Erro ao excluir o item.");
+                }
+            },
+            error: function() {
+                alert("Erro ao comunicar com o servidor.");
+            }
+        });
+    }
+
+</script>

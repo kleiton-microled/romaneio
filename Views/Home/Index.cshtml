@@ -1,0 +1,86 @@
+﻿@model Romaneio.Models.LoginViewModel
+
+@{
+    ViewBag.Title = "Home Page";
+}
+
+
+    <body class="text-center">
+        <br />  <br />  <br />
+
+        @if (TempData["MensagemErro"] != null)
+        {
+    <div class="alert alert-danger" role="alert" id="alert-error">
+        <button type="button" class="btn btn-danger btn-sm close-alert" data-bs-dismiss="alert" arial-label="close" onclick="closeAlert('alert-error')">X</button>
+        @TempData["MensagemErro"]
+    </div>
+        }
+
+        <div id="login-fundo-campos" class="main-login main-center-login">
+
+            @using (Html.BeginForm("Entrar", "Home", FormMethod.Post, new { @class = "form-signin" }))
+            {
+                <strong><h2 style="color: #142d61;font-family: Arial">Romaneio</h2></strong>
+                <label class="text-left" style="color:white">Login:</label>
+                <div style="color: #ffd800; text-align:left;">
+                    @ViewBag.Mensagem
+                </div>
+                <div id="login" class="text-center d-flex flex-column">
+                    @Html.EditorFor(model => model.Login, new { htmlAttributes = new { @class = "form-control  ", placeholder = "Login" } })
+                    @Html.ValidationMessageFor(m => m.Login, "", new { @class = "text-danger" })
+                </div>
+                <br />
+                <div id="password" class="text-center d-flex flex-column">
+                    @Html.EditorFor(model => model.Senha, new { htmlAttributes = new { @class = "form-control", placeholder = "Senha", Type = "Password" } })
+                    @Html.ValidationMessageFor(m => m.Senha, "", new { @class = "text-danger" })
+                </div>
+                <br />
+                <div id="patio" class="text-center d-flex flex-column">
+                    @Html.DropDownListFor(model => model.PATIO, new SelectList(Model.TIPOS_PATIOS, "AUTONUM", "DESCRICAO"), "Selecione um pátio", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.PATIO, "", new { @class = "text-danger" })
+                </div>
+                <br />
+                <div class="text-center d-flex flex-column">
+                    <button type="submit" class="btn btn-lg btn-primary btn-warning-2">Autenticar</button>
+                </div>
+            }
+        </div>
+
+
+
+        <style>
+            .main-login {
+                background-color: #fff;
+                -moz-border-radius: 2px;
+                -webkit-border-radius: 2px;
+                border-radius: 2px;
+                -moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+                -webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+                box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+            }
+
+            .main-center-login {
+                margin-top: 30px;
+                margin: 0 auto;
+                max-width: 380px;
+                padding: 40px 40px;
+            }
+
+            .main-center-registro {
+                margin-top: 30px;
+                margin: 0 auto;
+                max-width: 550px;
+                padding: 40px 40px;
+            }
+        </style>
+
+
+        <script>
+            function closeAlert(alertId) {
+                var alert = document.getElementById(alertId);
+                alert.style.display = 'none';
+            }
+        </script>
+
+         
+    </body>

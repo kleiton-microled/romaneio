@@ -1,0 +1,306 @@
+﻿@model Romaneio.Models.MovimentacaoCSViewModel
+
+@{
+    ViewBag.Title = "Movimentação Carga Solta";
+}
+
+<h2 class="page-title">
+    <i class="glyphicon glyphicon-transfer"></i> Movimentação Carga Solta
+</h2>
+
+@if (TempData["MensagemErro"] != null)
+{
+    <div class="alert alert-danger" id="alert-error">
+        <button type="button" class="close-alert" onclick="closeAlert('alert-error')">X</button>
+        @TempData["MensagemErro"]
+    </div>
+}
+
+@if (TempData["MensagemSucesso"] != null)
+{
+    <div class="alert alert-success" id="alert-success">
+        <button type="button" class="close-alert" onclick="closeAlert('alert-success')">X</button>
+        @TempData["MensagemSucesso"]
+    </div>
+}
+
+@using (Html.BeginForm("SalvarDados", "MovimentacaoCS", FormMethod.Post))
+{
+    <div class="card-custom">
+
+        <!-- ================= CABEÇALHO ================= -->
+        <div class="row">
+            <div class="col-md-3">
+                <label>Marcante</label>
+                @Html.EditorFor(model => model.MARCANTE, new { htmlAttributes = new { @class = "form-control", id = "txtMarcante" } })
+            </div>
+
+            <div class="col-md-2">
+                <label>Qtd. Marcante</label>
+                @Html.EditorFor(model => model.QTD_MARCANTE, new { htmlAttributes = new { @class = "form-control", id = "txtQtdMarcante", @readonly = "@readonly" } })
+            </div>
+
+            <div class="col-md-2">
+                <label>Lote</label>
+                @Html.EditorFor(model => model.LOTE, new { htmlAttributes = new { @class = "form-control", id = "txtLote", @readonly = "@readonly" } })
+            </div>
+
+            <div class="col-md-2">
+                <label>BL</label>
+                @Html.EditorFor(model => model.BL, new { htmlAttributes = new { @class = "form-control", id = "txtBL", @readonly = "@readonly" } })
+            </div>
+
+            <div class="col-md-3">
+                <label>Item</label>
+                @Html.DropDownListFor(model => model.ITEM, new MultiSelectList(Model.LISTA_ITENS, "ID_GRAVACAO", "DESCR"), string.Empty, new { @class = "form-control total", id = "ddlItem" })
+            </div>
+        </div>
+
+        <hr />
+
+        <!-- ================= DADOS ================= -->
+        <div class="row">
+            <div class="col-md-2">
+                <label>Qtd.</label>
+                @Html.EditorFor(model => model.QTD_EMBALAGEM, new { htmlAttributes = new { @class = "form-control", id = "txtQtdEmbalagem", @readonly = "@readonly" } })
+            </div>
+
+            <div class="col-md-4">
+                <label>Embalagem</label>
+                @Html.DropDownListFor(model => model.EMBALAGEM, new MultiSelectList(Model.TIPOS_EMBALAGENS, "AUTONUM", "DESCRICAO"), string.Empty, new { @class = "form-control total", id = "ddlEmbalagem" })
+            </div>
+
+            <div class="col-md-6">
+                <label>Mercadoria</label>
+                @Html.EditorFor(model => model.MERCADORIA, new { htmlAttributes = new { @class = "form-control", id = "txtMercadoria", @readonly = "@readonly" } })
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-md-3">
+                <label>Marca</label>
+                @Html.EditorFor(model => model.MARCA, new { htmlAttributes = new { @class = "form-control", id = "txtMarca", @readonly = "@readonly" } })
+            </div>
+
+            <div class="col-md-3">
+                <label>Importador</label>
+                @Html.EditorFor(model => model.IMPORTADOR, new { htmlAttributes = new { @class = "form-control", id = "txtImportador", @readonly = "@readonly" } })
+            </div>
+
+            <div class="col-md-3">
+                <label>Ent/desova</label>
+                @Html.EditorFor(model => model.ENT_DESOVA, new { htmlAttributes = new { @class = "form-control", id = "txtEntDesova", @readonly = "@readonly" } })
+            </div>
+
+            <div class="col-md-3">
+                <label>Container</label>
+                @Html.EditorFor(model => model.ID_CONTEINER, new { htmlAttributes = new { @class = "form-control", id = "txtCntr", @readonly = "@readonly" } })
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-md-2">
+                <label>IMO</label>
+                @Html.EditorFor(model => model.IMO, new { htmlAttributes = new { @class = "form-control", id = "txtImo", @readonly = "@readonly" } })
+            </div>
+
+            <div class="col-md-3">
+                <label>Mov. Agend.</label>
+                @Html.EditorFor(model => model.MOV_AGEND, new { htmlAttributes = new { @class = "form-control", id = "txtMovAgend", @readonly = "@readonly" } })
+            </div>
+
+            <div class="col-md-3">
+                <label>Etq. Prateleira</label>
+                @Html.EditorFor(model => model.ETQ_PRATELEIRA, new { htmlAttributes = new { @class = "form-control", id = "txtEtqPrateleira" } })
+            </div>
+
+            <div class="col-md-2">
+                <label>Qtd. Mov.</label>
+                @Html.EditorFor(model => model.QTD_LOCAL, new { htmlAttributes = new { @class = "form-control", id = "txtQtdMovimentada" } })
+            </div>
+
+            <div class="col-md-2">
+                <label>Local</label>
+                @Html.EditorFor(model => model.LOCAL, new { htmlAttributes = new { @class = "form-control", id = "txtLocal" } })
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-md-4">
+                <label>Armazém</label>
+                @Html.DropDownListFor(model => model.ARMAZEM, new MultiSelectList(Model.LISTA_ARMAZEM, "AUTONUM", "DESCRICAO"), string.Empty, new { @class = "form-control total", id = "ddlArmazem" })
+            </div>
+
+            <div class="col-md-8">
+                <label>Motivo</label>
+                @Html.DropDownListFor(model => model.MOTIVO, new MultiSelectList(Model.LISTA_MOTIVO, "AUTONUM", "DESCR"), string.Empty, new { @class = "form-control total", id = "ddlMotivo" })
+            </div>
+        </div>
+
+        <hr />
+
+        <!-- ================= CHECKBOX ================= -->
+        <div class="row form-row">
+ 
+            <div class="col-md-3 checkbox-block">
+                 @Html.CheckBoxFor(model => model.FL_FRENTE, new { @class = "ckb" })<strong>FRENTE</strong>
+            </div>
+            <div class="col-md-3 checkbox-block">
+                @Html.CheckBoxFor(model => model.FL_FUNDO, new { @class = "ckb" }) <strong>FUNDO</strong>
+            </div>
+            <div class="col-md-3 checkbox-block">
+                @Html.CheckBoxFor(model => model.FL_LE, new { @class = "ckb" }) <strong>LE</strong>
+            </div>
+            <div class="col-md-3 checkbox-block"> 
+                @Html.CheckBoxFor(model => model.FL_LD, new { @class = "ckb" }) <strong>LD</strong>
+            </div>
+        </div>
+
+        <hr />
+
+        <!-- ================= BOTÕES ================= -->
+        <div class="row mt-3">
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-success btn-block">Salvar</button>
+            </div>
+
+            <div class="col-md-2">
+                <a class="btn btn-danger btn-block" href="@Url.Action("Index","MovimentacaoCS")">Limpar</a>
+            </div>
+
+            <div class="col-md-2">
+                <a class="btn btn-warning btn-block" onclick="abrirHistorico(this)">Histórico</a>
+            </div>
+
+            <div class="col-md-2">
+                <a class="btn btn-secondary btn-block" id="btnCargasCT">Cargas CT</a>
+            </div>
+        </div>
+
+    </div>
+}
+
+<!-- ================= MODAL ================= -->
+<div class="modal fade" id="Modal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body" id="modal-body"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script language="JavaScript" type="text/javascript" src="~/Content/js/jquery-3.3.1.js"></script>
+<script language="JavaScript" type="text/javascript" src="~/Content/js/bootstrap.min.js"></script>
+
+<script>
+
+    $('#txtMarcante').change(function () {
+        CarregaDadosMarcante();
+    });
+
+    $('#ddlItem').change(function () {
+        CarregaDadosItem();
+    });
+
+    function CarregaDadosMarcante() {
+        var Marcante = document.getElementById('txtMarcante').value;
+        var url = '/MovimentacaoCS/Index?MARCANTE=' + Marcante;
+        window.location.href = url
+    }
+
+    function CarregaDadosItem() {
+       var item = document.getElementById('ddlItem').value;
+
+        $.ajax({
+                url: '@Url.Content("~/MovimentacaoCS/CarregaDadosItem")',
+                type: 'GET',
+            data: { ITEM: item },
+
+                beforeSend: function () {
+                    $('#preloader').show();
+                },
+                success: function (Dados) {
+
+                    $('#preloader').hide();
+
+                    var possuiDados = Dados.possuiDados;
+                    var status = Dados.statusRetorno;
+                    var mensagem = Dados.Mensagem;
+
+                    if (status == "200") {
+                        if (possuiDados) {
+
+                            var QTD_EMBALAGEM = Dados.objetoRetorno.QTD_EMBALAGEM;
+                            var EMBALAGEM = Dados.objetoRetorno.EMBALAGEM;
+                            var LOCAL = Dados.objetoRetorno.LOCAL;
+
+                            console.log(Dados.objetoRetorno);
+
+
+                            $('#txtQtdEmbalagem').val(QTD_EMBALAGEM);
+                            $('#txtLocal').val(LOCAL);
+
+                             $('#ddlEmbalagem option').each(function () {
+                                var descricao = $(this).text();
+
+                                if (descricao == EMBALAGEM) {
+                                    $(this).prop('selected', true);
+                                }
+                            });
+
+                        }
+                        else {
+
+                            $('#txtLocal').val('');
+                            $('#ddlEmbalagem').val(0);
+                            $('#txtQtdEmbalagem').val('');
+                        }
+                    }
+                    else {
+                        alert('Os dados não foram carregados');
+
+                    }
+                },
+                error: function () {
+                    alert('Os dados não foram carregados');
+                }
+            });
+    }
+
+    function closeAlert(alertId) {
+        var alert = document.getElementById(alertId);
+        alert.style.display = 'none';
+    }
+
+     function abrirHistorico(button) {
+         var Marcante = document.getElementById('txtMarcante').value;
+
+            $.ajax({
+            url: '@Url.Action("Historico", "MovimentacaoCS")', // Chama a action no controller
+            type: 'GET',
+            data: { Marcante: Marcante },
+            success: function (data) {
+            console.log(data);
+            $('#modal-body').html(data);
+            $('#Modal').modal('show');
+            },
+            error: function () {
+            alert("Erro ao carregar os detalhes do produto.");
+            }
+            });
+    };
+
+    $('#btnCargasCT').on('click', function () {
+    var descricao = $('#ddlArmazem option:selected').text();
+     var autonum = $('#ddlArmazem option:selected').val();
+
+    var url = '@Url.Action("CargasCT", "MovimentacaoCS")'
+        + '?autonumArmazensIpa=' + autonum + '&cntrArmazem=' + encodeURIComponent(descricao);
+
+        window.open(url, '_blank');
+});
+
+</script>

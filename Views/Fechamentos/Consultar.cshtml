@@ -1,0 +1,329 @@
+﻿@model  Romaneio.Models.ConsultaViewModel
+
+@using Romaneio.Extensions
+
+
+@{
+    ViewBag.Title = "Consultar Fechamentos";
+}
+    <br />
+    <h3 style="color: #8a730b !important;">&nbsp;&nbsp;<i class="glyphicon glyphicon-list-alt"></i>&nbsp;&nbsp;Consultar Fechamentos</h3>
+<br />
+
+<!-- Filtro -->
+@using (Html.BeginForm("Consultar", "Fechamentos", FormMethod.Get))
+{
+<div class="row" style="margin-left:10px">
+    <div class="col-md-2">
+        <label>Conteiner:</label>
+        @Html.TextBox("ID_CONTEINER_FILTRO", null, new { @class = "form-control" })
+    </div>
+
+    <div class="col-md-1">
+        <label style="color:white">.</label>
+        <button type="submit" class="btn btn-block btn-success">Pesquisar</button>
+    </div>
+    <div class="col-md-6"></div>
+    <div class="col-md-2">
+        <label style="color:white">.</label>
+        <a href="@Url.Action("Consultar", "Consultar",new {PATIO = Model.Patio })" class="btn btn-primary btn-sm">&nbsp;Consultar Disponiveis</a>
+    </div>
+</div>
+}
+<br />
+@using (Html.BeginForm())
+{
+
+    <div class="card-body">
+        <div class="table-responsive tableFixHead">
+            <table id="datatables" class="table table-hover table-sm" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Contêiner</th>
+                        <th scope="col">Tamanho</th>
+                        <th scope="col">Tipo</th>
+                        <th scope="col">Data Entrada</th>
+                        <th scope="col">Data Agendamento</th>
+                        <th scope="col">Lacre Origem</th>
+                        <th scope="col">Lacre IPA</th>
+                        <th scope="col">Viagem</th>
+                        <th scope="col">Boletim Desunit.</th>
+                        <th scope="col">DDA</th>
+                        <th scope="col">Solicitado</th>
+                        <th scope="col">Abertura</th>
+                        <th scope="col">Fechamento</th>
+                        <th scope="col">SIGVIG</th>
+                        <th scope="col">Posição</th>
+                     </tr>
+                </thead>
+                <tbody>
+
+
+                    @foreach (var linha in Model.Itens)
+                    {
+
+
+                        <tr id="linha-@linha.AUTONUM_CNTR" class="sem-quebra">
+
+                            <td>
+                                <a href="JavaScript:divexpandcollapse('div-@linha.AUTONUM_CNTR');" id="teste_1">
+                                    <img id="img-div-@linha.AUTONUM_CNTR" border="0" src="@Url.Content("~/Content/imagens/plus.png")" />
+                                </a>
+                            </td>
+
+
+                            <td>@linha.ID_CONTEINER</td>
+                            <td>@linha.TAMANHO</td>
+                            <td>@linha.DESCR_TIPO</td>
+                            <td>@linha.DT_ENTRADA.DataFormatada()</td>
+                            <td>@linha.DT_AGENDAMENTO.DataFormatada()</td>
+                            <td>@linha.LACRE_ORIGEM</td>
+                            <td>@linha.LACRE_IPA</td>
+                            <td>@linha.VIAGEM</td>
+                            <td>@linha.BOL_DESUNIT</td>
+                            <td>@linha.DDA</td>
+                            <td>@linha.SOLICITADO</td>
+                            <td>@linha.ABERTURA.DataFormatada()</td>
+                            <td>@linha.FECHAMENTO.DataFormatada()</td>
+                            <td>@linha.DESCRICAO_SIGVIG</td>
+                            <td>@linha.POSICAO</td>
+                        </tr>
+
+                        <tr>
+
+                            <td colspan="17">
+
+
+                                <div class="col-md-12">
+
+
+                                    <div id="div-@linha.AUTONUM_CNTR" style="display: none; position: relative; left: 15px; top: 10px; white-space: nowrap;" class="teste_div">
+
+
+                                    </div>
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+
+    <div class="pagination">
+        @if (Model.PaginaAtual > 1)
+        {
+            <a href="@Url.Action("Consultar", new { page = Model.PaginaAtual - 1 })">« Anterior</a>}
+
+        <span>Página @Model.PaginaAtual de @Model.TotalPaginas</span>
+
+        @if (Model.PaginaAtual < Model.TotalPaginas)
+        {
+            <a href="@Url.Action("Consultar", new { page = Model.PaginaAtual + 1 })">Próximo »</a>}
+    </div>
+
+
+
+}
+
+
+
+<div class="modal fade" id="Modal" tabindex="-1" aria-labelledby="modalTabelaLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            </div>
+            <div class="modal-body" id="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .tableFixHead {
+        overflow-y: auto;
+        max-height: 600px;
+        overflow-x: auto;
+        max-width: 100%;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center; /* Centraliza a paginação */
+        margin-top: 20px;
+    }
+
+        .pagination a {
+            color: #007bff;
+            padding: 8px 16px;
+            margin: 0 4px;
+            text-decoration: none;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+            .pagination a:hover {
+                background-color: #f1f1f1;
+                color: #0056b3;
+            }
+
+            .pagination a:active {
+                background-color: #ddd;
+            }
+
+        .pagination span {
+            padding: 8px 16px;
+            margin: 0 4px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f1f1f1;
+            color: #6c757d;
+        }
+
+        .pagination .disabled {
+            pointer-events: none;
+            color: #ccc;
+        }
+
+        .pagination .active {
+            font-weight: bold;
+            background-color: #007bff;
+            color: white;
+        }
+</style>
+
+<script language="JavaScript" type="text/javascript" src="~/Content/js/jquery-3.3.1.js"></script>
+@*<script language="JavaScript" type="text/javascript" src="~/Content/js/bootstrap.js"></script>*@
+<script language="JavaScript" type="text/javascript" src="~/Content/js/bootstrap.min.js"></script>
+
+<script>
+
+function divexpandcollapse(divname) {
+
+        console.log("divname :   " + divname);
+
+        var div = document.getElementById(divname);
+        var img = document.getElementById('img-' + divname);
+
+        console.log("div :   " + div);
+        console.log("img :   " + img);
+
+
+
+        if (div.style.display === "none") {
+            div.style.display = "inline";
+            img.src = "../Content/imagens/minus.png";
+
+            var cntr = divname;
+            console.log("cntr :   " + cntr);
+            cntr = cntr.toString().replace("div-", "");
+
+            $.ajax({
+                url: '@Url.Action("Lotes", "Fechamentos")', // Chama a action no controller
+                type: 'GET',
+                data: { cntr: cntr },
+                success: function (data) {
+
+                    $('#'+ divname).html(data);
+                  },
+                error: function () {
+                    alert("Erro ao carregar os detalhes do produto.");
+                }
+            });
+
+
+        } else {
+            div.style.display = "none";
+            img.src = "../Content/imagens/plus.png";
+        }
+    }
+
+
+
+
+
+
+
+            function abrirRelacaoUnidades(button) {
+            var lote = $(button).data('id');
+            $.ajax({
+            url: '@Url.Action("RelacaoUnidades", "Fechamentos")', // Chama a action no controller
+            type: 'GET',
+            data: { lote: lote },
+                success: function (data) {
+                    console.log(data);
+            $('#modal-body').html(data);
+            $('#Modal').modal('show');
+            },
+            error: function () {
+            alert("Erro ao carregar os detalhes do produto.");
+            }
+            });
+            }
+
+            function abrirNCM(button) {
+            var lote = $(button).data('id');
+            console.log("lote :   " + lote);
+
+            $.ajax({
+            url: '@Url.Action("NCM", "Fechamentos")', // Chama a action no controller
+            type: 'GET',
+            data: { lote: lote },
+            success: function (data) {
+            $('#modal-body').html(data);
+            $('#Modal').modal('show');
+            },
+            error: function () {
+            alert("Erro ao carregar os detalhes do produto.");
+            }
+            });
+            }
+
+            function abrirDescricao(button) {
+            var lote = $(button).data('id');
+            $.ajax({
+            url: '@Url.Action("Descricao", "Fechamentos")', // Chama a action no controller
+            type: 'GET',
+            data: { lote: lote },
+            success: function (data) {
+            $('#modal-body').html(data);
+            $('#Modal').modal('show');
+            },
+            error: function () {
+            alert("Erro ao carregar os detalhes do produto.");
+            }
+            });
+            }
+
+            function abrirLocalizacao(button) {
+            var lote = $(button).data('id');
+            $.ajax({
+            url: '@Url.Action("Localizacao", "Fechamentos")', // Chama a action no controller
+            type: 'GET',
+            data: { lote: lote },
+            success: function (data) {
+            $('#modal-body').html(data);
+            $('#Modal').modal('show');
+            },
+            error: function () {
+            alert("Erro ao carregar os detalhes do produto.");
+            }
+            });
+            }
+
+
+
+</script>
+
+
+<br />
