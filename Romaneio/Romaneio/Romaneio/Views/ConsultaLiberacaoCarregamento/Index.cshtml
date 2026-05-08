@@ -1,0 +1,158 @@
+@model Romaneio.Models.ViewModels.ConsultaLiberacaoCarregamentoViewModel
+
+@{
+    ViewBag.Title = "Consulta Lib. Carregamento";
+}
+
+<h3 class="page-title">
+    <i class="glyphicon glyphicon-check"></i>
+    Consulta Lib. Carregamento
+</h3>
+
+<div id="alert-container"></div>
+
+<div class="card-custom">
+    <div class="row">
+        <div class="col-md-3">
+            <label>Protocolo</label>
+            <input type="text" id="txtProtocolo" class="form-control" placeholder="000000/0000" />
+        </div>
+        <div class="col-md-3">
+            <label>Placa</label>
+            <input type="text" id="txtPlaca" class="form-control" placeholder="AAA-0000" />
+        </div>
+        <div class="col-md-3">
+            <label>CNTR</label>
+            <input type="text" id="txtCntr" class="form-control" placeholder="000000-0" />
+        </div>
+        <div class="col-md-3">
+            <label>BL</label>
+            <input type="text" id="txtBlFiltro" class="form-control" />
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-md-2">
+            <button id="btnFiltrar" class="btn btn-primary btn-block" type="button">Filtrar</button>
+        </div>
+        <div class="col-md-2">
+            <button id="btnLimpar" class="btn btn-default btn-block" type="button">Limpar</button>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="row">
+        <div class="col-md-3">
+            <label>Periodo</label>
+            <input type="text" id="txtPeriodo" class="form-control" readonly />
+        </div>
+        <div class="col-md-2">
+            <label>Lote</label>
+            <input type="text" id="txtLote" class="form-control" readonly />
+        </div>
+        <div class="col-md-3">
+            <label>N Documento</label>
+            <input type="text" id="txtDocumento" class="form-control" readonly />
+        </div>
+        <div class="col-md-4">
+            <label>Transportadora</label>
+            <input type="text" id="txtTransportadora" class="form-control" readonly />
+        </div>
+    </div>
+
+    <div class="row mt-2">
+        <div class="col-md-3">
+            <label>Motorista</label>
+            <input type="text" id="txtMotorista" class="form-control" readonly />
+        </div>
+        <div class="col-md-3">
+            <label>Placas</label>
+            <input type="text" id="txtPlacas" class="form-control" readonly />
+        </div>
+        <div class="col-md-3">
+            <label>Localizacao Carga</label>
+            <input type="text" id="txtLocalizacao" class="form-control" readonly />
+        </div>
+        <div class="col-md-3">
+            <label>Tipo Veiculo</label>
+            <select id="ddlTipoVeiculo" class="form-control">
+                <option value="0">Selecione</option>
+                @foreach (var tipo in Model.TIPOS_VEICULO)
+                {
+                    <option value="@tipo.AUTONUM">@tipo.DISPLAY</option>
+                }
+            </select>
+        </div>
+    </div>
+
+    <div class="row mt-2">
+        <div class="col-md-3">
+            <label>Status Siscarga</label>
+            <input type="text" id="txtSiscarga" class="form-control" readonly />
+        </div>
+        <div class="col-md-3">
+            <label>Status Sefaz</label>
+            <input type="text" id="txtSefaz" class="form-control" readonly />
+        </div>
+        <div class="col-md-3">
+            <label>CPF Motorista</label>
+            <input type="text" id="txtCpfMot" class="form-control" readonly />
+        </div>
+        <div class="col-md-3">
+            <label>Protocolo</label>
+            <input type="text" id="txtProtocoloFormatado" class="form-control" readonly />
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-md-12">
+            <span id="badgeBloqueioBl" class="label label-danger" style="display:none;">Bloq. BL</span>
+            <span id="badgeBloqueioCntr" class="label label-danger" style="display:none;">Bloq. Conteiner</span>
+            <span id="badgeGlme" class="label label-warning" style="display:none;">GLME pendente</span>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-md-7">
+            <label>Cargas</label>
+            <table class="table table-bordered table-condensed" id="tblCargas">
+                <thead>
+                    <tr>
+                        <th>Carga</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <div class="col-md-5">
+            <label>Protocolos Simultaneos</label>
+            <ul id="lstSimultaneos" class="list-group"></ul>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-md-2">
+            <button id="btnRegistrar" class="btn btn-success btn-block" type="button" disabled>Registrar</button>
+        </div>
+        <div class="col-md-2">
+            <button id="btnDocumentos" class="btn btn-info btn-block" type="button" disabled>Documentos</button>
+        </div>
+        <div class="col-md-2 col-md-offset-6">
+            <button id="btnSair" class="btn btn-default btn-block" type="button">Sair</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    window.consultaLibCarregamentoConfig = {
+        urls: {
+            filtrar: '@Url.Action("Filtrar", "ConsultaLiberacaoCarregamento")',
+            registrar: '@Url.Action("Registrar", "ConsultaLiberacaoCarregamento")',
+            simultaneos: '@Url.Action("CarregarSimultaneos", "ConsultaLiberacaoCarregamento")',
+            sair: '@Url.Action("Home", "Home")'
+        }
+    };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script language="JavaScript" type="text/javascript" src="~/Content/js/consulta-lib-carregamento.js"></script>
