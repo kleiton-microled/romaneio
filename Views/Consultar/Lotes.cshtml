@@ -1,0 +1,59 @@
+﻿@model  IEnumerable<Romaneio.Classes.LotesDTO>
+
+@{
+    ViewBag.Title = "Lotes";
+}
+
+
+
+<div class="table-responsive">
+    <table id="datatables" class="table table-hover table-sm" cellspacing="0">
+        <thead>
+            <tr>
+                <th scope="col">&nbsp;</th>
+                <th scope="col">Lote</th>
+                <th scope="col">BL</th>
+                <th scope="col">Total Itens</th>
+                <th scope="col">Marca</th>
+                <th scope="col">Qtd. Total</th>
+                <th scope="col">NCM</th>
+                <th scope="col">Descrição</th>
+                <th scope="col">Localização</th>
+                <th scope="col">Importador</th>
+                <th scope="col">Shipper</th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                @foreach (var linhaLotes in Model)
+                {
+                 <tr id="linha-@linhaLotes.LOTE" class="sem-quebra">
+                    <td>
+                        <a href="@Url.Action("Cadastrar", "Cadastrar", new { lote = linhaLotes.LOTE , cntr = linhaLotes.AUTONUM_CNTR })" class="btn btn-primary btn-sm"><i class="fas fa-print"></i>&nbsp;Selecionar</a>
+                    </td>
+                    <td>@linhaLotes.LOTE</td>
+                    <td>@linhaLotes.BL</td>
+                    <td>@linhaLotes.ITEM</td>
+                    <td>@linhaLotes.MARCA</td>
+                    <td>@linhaLotes.QUANTIDADE</td>
+                    <td><a data-id="@linhaLotes.LOTE" class="link-bootstrap3" onclick="abrirNCM(this)"><i class="fas fa-print"></i>&nbsp;@linhaLotes.NCM</a></td>
+                    <td><a data-id="@linhaLotes.LOTE" class="link-bootstrap3" onclick="abrirDescricao(this)"><i class="fas fa-print"></i>&nbsp;@linhaLotes.MERCADORIA</a></td>
+                    <td><a data-id="@linhaLotes.LOTE" class="link-bootstrap3" onclick="abrirLocalizacao(this)"><i class="fas fa-print"></i>&nbsp;@linhaLotes.LOCALIZACAO</a></td>
+                    <td>@linhaLotes.IMPORTADOR</td>
+                    <td>@linhaLotes.SHIPPER</td>
+
+                    <td colspan="4">
+                        <a data-id="@linhaLotes.LOTE" onclick="abrirRelacaoUnidades(this)" class="btn btn-info btn-sm"><i class="fas fa-print"></i>&nbsp;Relação de Unidades</a>
+                    </td>
+                </tr>
+               }
+
+            </tbody>
+        </table>
+    </div>

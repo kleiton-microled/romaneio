@@ -1,0 +1,113 @@
+﻿@model  Romaneio.Models.FotosRomaneioViewModel
+
+@{
+    ViewBag.Title = "Consulta de Fotos";
+}
+
+ <h2 style="color: #8a730b !important;"> Consulta de Fotos</h2>
+
+<a href="@Url.Action("TirarFoto", "Fotos", new { AUTONUM_ROMANEIO = Model.AUTONUM_ROMANEIO})" class="btn btn-warning btn-sm" style="float:right;margin-left:10px"> &nbsp;Nova Foto</a>
+<a href="@Url.Action("Cadastrar", "Cadastrar", new { AUTONUM_ROMANEIO = Model.AUTONUM_ROMANEIO})" class="btn btn-secondary btn-sm" style="float:right"> &nbsp;Voltar</a>
+
+<br />
+<br />
+<div class="table-responsive">
+    <table id="datatables" class="table table-hover table-sm" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Tipo</th>
+                <th>Descrição</th>
+                <th>Observação</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var linha in Model.FOTOS)
+            {
+                <tr id="linha-@linha.ID_FOTO" class="sem-quebra">
+                    <td>@linha.DESCR_TIPO</td>
+                    <td>@linha.DESCRICAO</td>
+                    <td>@linha.OBSERVACAO</td>
+                    <td><a data-id="@linha.ID_FOTO" data-romaneio="@linha.AUTONUM_ROMANEIO" class="btn btn-primary" style="color:white" onclick="VisualizarFoto(this)">Visualizar</a></td>
+                    <td><a data-id="@linha.ID_FOTO" data-romaneio="@linha.AUTONUM_ROMANEIO" class="btn btn-danger" style="color:white" onclick="ExcluirFoto(this)">Excluir</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="modal fade" id="Modal" tabindex="-1" aria-labelledby="modalTabelaLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            </div>
+            <div class="modal-body" id="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script language="JavaScript" type="text/javascript" src="~/Content/js/jquery-3.3.1.js"></script>
+<script language="JavaScript" type="text/javascript" src="~/Content/js/bootstrap.min.js"></script>
+
+
+<script>
+
+    function VisualizarFoto(button) {
+            var ID_FOTO = $(button).data('id');
+            $.ajax({
+            url: '@Url.Action("VisualizarFoto", "Fotos")', // Chama a action no controller
+            type: 'GET',
+                data: { ID_FOTO: ID_FOTO },
+                success: function (data) {
+                    console.log(data);
+            $('#modal-body').html(data);
+            $('#Modal').modal('show');
+            },
+            error: function () {
+            alert("Erro ao carregar os detalhes do produto.");
+            }
+            });
+    }
+
+
+
+    function ExcluirFoto(button) {
+        if (confirm("Tem certeza que deseja excluir esta imagem?")) {
+         var row = $(button).closest("tr");
+
+        // Pega o ID do item para ser excluído
+        var ID_FOTO = $(button).data("id");
+        var AUTONUM_ROMANEIO = $(button).data("romaneio");
+
+        console.log("linha: " + row);
+        console.log("ID_FOTO: " + ID_FOTO);
+        console.log("AUTONUM_ROMANEIO " + AUTONUM_ROMANEIO);
+
+        // Faz a requisição AJAX para o controller
+        $.ajax({
+            url: '@Url.Action("ExcluirFoto", "Fotos")', // Chama a ação ExcluirItem no controller Item
+            type: 'POST',
+            data: { ID_FOTO: ID_FOTO, AUTONUM_ROMANEIO: AUTONUM_ROMANEIO }, // Envia o ID do item para o controller
+            success: function(response) {
+                if (response.success) {
+                    // Se a exclusão for bem-sucedida, remove a linha da tabela
+                    row.remove();
+                } else {
+                    alert(response.message || "Erro ao excluir o foto.");
+                }
+            },
+            error: function() {
+                alert("Erro ao comunicar com o servidor.");
+            }
+        });
+        }
+    }
+
+</script>
+
+

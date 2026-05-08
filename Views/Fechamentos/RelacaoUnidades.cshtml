@@ -1,0 +1,29 @@
+﻿@model  IEnumerable<Romaneio.Models.RelacaoUnidadesViewModel>
+
+@using Romaneio.Extensions
+
+@{
+    ViewBag.Title = "Relação de Unidades";
+}
+
+<h2>Relação de Unidades</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>LOTE</th>
+            <th>CNTR</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.LOTE</td>
+                <td>@item.ID_CONTEINER</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+

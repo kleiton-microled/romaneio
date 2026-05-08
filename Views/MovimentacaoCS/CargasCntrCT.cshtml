@@ -1,0 +1,151 @@
+﻿@model Romaneio.Classes.ConteinersDTO
+
+@using Romaneio.Extensions
+
+@{
+    ViewBag.Title = "CargasCT";
+}
+
+ 
+
+<div class="card-custom">
+    <h3 class="page-title">
+        <i class="glyphicon glyphicon-edit"></i> Cargas CT
+    </h3>
+    <div class="row">
+        <div class="col-md-10"></div>
+        <div class="col-md-2">
+            <br />
+            <a class="btn btn-block btn-warning" onclick="abrirLacres(this)">Lacres</a>
+            @Html.TextAreaFor(model => model.DESCR_ARMAZEM, new { @class = "invisivel form-control", @readonly = "readonly", id = "txtDescrArmazem" })
+            @Html.TextAreaFor(model => model.AUTONUM_ARMAZENS_IPA, new { @class = "invisivel form-control", @readonly = "readonly", id = "txtAutonumArmazem" })
+
+        </div>
+    </div>
+    <br />
+    <div class="table-responsive">
+        <table class="table table-hover table-custom">
+            <thead>
+                <tr>
+                    <th>DESCR_ARMAZEM</th>
+                    <th>FINALITY</th>
+                    <th>BL</th>
+                    <th>LOTE</th>
+                    <th>QTDE</th>
+                    <th>EMBALAGEM</th>
+                    <th>MERCADORIA</th>
+                    <th>MARCA</th>
+                    <th>IMPORTADOR</th>
+                    <th>NAVIO</th>
+                    <th>VIAGEM</th>
+                    <th>DATA_ENTRADA</th>
+                    <th>DATA_DESOVA</th>
+                    <th>CNTR_DESOVA</th>
+                    <th>PESO</th>
+                    <th>TIPO_DOC</th>
+                    <th>IMO</th>
+                    <th>DIAS_ARM_FAIXA</th>
+                    <th>MARCANTE</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.CARGA_CT)
+                {
+                    <tr>
+                        <td>@item.DESCR_ARMAZEM</td>
+                        <td>@item.FINALITY</td>
+                        <td>@item.BL</td>
+                        <td>@item.LOTE</td>
+                        <td>@item.QTDE</td>
+                        <td>@item.EMBALAGEM</td>
+                        <td>@item.MERCADORIA</td>
+                        <td>@item.MARCA</td>
+                        <td>@item.IMPORTADOR</td>
+                        <td>@item.NAVIO</td>
+                        <td>@item.VIAGEM</td>
+                        <td>@item.DATA_ENTRADA</td>
+                        <td>@item.DATA_DESOVA</td>
+                        <td>@item.CNTR_DESOVA</td>
+                        <td>@item.PESO</td>
+                        <td>@item.TIPO_DOC</td>
+                        <td>@item.IMO</td>
+                        <td>@item.DIAS_ARM_FAIXA</td>
+                        <td>@item.MARCANTE</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        </div>
+        <div class="modal fade" id="Modal" tabindex="-1" aria-labelledby="modalTabelaLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    </div>
+                    <div class="modal-body" id="modal-body">
+                        <div id="conteudoModalLacres">
+                            <!-- a partial é carregada aqui -->
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script language="JavaScript" type="text/javascript" src="~/Content/js/jquery-3.3.1.js"></script>
+    <script language="JavaScript" type="text/javascript" src="~/Content/js/bootstrap.min.js"></script>
+    <script>
+
+
+    function abrirLacres(button) {
+        getLacres()
+    }
+
+    function getLacres() {
+        var AUTONUM_ARMAZENS_IPA = $('#txtAutonumArmazem').val();
+             $.ajax({
+            url: '@Url.Action("CarregaLacresCT", "MovimentacaoCS")', // Chama a action no controller
+            type: 'GET',
+            data: { AUTONUM_ARMAZENS_IPA: AUTONUM_ARMAZENS_IPA },
+            success: function (data) {
+            $('#modal-body').html(data);
+                $('#Modal').modal('show');
+            },
+            error: function () {
+            alert("Erro ao carregar os detalhes do produto.");
+            }
+            });
+    }
+
+
+    $(document).on("submit", "#formLacre", function (e) {
+        e.preventDefault();
+
+        var lacre = $("input[name='LACRE']").val();
+
+        if (!lacre) {
+            alert("Digite um lacre");
+            return;
+        }
+
+        $.ajax({
+            url: $(this).attr("action"),
+            type: "POST",
+            data: $(this).serialize(),
+            success: function (result) {
+
+                // atualiza só a tabela dentro do modal
+                $("#tabelaLacres").html($(result).find("#tabelaLacres").html());
+
+                $("input[name='LACRE']").val("").focus();
+
+                alert("Cadastrado com sucesso!");
+
+            },
+            error: function () {
+                alert("Erro ao inserir lacre 😢");
+            }
+        });
+    });
+    </script>

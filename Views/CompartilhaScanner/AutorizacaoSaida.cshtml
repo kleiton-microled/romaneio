@@ -1,0 +1,203 @@
+﻿@model Romaneio.Models.ViewModels.CompartilhaScannerViewModel
+
+@{
+    ViewBag.Title = "Autoriza Saida";
+}
+
+<h2 style="color: #8a730b !important;">&nbsp;&nbsp;<i class="glyphicon glyphicon-edit"></i>&nbsp;&nbsp;Compartilha Scanner - Autorização Saida</h2>
+
+
+@if (TempData["MensagemErro"] != null)
+{
+    <br />
+    <div class="alert alert-danger" role="alert" id="alert-error">
+        <button type="button" class="btn btn-danger btn-sm close-alert" data-bs-dismiss="alert" arial-label="close" onclick="closeAlert('alert-error')">X</button>
+        @TempData["MensagemErro"]
+    </div>
+}
+
+
+@if (TempData["MensagemSucesso"] != null)
+{
+    <br />
+    <div class="alert alert-success" role="alert" id="alert-success">
+        <button type="button" class="btn btn-success btn-sm close-alert" aria-label="close" onclick="closeAlert('alert-success')">X</button>
+        @TempData["MensagemSucesso"]
+    </div>
+}
+
+<br />
+<div class="card-custom">
+
+    <div class="row">
+        <div class="col-md-2">
+            <label>Pátio:</label>
+            @Html.DropDownListFor(model => model.PATIO, new MultiSelectList(Model.LISTA_PATIO, "AUTONUM", "DESCRICAO"), string.Empty, new { @class = "form-control total", id = "ddlPatio" })
+        </div>
+        <div class="col-md-2">
+            <label>Viagem:</label>
+            @Html.EditorFor(model => model.VIAGEM, new { htmlAttributes = new { @class = "form-control", id = "txtViagem" } })
+        </div>
+        <div class="col-md-2">
+            <label>Conteiner:</label>
+            @Html.EditorFor(model => model.ID_CONTEINER, new { htmlAttributes = new { @class = "form-control", id = "txtCntr" } })
+        </div>
+        <div class="col-md-3">
+            <label>Status:</label>
+            <select id="ddlStatus" name="STATUS" class="form-control">
+                <option value="Autorizacao" @(Model.STATUS == "Autorizacao" ? "selected" : "")>
+                    Aguardando Autorização
+                </option>
+
+                <option value="Saida" @(Model.STATUS == "Saida" ? "selected" : "")>
+                    Aguardando Saída
+                </option>
+
+                <option value="Retorno" @(Model.STATUS == "Retorno" ? "selected" : "")>
+                    Aguardando Retorno
+                </option>
+            </select>
+        </div>
+        <div class="col-md-1">
+            <label style="color:white">.</label>
+            <button type="button" class="btn btn-block btn-warning" id="btnFiltrar">Filtrar</button>
+        </div>
+    </div>
+
+
+    <br />
+    <br />
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Sistema</th>
+                <th>Conteiner</th>
+                <th>Tamanho</th>
+                <th>EF</th>
+                <th>Viagem</th>
+                <th>Terminal</th>
+                <th>Destino</th>
+                <th>Saída Scanner</th>
+                <th> </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.LISTA_DADOS)
+            {
+                <tr>
+                    <td>@item.AUTONUM</td>
+                    <td>@item.SISTEMA</td>
+                    <td>@item.ID_CONTEINER</td>
+                    <td>@item.TAMANHO</td>
+                    <td>@item.EF</td>
+                    <td>@item.VIAGEM</td>
+                    <td>@item.TERMINAL</td>
+                    <td>@item.DESTINO</td>
+                    <td>@item.DT_SAIDA_SCANNER</td>
+                    <td>
+                        @if (item.DESTINO == null)
+                        {<button type="button" class="btn btn-info" data-autonum="@item.AUTONUM" data-saida="@item.DT_SAIDA_SCANNER" data-sistema="@item.SISTEMA" data-cntr="@item.ID_CONTEINER" onclick="InformarDestino(this)">Informar Destino</button>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="modal fade" id="Modal" tabindex="-1" aria-labelledby="modalTabelaLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                </div>
+                <div class="modal-body" id="modal-body">
+                    @using (Html.BeginForm("Autorizar", "CompartilhaScanner", FormMethod.Post))
+                    {
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Autonum:</label>
+                                @Html.EditorFor(model => model.AUTONUM, new { htmlAttributes = new { @class = "form-control", @readonly = "@readonly", id = "txtAutonum" } })
+                            </div>
+                            <div class="col-md-4">
+                                <label>Sistema:</label>
+                                @Html.EditorFor(model => model.SISTEMA, new { htmlAttributes = new { @class = "form-control", @readonly = "@readonly", id = "txtSistema" } })
+                            </div>
+                            <div class="col-md-4">
+                                <label>Conteiner:</label>
+                                @Html.EditorFor(model => model.ID_CONTEINER, new { htmlAttributes = new { @class = "form-control", @readonly = "@readonly", id = "txtCntr" } })
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-md-9">
+                                <label>Destino:</label>
+                                @Html.DropDownListFor(model => model.DESTINO, new MultiSelectList(Model.LISTA_DESTINO, "AUTONUM", "DESCRICAO"), string.Empty, new { @class = "form-control total", id = "ddlArmazem" })
+                            </div>
+                            <div class="col-md-3">
+                                <label style="color:white">.</label>
+                                <button type="submit" class="btn btn-block btn-success">Autorizar Saída</button>
+                            </div>
+                        </div>
+
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+    <script language="JavaScript" type="text/javascript" src="~/Content/js/jquery-3.3.1.js"></script>
+    <script language="JavaScript" type="text/javascript" src="~/Content/js/bootstrap.min.js"></script>
+
+
+    <script>
+        $('form').submit(function () {
+            console.log('SUBMIT DISPARADO');
+        });
+
+        function closeAlert(alertId) {
+            var alert = document.getElementById(alertId);
+            alert.style.display = 'none';
+        }
+
+        function InformarDestino(button) {
+
+            var AUTONUM = $(button).data("autonum");
+            var SISTEMA = $(button).data("sistema");
+            var CNTR = $(button).data("cntr");
+
+            var STATUS = $('#ddlStatus').val();
+
+            if (STATUS == "Autorizacao") {
+                $('#txtAutonum').val(AUTONUM);
+                $('#txtSistema').val(SISTEMA);
+                $('#txtCntr').val(CNTR);
+
+                $('#Modal').modal('show');
+            }
+            else {
+                alert("Saída já autorizada!");
+            }
+
+
+        }
+
+
+
+        $('#btnFiltrar').click(function () {
+
+            var patio = $('#ddlPatio').val();
+            var viagem = $('#txtViagem').val();
+            var cntr = $('#txtCntr').val();
+            var status = $('#ddlStatus').val();
+
+            var url = '/CompartilhaScanner/AutorizacaoSaida?patio=' + patio + '&viagem=' + viagem + '&cntr=' + cntr + '&status=' + status;
+            window.location.href = url
+
+        });
+
+
+    </script>

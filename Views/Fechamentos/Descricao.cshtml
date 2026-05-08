@@ -1,0 +1,21 @@
+﻿@model  Romaneio.Models.DescricaoViewModel
+
+@{
+    ViewBag.Title = "Descrição";
+}
+
+<h2>Descrição</h2>
+@using (Html.BeginForm())
+{<div class="row">
+     <div class="col-md-12">
+         @Html.TextAreaFor(model => model.Descricao, new { @class = "form-control", @readonly = "readonly" })
+     </div>
+    </div>
+    }
+<style>
+
+    textarea {
+        width: 100%;
+        max-width: 100%;
+    }
+</style>

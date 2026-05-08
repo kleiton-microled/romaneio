@@ -1,0 +1,117 @@
+@model Romaneio.Models.ViewModels.AssociacaoMarcantesViewModel
+
+@{
+    ViewBag.Title = "Associacao de Marcantes";
+}
+
+<h2 class="page-title">
+    <i class="glyphicon glyphicon-link"></i> Associacao de Marcantes
+</h2>
+
+<div id="alert-container"></div>
+
+<div class="card-custom">
+    <div class="row">
+        <div class="col-md-2">
+            <label>Lote</label>
+            <input type="text" id="txtLote" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            <label>CNTR</label>
+            <select id="ddlCntr" class="form-control">
+                <option value="">Selecione</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label style="color:white">.</label>
+            <button id="btnFiltrar" type="button" class="btn btn-primary btn-block">[F4] Filtrar</button>
+        </div>
+        <div class="col-md-2">
+            <label style="color:white">.</label>
+            <span id="lblExp" class="label label-warning" style="display:none;">EXP</span>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-bordered table-hover" id="tblCargas">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Lote</th>
+                        <th>Item</th>
+                        <th>Qtd</th>
+                        <th>Embalagem</th>
+                        <th>Conteiner</th>
+                        <th>Mercadoria</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="row">
+        <div class="col-md-3">
+            <label>Marcante</label>
+            <input type="text" id="txtMarcante" maxlength="9" class="form-control" />
+        </div>
+        <div class="col-md-2">
+            <label>Qtde</label>
+            <input type="number" id="txtQtde" maxlength="4" min="1" class="form-control" />
+        </div>
+        <div class="col-md-2">
+            <label style="color:white">.</label>
+            <button id="btnAdicionar" type="button" class="btn btn-success btn-block" disabled>[F1] Adiciona</button>
+        </div>
+        <div class="col-md-2">
+            <label style="color:white">.</label>
+            <button id="btnRemover" type="button" class="btn btn-danger btn-block" disabled>[F2] Remove</button>
+        </div>
+    </div>
+
+    <div class="row" style="margin-top:15px;">
+        <div class="col-md-12">
+            <table class="table table-striped table-bordered" id="tblMarcantesTemp">
+                <thead>
+                    <tr>
+                        <th>Marcante</th>
+                        <th>Qtde</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="row">
+        <div class="col-md-2 col-md-offset-6">
+            <button id="btnSalvar" type="button" class="btn btn-primary btn-block">[F5] Salvar</button>
+        </div>
+        <div class="col-md-2">
+            <button id="btnSair" type="button" class="btn btn-default btn-block">[ESC] Sair</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    window.associacaoMarcantesConfig = {
+        urls: {
+            obterConteiners: '@Url.Action("ObterConteinersPorLote", "AssociacaoMarcantes")',
+            filtrar: '@Url.Action("Filtrar", "AssociacaoMarcantes")',
+            carregarTemporarios: '@Url.Action("CarregarTemporarios", "AssociacaoMarcantes")',
+            adicionarTemp: '@Url.Action("AdicionarTemp", "AssociacaoMarcantes")',
+            removerTemp: '@Url.Action("RemoverTemp", "AssociacaoMarcantes")',
+            salvar: '@Url.Action("Salvar", "AssociacaoMarcantes")',
+            sair: '@Url.Action("Home", "Home")'
+        }
+    };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script language="JavaScript" type="text/javascript" src="~/Content/js/associacao-marcantes.js"></script>

@@ -1,0 +1,362 @@
+﻿@model Romaneio.Models.LoteViewModel
+
+@{
+    ViewBag.Title = "Consultar Cadastro";
+}
+
+<style>
+    .ckb {
+        width: 6%;
+        height: 30px;
+        padding: 6px 12px;
+        font-size: 14px;
+    }
+
+    input[type="checkbox"].ckbTable {
+        width: 100%;
+        height: 30px;
+        padding: 6px 12px;
+        font-size: 14px;
+    }
+
+    .total {
+        width: 100% !important;
+        max-width: 100% !important
+    }
+
+    .tableFixHead {
+        overflow-y: auto;
+        max-height: 400px;
+        overflow-x: auto;
+        max-width: 100%;
+    }
+
+    textarea {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .invisivel {
+        display: none !important;
+    }
+</style>
+
+<h2 style="color: #8a730b !important;">&nbsp;&nbsp;<i class="glyphicon glyphicon-edit"></i>&nbsp;&nbsp;Consultar Cadastro</h2>
+
+<div>
+    <div class="row">
+        <div class="col-md-1">
+            Romaneio:
+            @Html.EditorFor(model => model.AUTONUM_ROMANEIO, new { htmlAttributes = new { @class = "form-control  ", @readonly = "@readonly", @Visible = "@false" } })
+        </div>
+        <div class="col-md-1">
+            Conteiner:
+            @Html.EditorFor(model => model.ID_CONTEINER, new { htmlAttributes = new { @class = "form-control  ", @readonly = "@readonly" } })
+            @Html.EditorFor(model => model.AUTONUM_CNTR, new { htmlAttributes = new { @class = "invisivel", id = "txtCntr" } })
+
+        </div>
+        <div class="col-md-1">
+            Lote:
+            @Html.DropDownListFor(model => model.LOTE, new MultiSelectList(Model.LISTA_LOTES, "AUTONUM", "LOTE"), string.Empty, new { @class = "form-control total", id = "ddlLote" })
+        </div>
+        <div class="col-md-5">
+            Item:
+            @Html.DropDownListFor(model => model.ITEM, new MultiSelectList(Model.LISTA_ITENS, "ITEM", "DESCR"), string.Empty, new { @class = "form-control total", id = "ddlItem" })
+        </div>
+        <div class="col-md-2">
+            <label> Sem Avaria:</label>
+            @Html.CheckBoxFor(model => model.FL_SEM_AVARIA, new { id = "ckbSemAvaria", @Style = "width: 60%; height: 30px; text-align:center " , @readonly = "@readonly" })
+        </div>
+    </div>
+     <div id="divDados">
+         <div class="row">
+             <div class="col-md-1">
+                 Inicio:
+                 @Html.EditorFor(model => model.INICIO, new { htmlAttributes = new { @class = "form-control data", @readonly = "@readonly" } })
+
+             </div>
+
+             <div class="col-md-1">
+                 Demurrage:
+                 @Html.EditorFor(model => model.DEMURRAGE, new { htmlAttributes = new { @class = "form-control data", @readonly = "@readonly" } })
+
+             </div>
+             <div class="col-md-1">
+                 Término:
+                 @Html.EditorFor(model => model.TERMINO, new { htmlAttributes = new { @class = "form-control data", @readonly = "@readonly" } })
+
+             </div>
+             <div class="col-md-2">
+                 Solicitado Por:
+                 @Html.DropDownListFor(model => model.SOLICITANTE, new MultiSelectList(Model.TIPOS_SOLICITANTES, "AUTONUM", "DESCRICAO"), string.Empty, new { @class = "form-control", @readonly = "@readonly" })
+             </div>
+
+             <div class="col-md-2">
+                 Conferente:
+                 @Html.EditorFor(model => model.CONFERENTE, new { htmlAttributes = new { @class = "form-control  ", @readonly = "@readonly" } })
+
+             </div>
+             <div class="col-md-4">
+                 Fiscal:
+                 @Html.EditorFor(model => model.FISCAL, new { htmlAttributes = new { @class = "form-control total ", @readonly = "@readonly" } })
+
+             </div>
+
+         </div>
+         <div class="row">
+             <div class="col-md-2">
+                 Patio:
+                 @Html.EditorFor(model => model.EMPRESA, new { htmlAttributes = new { @class = "form-control  ", @readonly = "@readonly" } })
+                 @Html.EditorFor(model => model.PATIO, new { htmlAttributes = new { @class = "form-control  ", @readonly = "@readonly", style = "display:none;" } })
+
+             </div>
+             <div class="col-md-5">
+                 NCM's:
+                 @Html.EditorFor(model => model.NCM, new { htmlAttributes = new { @class = "form-control total ", @readonly = "@readonly" } })
+             </div>
+             <div class="col-md-2">
+                 Local:
+                 @Html.EditorFor(model => model.LOCAL, new { htmlAttributes = new { @class = "form-control total", @readonly = "@readonly" } })
+             </div>
+             <div class="col-md-2">
+                 SubClasse:
+                 @Html.EditorFor(model => model.SUB_CLASSE, new { htmlAttributes = new { @class = "form-control total", @readonly = "@readonly" } })
+             </div>
+         </div>
+         <div class="row">
+             <div class="col-md-2">
+                 Tipo:
+                 @Html.DropDownListFor(model => model.DESOVA, new MultiSelectList(Model.TIPOS_DESOVA, "AUTONUM", "DESCRICAO"), string.Empty, new { @class = "form-control", @readonly = "@readonly" })
+             </div>
+             <div class="col-md-1">
+                 Inspeção Mapa:
+                 @Html.EditorFor(model => model.INSPECAO_MAPA, new { htmlAttributes = new { @class = "form-control data", @readonly = "@readonly" } })
+             </div>
+             <div class="col-md-1">
+                 Volume(m³):
+                 @Html.EditorFor(model => model.VOLUME, new { htmlAttributes = new { @class = "form-control  ", @readonly = "@readonly" } })
+             </div>
+
+             <div class="col-md-1">
+                 Peso Apurado:
+                 @Html.EditorFor(model => model.PESO_APURADO, new { htmlAttributes = new { @class = "form-control  ", @readonly = "@readonly" } })
+             </div>
+             <div class="col-md-1">
+                 Peso Bruto:
+                 @Html.EditorFor(model => model.PESO_BRUTO, new { htmlAttributes = new { @class = "form-control  ", @readonly = "@readonly" } })
+             </div>
+             <div class="col-md-1">
+                 IMO:
+                 @Html.EditorFor(model => model.IMO, new { htmlAttributes = new { @class = "form-control  ", @readonly = "@readonly" } })
+             </div>
+
+             <div class="col-md-1">
+                 UNDG:
+                 @Html.EditorFor(model => model.UNDG, new { htmlAttributes = new { @class = "form-control  ", @readonly = "@readonly" } })
+             </div>
+             <div class="col-md-3">
+                 Gênero:
+                 @Html.DropDownListFor(model => model.GENERO, new MultiSelectList(Model.TIPOS_GENERO, "AUTONUM", "DESCRICAO"), string.Empty, new { @class = "form-control total", @readonly = "@readonly" })
+             </div>
+         </div>
+
+         <div class="row">
+             <div class="col-md-1">
+                 Quantidade:
+                 @Html.EditorFor(model => model.QUANTIDADE, new { htmlAttributes = new { @class = "form-control inteiro ", @readonly = "@readonly" } })
+             </div>
+             <div class="col-md-2">
+                 Embalagens:
+                 @Html.DropDownListFor(model => model.EMBALAGEM, new MultiSelectList(Model.TIPOS_EMBALAGENS, "AUTONUM", "DESCRICAO"), string.Empty, new { @class = "form-control", @readonly = "@readonly" })
+             </div>
+
+             <div class="col-md-4">
+                 Mercadoria:
+                 @Html.EditorFor(model => model.MERCADORIA, new { htmlAttributes = new { @class = "form-control total", @readonly = "@readonly" } })
+             </div>
+             <div class="col-md-2">
+                 Marca:
+                 @Html.EditorFor(model => model.MARCA, new { htmlAttributes = new { @class = "form-control  ", @readonly = "@readonly" } })
+             </div>
+             <div class="col-md-2">
+                 Localização:
+                 @Html.EditorFor(model => model.LOCALIZACAO, new { htmlAttributes = new { @class = "form-control  ", @readonly = "@readonly" } })
+             </div>
+         </div>
+         <div class="row">
+             <div class="col-md-12">
+                 Descrição:
+                 @Html.TextAreaFor(model => model.DESCRICAO, new { @class = "form-control", @readonly = "readonly" })
+             </div>
+         </div>
+
+         <br />
+         <br />
+         <div class="row">
+             <div class="col-md-3">
+                 @Html.CheckBoxFor(model => model.FL_OUTRA_AVARIA, new { id = "ckbOutros", @class = "ckb" }) <strong>OUTRO TIPO DE AVARIA</strong>
+                 @Html.EditorFor(model => model.DESCR_OUTRA_AVARIA, new { htmlAttributes = new { id = "txtOutraAvaria", @class = "form-control  ", @readonly = "@readonly" } })<br />
+             </div>
+             <div class="col-md-3">
+                 @Html.CheckBoxFor(model => model.FL_FALTA, new { id = "ckbFalta", @class = "ckb" }) <strong>FALTA</strong>
+                 @Html.EditorFor(model => model.DESCR_FALTA, new { htmlAttributes = new { id = "txtFalta", @class = "form-control  ", @readonly = "@readonly" } })<br />
+             </div>
+             <div class="col-md-3">
+                 @Html.CheckBoxFor(model => model.FL_ACRESCIMO, new { id = "ckbAcrescimo", @class = "ckb" }) <strong>ACRÉSCIMO</strong>
+                 @Html.EditorFor(model => model.DESCR_ACRESCIMO, new { htmlAttributes = new { id = "txtAcrescimo", @class = "form-control  ", @readonly = "@readonly" } })<br />
+             </div>
+             <div class="col-md-3">
+                 @Html.CheckBoxFor(model => model.FL_AGUARDANDO_RECONHECIMENTO, new { id = "ckbAguardandoReconhecimento", @class = "ckb" }) <strong>AGUARDANDO RECONHECIMENTO</strong>
+                 @Html.EditorFor(model => model.DESCR_AGUARDANDO_RECONHECIMENTO, new { htmlAttributes = new { id = "txtAguardandoReconhecimento", @class = "form-control  ", @readonly = "@readonly" } })<br />
+             </div>
+         </div>
+            <br />
+            <br />
+            <div class="row">
+                <div class="col-md-12">
+                    <label class="control-label">Obs.:</label>
+                    @Html.TextAreaFor(model => model.OBS, new { @class = "form-control", @readonly = "@readonly" })
+                </div>
+            </div>
+            <br />
+            <br />
+            
+
+        </div>
+
+    </div>
+
+
+ <script language="JavaScript" type="text/javascript" src="~/Content/js/jquery-3.3.1.js"></script>
+ <script language="JavaScript" type="text/javascript" src="~/Content/js/bootstrap.min.js"></script>
+
+ <script>
+    $('#ddlItem').change(function () {
+        CarregaDadosItem();
+        console.log("ddlItem");
+        var elementos = document.getElementById("divDados");
+        elementos.style.display = "block";
+    });
+
+     $('#ddlLote').change(function () {
+         CarregaDadosLote();
+         console.log("ddlLote");
+         var elementos = document.getElementById("divDados");
+         elementos.style.display = "block";
+     });
+
+    function CarregaDadosLote() {
+        var cntr = document.getElementById('txtCntr').value;
+        var lote = document.getElementById('ddlLote').value;
+        var item = 0;
+        var url = '/Fechamentos/ConsultarCadastro?cntr=' + cntr + '&lote=' + lote + '&item=' + item;
+        window.location.href = url
+
+    }
+
+     function CarregaDadosItem() {
+         var cntr = document.getElementById('txtCntr').value;
+         var lote = document.getElementById('ddlLote').value;
+         var item = document.getElementById('ddlItem').value;
+         var url = '/Fechamentos/ConsultarCadastro?cntr=' + cntr + '&lote=' + lote + '&item=' + item;
+         window.location.href = url
+
+     }
+
+    $(document).ready(function () {
+
+        var item = document.getElementById('ddlItem').value;
+        var elementos = document.getElementById("divDados");
+
+        if (item != "") {
+            elementos.style.display = "block";
+        } else {
+            elementos.style.display = "none";
+        }
+
+        var ckbFalta = document.getElementById('ckbFalta');
+        var ckbAcrescimo = document.getElementById('ckbAcrescimo');
+        var ckbOutros = document.getElementById('ckbOutros');
+        var ckbAguardandoReconhecimento = document.getElementById('ckbAguardandoReconhecimento');
+
+        // ----------------------------------------------------------------------------------- //
+
+        $(ckbFalta).click(function () {
+            if (ckbFalta.checked) {
+                document.getElementById('txtFalta').removeAttribute('readonly');
+            }
+            else {
+                document.getElementById('txtFalta').setAttribute('readonly', false);
+            }
+        });
+
+        if ($("#ckbFalta").is(':checked') == false) {
+            document.getElementById('txtFalta').setAttribute('readonly', false);
+        }
+        else {
+            document.getElementById('txtFalta').removeAttribute('readonly');
+        }
+
+
+        // ----------------------------------------------------------------------------------- //
+
+        $(ckbAcrescimo).click(function () {
+            if (ckbAcrescimo.checked) {
+                document.getElementById('txtAcrescimo').removeAttribute('readonly');
+            }
+            else {
+                document.getElementById('txtAcrescimo').setAttribute('readonly', false);
+            }
+        });
+
+        if ($("#ckbAcrescimo").is(':checked') == false) {
+            document.getElementById('txtAcrescimo').setAttribute('readonly', false);
+        }
+        else {
+            document.getElementById('txtAcrescimo').removeAttribute('readonly');
+        }
+
+        // ----------------------------------------------------------------------------------- //
+
+        $(ckbOutros).click(function () {
+            if (ckbOutros.checked) {
+                document.getElementById('txtOutraAvaria').removeAttribute('readonly');
+            }
+            else {
+                document.getElementById('txtOutraAvaria').setAttribute('readonly', false);
+            }
+        });
+
+        if ($("#ckbOutros").is(':checked') == false) {
+            document.getElementById('txtOutraAvaria').setAttribute('readonly', false);
+        }
+        else {
+            document.getElementById('txtOutraAvaria').removeAttribute('readonly');
+        }
+
+        // ----------------------------------------------------------------------------------- //
+
+        $(ckbAguardandoReconhecimento).click(function () {
+            if (ckbAguardandoReconhecimento.checked) {
+                document.getElementById('txtAguardandoReconhecimento').removeAttribute('readonly');
+            }
+            else {
+                document.getElementById('txtAguardandoReconhecimento').setAttribute('readonly', false);
+            }
+        });
+
+        if ($("#ckbAguardandoReconhecimento").is(':checked') == false) {
+            document.getElementById('txtAguardandoReconhecimento').setAttribute('readonly', false);
+        }
+        else {
+            document.getElementById('txtAguardandoReconhecimento').removeAttribute('readonly');
+        }
+
+    });
+
+    function closeAlert(alertId) {
+        var alert = document.getElementById(alertId);
+        alert.style.display = 'none';
+    }
+
+ </script> 
