@@ -196,6 +196,7 @@
     <Compile Include="Controllers\ConsultarController.cs" />
     <Compile Include="Controllers\ConsultaLiberacaoCarregamentoController.cs" />
     <Compile Include="Controllers\CarregamentoCargaSoltaController.cs" />
+    <Compile Include="Controllers\LocalizacaoCarregamentosController.cs" />
     <Compile Include="Controllers\DefaultController.cs" />
     <Compile Include="Controllers\FechamentosController.cs" />
     <Compile Include="Controllers\FotosController.cs" />
@@ -222,6 +223,7 @@
     <Compile Include="Interfaces\Repositories\IFechamentosRepositorio.cs" />
     <Compile Include="Interfaces\Repositories\IConsultaLiberacaoCarregamentoRepositorio.cs" />
     <Compile Include="Interfaces\Repositories\ICarregamentoCargaSoltaRepositorio.cs" />
+    <Compile Include="Interfaces\Repositories\ILocalizacaoCarregamentosRepositorio.cs" />
     <Compile Include="Interfaces\Repositories\IDadosRepositorio.cs" />
     <Compile Include="Models\Armazens.cs" />
     <Compile Include="Models\CargasCT.cs" />
@@ -244,6 +246,7 @@
     <Compile Include="Models\ViewModels\ConsultaViewModel.cs" />
     <Compile Include="Models\ViewModels\ConsultaLiberacaoCarregamentoViewModel.cs" />
     <Compile Include="Models\ViewModels\CarregamentoCargaSoltaViewModel.cs" />
+    <Compile Include="Models\ViewModels\LocalizacaoCarregamentosViewModel.cs" />
     <Compile Include="Models\Conteiners.cs" />
     <Compile Include="Models\Embalagens.cs" />
     <Compile Include="Models\Generos.cs" />
@@ -272,6 +275,7 @@
     <Compile Include="Repositorios\DadosRepositorio.cs" />
     <Compile Include="Repositorios\ConsultaLiberacaoCarregamentoRepositorio.cs" />
     <Compile Include="Repositorios\CarregamentoCargaSoltaRepositorio.cs" />
+    <Compile Include="Repositorios\LocalizacaoCarregamentosRepositorio.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\css\bootstrap-theme.min.css" />
@@ -304,6 +308,7 @@
     <Content Include="Content\js\bootstrap.js" />
     <Content Include="Content\js\consulta-lib-carregamento.js" />
     <Content Include="Content\js\carregamento-carga-solta.js" />
+    <Content Include="Content\js\localizacao-carregamentos.js" />
     <Content Include="Content\js\bootstrap.min.js" />
     <Content Include="Content\js\CODE128.js" />
     <Content Include="Content\js\DD_roundies_0.0.2a.js" />
@@ -427,6 +432,7 @@
     <Content Include="Views\Consultar\Consultar.cshtml" />
     <Content Include="Views\ConsultaLiberacaoCarregamento\Index.cshtml" />
     <Content Include="Views\CarregamentoCargaSolta\Index.cshtml" />
+    <Content Include="Views\LocalizacaoCarregamentos\Index.cshtml" />
     <Content Include="Views\Consultar\Descricao.cshtml" />
     <Content Include="Views\Consultar\Localizacao.cshtml" />
     <Content Include="Views\Consultar\NCM.cshtml" />

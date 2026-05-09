@@ -111,6 +111,22 @@
         </button>
     </div>
 
+    <div class="col-md-2 link menu-item" id="divLocalizacaoCarregamentos">
+        <button type="button" class="menu-card">
+            <div class="icon">
+                <i class="fa fa-map-marker"></i>
+            </div>
+
+            <div class="title">
+                Localizacao Carregamentos
+            </div>
+
+            <div class="action">
+                <i class="fa fa-sign-in-alt"></i> Acessar
+            </div>
+        </button>
+    </div>
+
 </div>
 
 
@@ -145,6 +161,10 @@
 
     $('#divCarregamentoCargaSolta').click(function () {
         location.href = "@Url.Content("~/CarregamentoCargaSolta/Index")";
+    });
+
+    $('#divLocalizacaoCarregamentos').click(function () {
+        location.href = "@Url.Content("~/LocalizacaoCarregamentos/Index")";
     });
 
 </script>

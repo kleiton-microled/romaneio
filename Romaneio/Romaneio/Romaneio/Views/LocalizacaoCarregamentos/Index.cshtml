@@ -1,0 +1,128 @@
+@model Romaneio.Models.ViewModels.LocalizacaoCarregamentosViewModel
+
+@{
+    ViewBag.Title = "Localizacao Carregamentos";
+}
+
+<h3 class="page-title">
+    <i class="glyphicon glyphicon-map-marker"></i>
+    Localizacao Carregamentos - Patio @Model.DESCR_PATIO
+</h3>
+
+<div id="alert-container"></div>
+
+<div class="card-custom">
+    <div class="row">
+        <div class="col-md-4">
+            <label>Patio</label>
+            <input type="text" id="txtPatio" class="form-control" readonly value="@Model.DESCR_PATIO" />
+        </div>
+        <div class="col-md-4">
+            <label>Placa</label>
+            <input type="text" id="txtPlaca" class="form-control" maxlength="8" placeholder="AAA-0000" />
+        </div>
+        <div class="col-md-2">
+            <label style="color:white">.</label>
+            <button id="btnFiltrar" type="button" class="btn btn-primary btn-block">Filtrar</button>
+        </div>
+        <div class="col-md-2">
+            <label style="color:white">.</label>
+            <button id="btnLimpar" type="button" class="btn btn-default btn-block">Limpar</button>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="row">
+        <div class="col-md-2">
+            <label>Cavalo</label>
+            <input type="text" id="txtCavalo" class="form-control" readonly />
+        </div>
+        <div class="col-md-2">
+            <label>Carreta</label>
+            <input type="text" id="txtCarreta" class="form-control" readonly />
+        </div>
+        <div class="col-md-2">
+            <label>Lib. Ent.</label>
+            <input type="text" id="txtLibera" class="form-control" readonly />
+        </div>
+        <div class="col-md-2">
+            <label>Gate In</label>
+            <input type="text" id="txtGateIn" class="form-control" readonly />
+        </div>
+        <div class="col-md-2">
+            <label>Carga</label>
+            <input type="text" id="txtCarga" class="form-control" readonly />
+        </div>
+        <div class="col-md-2">
+            <label>Quadra</label>
+            <input type="text" id="txtQuadra" class="form-control" readonly />
+        </div>
+    </div>
+
+    <div class="row mt-2">
+        <div class="col-md-2">
+            <label>Rua</label>
+            <input type="text" id="txtRua" class="form-control" readonly />
+        </div>
+        <div class="col-md-5">
+            <label>Transportadora</label>
+            <input type="text" id="txtTransportadora" class="form-control" readonly />
+        </div>
+        <div class="col-md-5">
+            <label>Responsavel</label>
+            <input type="text" id="txtResponsavel" class="form-control" readonly />
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table class="table table-bordered table-condensed table-hover" id="tblLocalizacao">
+                    <thead>
+                        <tr>
+                            <th>Cavalo</th>
+                            <th>Carreta</th>
+                            <th>Lib. Entrada</th>
+                            <th>Gate IN</th>
+                            <th>Carga</th>
+                            <th>Quadra</th>
+                            <th>Rua</th>
+                            <th>Transportadora</th>
+                            <th>Responsavel</th>
+                            <th>Tipo</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-2">
+        <div class="col-md-3"><strong>Total Entradas:</strong> <span id="lblTotEnt">0</span></div>
+        <div class="col-md-3"><strong>Total CNTR:</strong> <span id="lblTotCntr">0</span></div>
+        <div class="col-md-3"><strong>Total CS:</strong> <span id="lblTotCs">0</span></div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-md-2">
+            <button id="btnSaida" type="button" class="btn btn-warning btn-block" disabled>Saida</button>
+        </div>
+        <div class="col-md-2 col-md-offset-8">
+            <button id="btnSair" type="button" class="btn btn-default btn-block">Sair [ESC]</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    window.localizacaoCarregamentosConfig = {
+        urls: {
+            filtrar: '@Url.Action("Filtrar", "LocalizacaoCarregamentos")',
+            moverSaida: '@Url.Action("MoverSaida", "LocalizacaoCarregamentos")',
+            sair: '@Url.Action("Home", "Home")'
+        }
+    };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script language="JavaScript" type="text/javascript" src="~/Content/js/localizacao-carregamentos.js"></script>
