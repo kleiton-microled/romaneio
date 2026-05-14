@@ -1,0 +1,105 @@
+@model Romaneio.Models.ViewModels.DescargaDdcPatioViewModel
+
+@{
+    ViewBag.Title = "Descarga DDC - Patio";
+}
+
+<h3 class="page-title">
+    <i class="glyphicon glyphicon-import"></i>
+    Descarga DDC - Patio @Model.DESCR_PATIO
+</h3>
+<p class="text-muted">Equivalente ao menu <strong>Descarga DDC</strong> do Coletor Pátio (legado <code>FrmDescargaArmazem</code>).</p>
+
+<div id="alert-container"></div>
+
+<div class="panel panel-default">
+    <div class="panel-heading"><strong>Filtro</strong> <span class="small text-muted">(F4 Carregar, F2 Limpar)</span></div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-4">
+                <label>Placa</label>
+                <select id="selPlaca" class="form-control">
+                    <option value="">-- selecione --</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label>Lote</label>
+                <select id="selLote" class="form-control" disabled>
+                    <option value="">-- selecione --</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label>&nbsp;</label>
+                <div class="btn-toolbar">
+                    <button type="button" id="btnCarregar" class="btn btn-primary" title="F4">F4 - Carregar</button>
+                    <button type="button" id="btnLimpar" class="btn btn-default" title="F2">F2 - Limpar</button>
+                    <a href="@Url.Action("Index", "Home")" class="btn btn-link">Sair</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="painelItens" class="panel panel-default" style="display:none;">
+    <div class="panel-heading"><strong>Itens de descarga</strong> <span class="small text-muted">(F3 Novo, F5 Salvar, F6 Excluir)</span></div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered" id="tblItens">
+                <thead>
+                    <tr>
+                        <th>Qtde</th>
+                        <th>Embalagem</th>
+                        <th>Finalizado</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <hr />
+
+        <div class="row">
+            <div class="col-md-2">
+                <label>Quantidade</label>
+                <input type="number" id="txtQuantidade" class="form-control" min="1" step="any" maxlength="8" />
+            </div>
+            <div class="col-md-4">
+                <label>Embalagem</label>
+                <select id="selEmbalagem" class="form-control"></select>
+            </div>
+            <div class="col-md-4">
+                <label>Entrega finalizada?</label>
+                <div>
+                    <label class="radio-inline"><input type="radio" name="radFinal" id="radFinalSim" value="1" /> SIM</label>
+                    <label class="radio-inline"><input type="radio" name="radFinal" id="radFinalNao" value="0" /> NAO</label>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <label>&nbsp;</label>
+                <div class="btn-group-vertical btn-block">
+                    <button type="button" id="btnNovo" class="btn btn-default btn-sm" title="F3">F3 - Novo</button>
+                    <button type="button" id="btnSalvar" class="btn btn-success btn-sm" title="F5">F5 - Salvar</button>
+                    <button type="button" id="btnExcluir" class="btn btn-danger btn-sm" title="F6">F6 - Excluir</button>
+                </div>
+            </div>
+        </div>
+        <input type="hidden" id="hidAutonumItem" value="0" />
+        <input type="hidden" id="hidCntr" value="0" />
+        <input type="hidden" id="hidGate" value="0" />
+        <input type="hidden" id="hidLote" value="0" />
+        <input type="hidden" id="hidIdOc" value="0" />
+    </div>
+</div>
+
+<script type="text/javascript">
+    var ddpUrls = {
+        placas: '@Url.Action("ListarPlacasDdc", "DescargaDdcPatio")',
+        embalagens: '@Url.Action("ListarEmbalagens", "DescargaDdcPatio")',
+        gateLotes: '@Url.Action("ResolverGateELotes", "DescargaDdcPatio")',
+        carregar: '@Url.Action("CarregarCabecalho", "DescargaDdcPatio")',
+        itens: '@Url.Action("ListarItens", "DescargaDdcPatio")',
+        salvar: '@Url.Action("SalvarItem", "DescargaDdcPatio")',
+        excluir: '@Url.Action("ExcluirItem", "DescargaDdcPatio")'
+    };
+</script>
+<script src="~/Content/js/descarga-ddc-patio.js"></script>

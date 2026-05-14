@@ -159,14 +159,14 @@
         </button>
     </div>
 
-    <div class="col-md-2 link menu-item" id="divContainerReeferPatio">
+    <div class="col-md-2 link menu-item" id="divDescargaDdcPatio">
         <button type="button" class="menu-card">
             <div class="icon">
-                <i class="fa fa-snowflake"></i>
+                <i class="glyphicon glyphicon-import"></i>
             </div>
 
             <div class="title">
-                Conteiner REEFER Patio
+                Descarga DDC - Patio
             </div>
 
             <div class="action">
@@ -225,6 +225,10 @@
 
     $('#divContainerReeferPatio').click(function () {
         location.href = "@Url.Content("~/ContainerReeferPatio/Index")";
+    });
+
+    $('#divDescargaDdcPatio').click(function () {
+        location.href = "@Url.Content("~/DescargaDdcPatio/Index")";
     });
 
 </script>

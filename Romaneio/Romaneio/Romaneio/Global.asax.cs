@@ -42,6 +42,7 @@ namespace Romaneio
             container.RegisterType<ILocalizacaoCarregamentosRepositorio, LocalizacaoCarregamentosRepositorio>(new HierarchicalLifetimeManager());
             container.RegisterType<IMovimentacaoContainerPatioRepositorio, MovimentacaoContainerPatioRepositorio>(new HierarchicalLifetimeManager());
             container.RegisterType<IContainerReeferPatioRepositorio, ContainerReeferPatioRepositorio>(new HierarchicalLifetimeManager());
+            container.RegisterType<IDescargaDdcPatioRepositorio, DescargaDdcPatioRepositorio>(new HierarchicalLifetimeManager());
 
             // Registrando o controller
             DependencyResolver.SetResolver(new UnityDependencyResolver(container));

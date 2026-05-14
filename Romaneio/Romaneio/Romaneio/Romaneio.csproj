@@ -199,6 +199,7 @@
     <Compile Include="Controllers\ConsultaDocumentosAgendamentoController.cs" />
     <Compile Include="Controllers\LocalizacaoCarregamentosController.cs" />
     <Compile Include="Controllers\ContainerReeferPatioController.cs" />
+    <Compile Include="Controllers\DescargaDdcPatioController.cs" />
     <Compile Include="Controllers\MovimentacaoContainerPatioController.cs" />
     <Compile Include="Controllers\DefaultController.cs" />
     <Compile Include="Controllers\FechamentosController.cs" />
@@ -231,6 +232,7 @@
     <Compile Include="Interfaces\Repositories\IConsultaDocumentosAgendamentoRepositorio.cs" />
     <Compile Include="Interfaces\Repositories\ILocalizacaoCarregamentosRepositorio.cs" />
     <Compile Include="Interfaces\Repositories\IContainerReeferPatioRepositorio.cs" />
+    <Compile Include="Interfaces\Repositories\IDescargaDdcPatioRepositorio.cs" />
     <Compile Include="Interfaces\Repositories\IMovimentacaoContainerPatioRepositorio.cs" />
     <Compile Include="Interfaces\Repositories\IDadosRepositorio.cs" />
     <Compile Include="Models\Armazens.cs" />
@@ -258,6 +260,7 @@
     <Compile Include="Models\ViewModels\ConsultaDocumentosAgendamentoViewModels.cs" />
     <Compile Include="Models\ViewModels\LocalizacaoCarregamentosViewModel.cs" />
     <Compile Include="Models\ViewModels\ContainerReeferPatioViewModels.cs" />
+    <Compile Include="Models\ViewModels\DescargaDdcPatioViewModels.cs" />
     <Compile Include="Models\ViewModels\MovimentacaoContainerPatioViewModels.cs" />
     <Compile Include="Models\Conteiners.cs" />
     <Compile Include="Models\Embalagens.cs" />
@@ -291,6 +294,7 @@
     <Compile Include="Repositorios\ConsultaDocumentosAgendamentoRepositorio.cs" />
     <Compile Include="Repositorios\LocalizacaoCarregamentosRepositorio.cs" />
     <Compile Include="Repositorios\ContainerReeferPatioRepositorio.cs" />
+    <Compile Include="Repositorios\DescargaDdcPatioRepositorio.cs" />
     <Compile Include="Repositorios\MovimentacaoContainerPatioRepositorio.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -328,6 +332,7 @@
     <Content Include="Content\js\consulta-documentos-agendamento.js" />
     <Content Include="Content\js\localizacao-carregamentos.js" />
     <Content Include="Content\js\container-reefer-patio.js" />
+    <Content Include="Content\js\descarga-ddc-patio.js" />
     <Content Include="Content\js\movimentacao-container-patio.js" />
     <Content Include="Content\js\bootstrap.min.js" />
     <Content Include="Content\js\CODE128.js" />
@@ -455,6 +460,7 @@
     <Content Include="Views\ConsultaDocumentosAgendamento\Index.cshtml" />
     <Content Include="Views\LocalizacaoCarregamentos\Index.cshtml" />
     <Content Include="Views\ContainerReeferPatio\Index.cshtml" />
+    <Content Include="Views\DescargaDdcPatio\Index.cshtml" />
     <Content Include="Views\MovimentacaoContainerPatio\Index.cshtml" />
     <Content Include="Views\Consultar\Descricao.cshtml" />
     <Content Include="Views\Consultar\Localizacao.cshtml" />
