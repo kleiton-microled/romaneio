@@ -1,0 +1,254 @@
+@model Romaneio.Models.ViewModels.ContainerReeferPatioViewModel
+
+@{
+    ViewBag.Title = "Conteiner REEFER - Patio";
+}
+
+<h3 class="page-title">
+    <i class="glyphicon glyphicon-certificate"></i>
+    Conteiner REEFER - Patio @Model.DESCR_PATIO
+</h3>
+
+<div id="alert-container"></div>
+
+<ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active"><a href="#tab-monitor" data-toggle="tab">Monitoramento</a></li>
+    <li role="presentation"><a href="#tab-prev" data-toggle="tab">Previsao</a></li>
+    <li role="presentation"><a href="#tab-desl" data-toggle="tab">Un. Desligadas</a></li>
+</ul>
+
+<div class="tab-content card-custom" style="padding:15px;">
+    <div role="tabpanel" class="tab-pane active" id="tab-monitor">
+        <div class="row">
+            <div class="col-md-2">
+                <label>Patio</label>
+                <input type="text" class="form-control" readonly value="@Model.DESCR_PATIO" />
+            </div>
+            <div class="col-md-2">
+                <label>Final (5 caracteres)</label>
+                <input type="text" id="txtFinal" class="form-control" maxlength="5" autocomplete="off" />
+            </div>
+            <div class="col-md-3">
+                <label>ID conteiner completo</label>
+                <input type="text" id="txtIdCompleto" class="form-control" maxlength="15" autocomplete="off" />
+            </div>
+            <div class="col-md-2">
+                <label>&nbsp;</label>
+                <button type="button" id="btnBuscarFinal" class="btn btn-primary btn-block">Buscar final</button>
+            </div>
+            <div class="col-md-2">
+                <label>&nbsp;</label>
+                <button type="button" id="btnCarregar" class="btn btn-default btn-block">Carregar</button>
+            </div>
+        </div>
+
+        <div class="row" style="margin-top:8px;">
+            <div class="col-md-12">
+                <span id="badges-reefer"></span>
+            </div>
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+            <div class="col-md-2">
+                <label>MIN temp. (cadastro)</label>
+                <input type="text" id="txtMin" class="form-control" readonly />
+            </div>
+            <div class="col-md-2">
+                <label>MAX temp. (cadastro)</label>
+                <input type="text" id="txtMax" class="form-control" readonly />
+            </div>
+            <div class="col-md-2">
+                <label>Set point</label>
+                <input type="text" id="txtSetPoint" class="form-control" readonly />
+            </div>
+            <div class="col-md-2">
+                <label>Umidade set</label>
+                <input type="text" id="txtUmidadeSet" class="form-control" readonly />
+            </div>
+            <div class="col-md-2">
+                <label>Ventilacao set</label>
+                <input type="text" id="txtVentilacaoSet" class="form-control" readonly />
+            </div>
+            <div class="col-md-2">
+                <label>Gate IN</label>
+                <input type="text" id="txtGateIn" class="form-control" readonly />
+            </div>
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+            <div class="col-md-2">
+                <label>Temp. SUP</label>
+                <input type="text" id="txtTempSup" class="form-control" maxlength="8" autocomplete="off" />
+            </div>
+            <div class="col-md-2">
+                <label>Temp. RET</label>
+                <input type="text" id="txtTempRet" class="form-control" maxlength="8" autocomplete="off" />
+            </div>
+            <div class="col-md-1">
+                <label>Escala</label>
+                <input type="text" id="txtEscala" class="form-control" maxlength="1" autocomplete="off" />
+            </div>
+            <div class="col-md-2">
+                <label>Umidade (%)</label>
+                <input type="text" id="txtUmidade" class="form-control" maxlength="12" autocomplete="off" />
+            </div>
+            <div class="col-md-2">
+                <label>Ventilacao</label>
+                <input type="text" id="txtVentilacao" class="form-control" maxlength="12" autocomplete="off" />
+            </div>
+            <div class="col-md-3">
+                <label>&nbsp;</label>
+                <div class="btn-group btn-group-justified" style="display:table;width:100%;">
+                    <div class="btn-group">
+                        <button type="button" id="btnPlugOff" class="btn btn-warning">PLUG OFF</button>
+                    </div>
+                    <div class="btn-group">
+                        <button type="button" id="btnSalvar" class="btn btn-success">Salvar</button>
+                    </div>
+                    <div class="btn-group">
+                        <button type="button" id="btnLimpar" class="btn btn-default">Limpar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" style="margin-top:12px;">
+            <div class="col-md-12">
+                <label>Historico de monitoramento</label>
+                <div class="table-responsive" style="max-height:280px;overflow:auto;">
+                    <table class="table table-condensed table-striped" id="tblHistorico">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Temp. SUP</th>
+                                <th>Temp. RET</th>
+                                <th>Umidade</th>
+                                <th>Ventilacao</th>
+                                <th>Usuario</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div role="tabpanel" class="tab-pane" id="tab-prev">
+        <div class="row">
+            <div class="col-md-12">
+                <h4>Unidades previstas - entrada patio <span class="badge" id="lblTotEnt">0</span></h4>
+                <div class="table-responsive" style="max-height:260px;overflow:auto;">
+                    <table class="table table-condensed table-striped" id="tblEntradas">
+                        <thead>
+                            <tr>
+                                <th>Conteiner</th>
+                                <th>Tam</th>
+                                <th>Set point</th>
+                                <th>Atracacao</th>
+                                <th>Local atracacao</th>
+                                <th>Entrada prevista</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-top:15px;">
+            <div class="col-md-12">
+                <h4>Unidades em estoque <span class="badge" id="lblTotSai">0</span></h4>
+                <div class="checkbox-inline"><label><input type="checkbox" id="chkApenasDesligados" /> Apenas os desligados</label></div>
+                <div class="checkbox-inline"><label><input type="checkbox" id="chkAgendSaida" /> Com agendamento saida</label></div>
+                <div class="checkbox-inline"><label><input type="checkbox" id="chkPosicionados" /> Posicionados</label></div>
+                <button type="button" id="btnFiltrarEstoque" class="btn btn-sm btn-primary" style="margin-left:10px;">Atualizar estoque</button>
+                <div class="table-responsive" style="max-height:280px;overflow:auto;margin-top:8px;">
+                    <table class="table table-condensed table-striped" id="tblSaidas">
+                        <thead>
+                            <tr>
+                                <th>Conteiner</th>
+                                <th>Gate IN</th>
+                                <th>Yard</th>
+                                <th>Prev. saida</th>
+                                <th>Set point</th>
+                                <th>1a Medic.</th>
+                                <th>Data</th>
+                                <th>Ult. Medic.</th>
+                                <th>Data</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div role="tabpanel" class="tab-pane" id="tab-desl">
+        <div class="row">
+            <div class="col-md-12">
+                <h4>Unidades desligadas <span class="badge" id="lblTotDesl">0</span></h4>
+                <button type="button" id="btnAtualizarDesligados" class="btn btn-sm btn-primary">Atualizar</button>
+                <div class="table-responsive" style="max-height:420px;overflow:auto;margin-top:8px;">
+                    <table class="table table-condensed table-striped" id="tblDesligados">
+                        <thead>
+                            <tr>
+                                <th>Conteiner</th>
+                                <th>Gate IN</th>
+                                <th>Yard</th>
+                                <th>Prev. saida</th>
+                                <th>Set point</th>
+                                <th>1a Medic.</th>
+                                <th>Data</th>
+                                <th>Ult. Medic.</th>
+                                <th>Data</th>
+                                <th>Plug OFF</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalConfirmTemp" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header"><h4 class="modal-title">Confirmacao</h4></div>
+            <div class="modal-body" id="modalConfirmTempBody"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" id="btnCancelarTemp">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="btnConfirmarTemp">Confirmar e salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalPlugOff" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header"><h4 class="modal-title">PLUG OFF</h4></div>
+            <div class="modal-body">Confirma registro de PLUG OFF (energia) para esta unidade IPA?</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-warning" id="btnConfirmarPlugOff">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var crpUrls = {
+        buscarFinal: '@Url.Action("BuscarPorFinal", "ContainerReeferPatio")',
+        carregar: '@Url.Action("CarregarConteiner", "ContainerReeferPatio")',
+        historico: '@Url.Action("ListarHistorico", "ContainerReeferPatio")',
+        salvar: '@Url.Action("SalvarMonitoramento", "ContainerReeferPatio")',
+        plugOff: '@Url.Action("RegistrarPlugOff", "ContainerReeferPatio")',
+        entradas: '@Url.Action("ListarEntradasPrevistas", "ContainerReeferPatio")',
+        estoque: '@Url.Action("ListarEstoqueReefer", "ContainerReeferPatio")',
+        desligados: '@Url.Action("ListarUnidadesDesligadas", "ContainerReeferPatio")'
+    };
+</script>
+<script src="~/Content/js/container-reefer-patio.js"></script>
