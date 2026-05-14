@@ -1,0 +1,171 @@
+# Diagnostico VB6 - Carregamento Carga Solta (Armazem)
+
+## Identificacao da tela
+- Nome: Carregamento Carga Solta (titulo no menu) / Caption do form: "CARREGAMENTO CARGA SOLTA".
+- Modulo: Coletor Armazem (executavel `ColetorArm.exe`, projeto `Coletor.vbp`).
+- Form principal: `CarregaCS` (arquivo `CarregaCS.frm`).
+- Caminho: `ProjetoReferencia/Coletor/CarregaCS.frm`.
+- Entrada pelo menu: `Principal.frm` -> `Command1(7)` (Caption "Carregamento Carga Solta") -> `CarregaCS.Show 1`.
+
+> Observacao: existe `CarregaCSPatio.frm`, porem ele pertence ao projeto `ColetorPatioSmall.vbp` (Coletor Patio) e nao ao projeto Armazem. A tela alvo desta migracao e `CarregaCS.frm`.
+
+## Arquivos localizados
+- `.frm`:
+  - `ProjetoReferencia/Coletor/CarregaCS.frm` (form alvo).
+  - `ProjetoReferencia/Coletor/Principal.frm` (entrada pelo menu, `Case 7 -> CarregaCS.Show 1`).
+  - `ProjetoReferencia/Coletor/FrmAcessoAnt.frm` (login que define `Wflag_carregamento_marcante_bip` a partir de `TB_CAD_USUARIOS`).
+- `.frx`:
+  - `ProjetoReferencia/Coletor/CarregaCS.frx` (binding do `DataCombo1` para `Adodc1`).
+- `.bas`:
+  - `ProjetoReferencia/Coletor/Microled.bas` (globais `db`, `ConnectionString`, `Cod_Usuario`, `TrabDsn`, `UsuBanco`, `PasBanco`, `Banco_Sgipa`, `Banco_Operador`, util `Nnull`, `PRSet`).
+  - `ProjetoReferencia/Coletor/mdlColetor.bas` (`Col_Patio`, `Col_Login`, funcao `Valida_Acesso_Botao` com `sistema = 'COLETOR_ARM'`).
+- `.cls`:
+  - Nao identificados especificos para a tela.
+- Outros:
+  - `ProjetoReferencia/Coletor/Coletor.vbp` (composicao do projeto Armazem; gera `ColetorArm.exe`).
+  - `ProjetoReferencia/Coletor/ConsultaDocumentos/ConsultaDocColetor.exe` (acionado por `[F2] DOC`).
+
+## Eventos mapeados
+- `Form_Load`:
+  - Define colunas das ListViews `lvOC` (ORDENS), `lvCm` (CARREGAMENTOS) e `lvLocal` (LOCAIS).
+  - Chama `Carrega_Veiculos` (popula `DataCombo1` com placas distintas a partir de `VW_CAM_CARREGAMENTO`).
+  - Nao carrega ordens automaticamente; depende da troca do veiculo no combo.
+- `Form_KeyDown`:
+  - Quando `frmLocais.Visible = False`:
+    - `ESC` -> `Unload Me` (sai da tela).
+    - `F1` -> `cmdF1_Click` (abre painel `frmLocais`).
+    - `F2` -> `cmdF2_Click` (abre documentos via `ConsultaDocColetor.exe`).
+    - `F3` -> `Limpa` (limpa campos do marcante).
+    - `F4` -> `cmdF4_Click` (CARREGA item).
+    - `F5` -> `cmdF5_Click` (CANCELA carregamento).
+  - Quando `frmLocais.Visible = True`:
+    - `ESC` -> esconde `frmLocais` (`Visible = False`).
+- `Form_Unload`: `Unload Me` (auto-unload sem efeito util).
+- Clicks de botoes:
+  - `cmdF1_Click` -> exige `lvOC.SelectedItem`; copia `Lote/Ordem` para `txt2Lote/txt2Ordem`; chama `Carrega_LvLocal`; mostra `frmLocais`.
+  - `cmdF2_Click` -> exige `TXTLOTE > 0`; verifica se `TB_SOLICITACAO_LTL.flag_ltl = 1` para o BL; aciona `Shell` chamando `ConsultaDocColetor.exe` com `TrabDsn`, `UsuBanco`, `PasBanco`, `Cod_Usuario`, `Lote ou max(autonum) de TB_AG_CS`, `TestaEntrada=True`, `VLTL`.
+  - `cmdF4_Click` -> validacoes e fluxo principal de CARREGA (transacao, ver "SQLs" e "Regras").
+  - `cmdF5_Click` -> validacoes e fluxo de CANCELA (transacao).
+  - `Command1_Click` ("..." Refresh) -> `Carrega_Veiculos` (recarrega combo).
+  - `Command2_Click` ([F3] LIMPAR) -> `Limpa` + foco em `txtMarcante`.
+- Eventos de lista/grid:
+  - `lvOC_Click` -> `Carrega_LvCarregamentos` (recarrega marcantes da OC selecionada).
+  - `lvOC_KeyUp` -> `Carrega_LvCarregamentos` (mesma acao para navegacao por teclado).
+- Eventos de combo:
+  - `DataCombo1_Change` -> `Carrega_LvOrdem` + `Carrega_LvCarregamentos`.
+- Eventos de foco/digitacao do marcante:
+  - `txtMarcante_GotFocus` -> `Tag = "0"`.
+  - `txtMarcante_LostFocus` -> verifica anti-digitacao (Tag e `DateDiff` entre `HorarioEnter` e `HorarioNumero`); se `Wflag_carregamento_marcante_bip <> 0` e nao foi bipado, exibe `MsgBox` "Campo nao permite digitacao manual" e limpa; senao `Carrega_Dados`. Se `=1`, desabilita o campo.
+  - `txtMarcante_KeyDown`: `KeyCode=13` (Enter) -> `Tag="1"` e registra `HorarioEnter`.
+  - `txtMarcante_KeyPress`: `Enter` com `Wflag_carregamento_marcante_bip = 0` -> envia `{TAB}`; senao registra `HorarioNumero` e marca Tag se input > 5 caracteres (semantica anti-digitacao manual).
+  - `txtMarcante_Change`: quando `Len(txtMarcante) = 9`, repete a validacao do `LostFocus` (anti-digitacao) e chama `Carrega_Dados`.
+- Funcoes auxiliares:
+  - `Carrega_LvOrdem`: lista OCs do veiculo selecionado.
+  - `Carrega_LvCarregamentos`: lista marcantes ja em `YARD='CAM'` para a OC selecionada.
+  - `Carrega_LvLocal`: lista de locais de origem (armazem/posicao) para a OC selecionada.
+  - `Carrega_Veiculos`: popula `DataCombo1` com placas distintas filtradas por `Col_Patio`.
+  - `Carrega_Dados`: dado o marcante, popula `Lote`, `Qtde`, `Local`, `Armazem` e ids ocultos `txtAutonumCS`, `txtAutonum_Cs_Yard`.
+  - `Limpa`: limpa campos pos-operacao.
+
+## SQLs e persistencia
+- Consultas:
+  - Combo de veiculos (`Carrega_Veiculos`):
+    - `SELECT DISTINCT PLACA_C + ' ' + PLACA_CARRETA + ' - ' + ISNULL(MODELO,'') AS DISPLAY FROM SGIPA..VW_CAM_CARREGAMENTO WHERE PATIO=<Col_Patio> ORDER BY 1`
+    - Quando `Col_Patio = 1`: `WHERE PATIO IN (1,7)`.
+  - Lista de OCs (`Carrega_LvOrdem`):
+    - `SELECT A.PLACA_C, A.PLACA_CARRETA, A.MODELO, A.ORDEM_CARREG, A.NUM_OC, A.QUANTIDADE, A.AUTONUMCS, A.LOTE, A.ITEM, A.EMBALAGEM, ISNULL(B.QTDE_CARREGADA,0) AS QTDE_CARREGADA FROM SGIPA..VW_CAM_CARREGAMENTO A LEFT JOIN ( SELECT SUM(volumes) AS QTDE_CARREGADA, AUTONUM_CARGA AS AUTONUMCS FROM sgipa..tb_marcantes M INNER JOIN SGIPA..TB_CARGA_SOLTA_YARD Y ON M.AUTONUM_CS_YARD=Y.AUTONUM WHERE M.VOLUMES>0 AND Y.YARD='CAM' AND (M.PLACA_C IS NULL OR M.PLACA_C='<placa8>') GROUP BY M.AUTONUM_CARGA ) B ON A.AUTONUMCS=B.AUTONUMCS WHERE A.PLACA_C='<placa8>' ORDER BY A.LOTE,A.ITEM`
+  - Lista de carregamentos (`Carrega_LvCarregamentos`):
+    - `SELECT M.AUTONUM AS MARCANTE, M.VOLUMES AS QTDE FROM SGIPA..TB_MARCANTES M INNER JOIN SGIPA..TB_CARGA_SOLTA_YARD Y ON M.AUTONUM_CS_YARD=Y.AUTONUM WHERE M.AUTONUM_CARGA=<AUTONUMCS_OC> AND (M.PLACA_C IS NULL OR M.PLACA_C='<placa8>') AND Y.YARD='CAM' ORDER BY M.AUTONUM`
+  - Lista de locais (`Carrega_LvLocal`):
+    - `SELECT MARCANTE, QTDE, DESCR_ARMAZEM, POSICAO FROM SGIPA..VW_INVENT_ARMAZEM WHERE AUTONUMCS=<AUTONUMCS_OC> AND qtde>0 ORDER BY DESCR_ARMAZEM, POSICAO, MARCANTE`
+  - Carga dos dados do marcante (`Carrega_Dados`):
+    - `SELECT M.AUTONUM AS MARCANTE, S.AUTONUM AS AUTONUMCS, S.BL AS LOTE, S.ITEM, M.VOLUMES AS QUANTIDADE, E.DESCR AS EMBALAGEM, S.MERCADORIA, S.MARCA, S.ARMAZEM_IPA AS AUTONUM_ARMAZEM, A.DESCR AS DESCR_ARMAZEM, S.CNTR AS AUTONUMCNTR, c.Id_Conteiner, Y.YARD AS POSICAO, M.AUTONUM_CS_YARD FROM TB_CARGA_SOLTA S INNER JOIN DTE_TB_EMBALAGENS E ON S.EMBALAGEM=E.CODE LEFT JOIN TB_CNTR_BL C ON S.CNTR=C.AUTONUM INNER JOIN TB_MARCANTES M ON S.AUTONUM=M.AUTONUM_CARGA LEFT JOIN TB_CARGA_SOLTA_YARD Y ON M.AUTONUM_CS_YARD=Y.AUTONUM LEFT JOIN TB_ARMAZENS_IPA A ON Y.ARMAZEM=A.AUTONUM WHERE M.AUTONUM=<txtMarcante>`
+  - Pre-validacao do `[F4] CARREGA`:
+    - `SELECT bl FROM tb_carga_solta WHERE autonum=<txtAutonumCS>`
+    - `SELECT DBO.FC_VALIDA_SAIDA_CARGA(<BL>, <ORDEM>, <AUTONUMCS>) AS RETORNO` (function escalar; deve retornar `'OK'` para liberar).
+  - Pre-validacao do `[F2] DOC`:
+    - `SELECT ISNULL(MAX(flag_ltl),0) FROM TB_SOLICITACAO_LTL A INNER JOIN TB_BL B ON A.LOTE = B.AUTONUM WHERE b.autonum=<txtLote>`
+    - Se nao for LTL: `SELECT MAX(autonum) AUTONUM FROM TB_AG_CS WHERE LOTE=<txtLote>`
+- Inserts:
+  - Carregamento (`cmdF4_Click`):
+    - `INSERT INTO SGIPA..TB_CARGA_SOLTA_YARD (AUTONUM_CS, ARMAZEM, YARD, ORIGEM, QUANTIDADE, MOTIVO) VALUES (<AUTONUMCS>, <txtArmazem.Tag>, 'CAM', 'I', <txtQtde>, 8)`
+  - Cancelamento (`cmdF5_Click`):
+    - `INSERT INTO SGIPA..TB_CARGA_SOLTA_YARD (AUTONUM_CS, ARMAZEM, YARD, ORIGEM, QUANTIDADE, MOTIVO) VALUES (<AUTONUMCS>, <txtArmazem.Tag>, 'CANCC', 'I', <txtQtde>, 8)`
+  - Historico:
+    - `INSERT INTO SGIPA..TB_HIST_SHIFTING_CS (MARCANTE, ARMAZEM, YARD, DT_MOV, USUARIO) VALUES (<marcante>, 0, 'CAM', GETDATE(), <Cod_Usuario>)` (somente no F4; F5 nao registra historico).
+- Updates:
+  - `UPDATE SGIPA..TB_MARCANTES SET ORDEM=<ordem_oc>, PLACA_C='<placa8>' WHERE AUTONUM=<txtMarcante>` (executado fora da transacao do F4, antes de `BeginTrans`).
+  - `UPDATE SGIPA..TB_CARGA_SOLTA_YARD SET QUANTIDADE=0 WHERE AUTONUM=<txtAutonum_Cs_Yard>` (carregamento total) ou
+  - `UPDATE SGIPA..TB_CARGA_SOLTA_YARD SET QUANTIDADE=QUANTIDADE - <txtQtde> WHERE AUTONUM=<txtAutonum_Cs_Yard>` (parcial).
+  - `UPDATE SGIPA..TB_MARCANTES SET AUTONUM_CS_YARD=<novo_id_yard> WHERE AUTONUM=<marcante>` (total) ou
+  - `UPDATE SGIPA..TB_MARCANTES SET AUTONUM_CS_YARD=<novo_id_yard>, VOLUMES=<txtQtde> WHERE AUTONUM=<marcante>` (parcial).
+  - `UPDATE SGIPA..tb_temp_marcante SET QTDE=<txtQtde> WHERE MARCANTE='<txtMarcante>'` (somente em parcial).
+  - Cancelamento: `UPDATE SGIPA..TB_MARCANTES SET AUTONUM_CS_YARD=<novo_id_yard>, PLACA_C=NULL WHERE AUTONUM=<marcante>`.
+- Deletes:
+  - Nao existem deletes neste form.
+- Views/Tabelas/Functions:
+  - Views: `SGIPA..VW_CAM_CARREGAMENTO`, `SGIPA..VW_INVENT_ARMAZEM`.
+  - Tabelas: `SGIPA..TB_MARCANTES`, `SGIPA..TB_CARGA_SOLTA_YARD`, `SGIPA..TB_CARGA_SOLTA`, `SGIPA..TB_HIST_SHIFTING_CS`, `SGIPA..TB_BL`, `SGIPA..TB_SOLICITACAO_LTL`, `SGIPA..TB_AG_CS`, `SGIPA..TB_ARMAZENS_IPA`, `SGIPA..TB_CNTR_BL`, `SGIPA..DTE_TB_EMBALAGENS`, `SGIPA..tb_temp_marcante`.
+  - Functions: `DBO.FC_VALIDA_SAIDA_CARGA(BL, ORDEM, AUTONUMCS) -> VARCHAR` (retorna `'OK'` ou texto da critica).
+  - Procedures: nao chamadas diretamente pela tela.
+
+## Dependencias tecnicas
+- Variaveis globais (em `Microled.bas` e `mdlColetor.bas`):
+  - `db` (conexao ADODB), `ConnectionString` (string ADO usada pelo `Adodc1`).
+  - `Sql` (string global compartilhada), `tb1` (recordset global).
+  - `Cod_Usuario`, `TrabDsn`, `UsuBanco`, `PasBanco` (parametros para `ConsultaDocColetor.exe`).
+  - `Col_Patio` (define filtro do combo veiculo: PATIO especifico, ou `(1,7)` quando `=1`).
+  - `Col_Login` (usuario corrente, usado em `Valida_Acesso_Botao`).
+  - `Wflag_carregamento_marcante_bip` (carregada do login pelo `FrmAcessoAnt.frm` a partir de `TB_CAD_USUARIOS.flag_carregamento_marcante_bip`):
+    - `0` -> permite digitacao manual; Enter no marcante envia `TAB`.
+    - `<>0` -> exige bipagem (sem digitacao). Mensagem: "Campo nao permite digitacao manual".
+    - `=1` -> apos validar marcante, desabilita o campo (`TXTMARCANTE.Enabled = False`).
+  - `OrdemAnt` (long usado para reaplicar selecao na lvOC pos-operacao; declarado em modulo global).
+  - `X` (variant para retorno de `MsgBox`).
+- Funcoes utilitarias:
+  - `Nnull(value, tipo)` (Microled.bas) - sanitiza nulos retornando `0` ou `Empty/string` conforme `tipo`.
+  - `PRSet(rs, sql)` - abre Recordset cliente sobre `db`.
+- Formularios auxiliares:
+  - `Principal` (entrada via menu, Caption "Carregamento Carga Solta").
+  - `frmLocais` (frame interno do proprio form, nao um form separado): painel modal com `lvLocal` e botoes ocultos pelo VB.
+- Controle de permissao:
+  - `Valida_Acesso_Botao(Col_Login, "COMMAND1(7)")` em `Principal.Form_Activate` (`tb_sys_funcoes.sistema = 'COLETOR_ARM'`).
+  - Filtro implicito por `Col_Patio` (definido no login a partir de `tb_cad_usuarios.PATIO`; se `=7`, redefine para `1`).
+
+## Atalhos e automatismos
+- Atalhos:
+  - `F1` LOCAIS, `F2` DOC, `F3` LIMPAR, `F4` CARREGA, `F5` CANCELA, `ESC` sair (ou fechar `frmLocais`).
+- Foco automatico:
+  - Apos `F4` sucesso: `Limpa` e `txtMarcante.SetFocus`.
+  - Apos `F5` sucesso: `Limpa` e `txtMarcante.SetFocus`.
+  - Apos `F3` (LIMPAR): se `txtMarcante.Enabled` -> `txtMarcante.SetFocus`.
+- Comportamentos implicitos:
+  - `KeyPreview=True` no form para capturar atalhos globais.
+  - `txtArmazem.Tag` armazena `AUTONUM_ARMAZEM` (id do armazem para escrita na `TB_CARGA_SOLTA_YARD`).
+  - `txtQtde.Tag` armazena a quantidade ORIGINAL (`VOLUMES` do marcante) para distinguir "carregamento total" de "parcial".
+  - `Carrega_LvOrdem` usa apenas os 8 primeiros caracteres do combo (`Left$(DataCombo1.text, 8)`) como placa do cavalo.
+  - `Carrega_LvOrdem` aceita marcantes ainda nao bipados (`PLACA_C IS NULL`) e os ja bipados para a placa selecionada (`PLACA_C = <placa8>`).
+  - `lvOC.ListItems(...).SubItems(7)` guarda `AUTONUMCS`. Coluna oculta com largura 0.
+  - O `INSERT` em `TB_CARGA_SOLTA_YARD` nao informa `autonum` explicitamente; o autonum e recuperado via `SELECT ISNULL(MAX(AUTONUM),0) FROM TB_CARGA_SOLTA_YARD WHERE AUTONUM_CS=<AUTONUMCS>` apos o insert (deve ser coluna `IDENTITY` ou trigger). O comentario no codigo cita uso de `IDENT_CURRENT('TB_CARGA_SOLTA_YARD')`, hoje desabilitado.
+  - Estado do `txtMarcante`: usa `Tag` ("0"/"1") combinado com `HorarioEnter` e `HorarioNumero` (`DateDiff` em segundos) para detectar se a entrada veio de um leitor de codigo de barras (Enter rapido apos digitos) ou de digitacao manual.
+
+## Pontos criticos
+- Riscos:
+  - SQL dinamico concatenado, sem parametros (vulneravel; concatena `txtMarcante`, `lote`, `placa`).
+  - O `UPDATE SGIPA..TB_MARCANTES SET ORDEM=..., PLACA_C='...'` em `cmdF4_Click` ocorre fora da transacao; uma falha apos esse update (mas antes/durante o BeginTrans) deixa o marcante com placa sem o lancamento em `TB_CARGA_SOLTA_YARD` correspondente.
+  - `Form_Unload` chama `Unload Me` recursivamente; tipico em VB6 mas pode causar comportamento estranho ao sair.
+  - O autonum gravado em `TB_MARCANTES.AUTONUM_CS_YARD` e obtido via `MAX(AUTONUM) WHERE AUTONUM_CS=<AUTONUMCS>` apos o INSERT - sob concorrencia em uma mesma carga, dois operadores podem trocar IDs entre si.
+  - `TXTMARCANTE.text` e usado tanto como string (insert no historico/temp) quanto convertido para Long via `Val(...)`. Marcante com zeros a esquerda funciona em ambos os casos, mas a comparacao em `tb_temp_marcante` e por string.
+  - `Adodc1` usa connection string ADO (provider OLEDB) diferente da conexao `db` (que e SqlServer/ODBC) - duplicacao de canal de dados.
+  - Nao ha refresh automatico apos `[F2] DOC`. O usuario abre o exe externo e a tela permanece exibindo o estado anterior.
+- Inconsistencias:
+  - `txt2Lote` e preenchido a partir do `lvOC.SelectedItem.SubItems(2)` (Lote/BL) mas no comentario o `Carrega_LvLocal` filtra por `AUTONUMCS` (id da OC), nao pelo lote (linha SQL alternativa esta comentada).
+  - Caracteres acentuados aparecem corrompidos (encoding ANSI/Windows-1252 nas mensagens "nao", "ja", "carregada", "indisponivel").
+  - Existem trechos comentados que sugerem evolucao incremental (sequence `SEQ_CARGA_SOLTA_YARD`, `IDENT_CURRENT`).
+  - Variavel `OrdemAnt` e local em `Form_KeyDown` mas tambem usada em `cmdF4_Click`; em `cmdF4_Click` ela e referenciada como variavel global, demonstrando dependencia de escopo de modulo.
+- Hipoteses:
+  - Hipotese: `TB_CARGA_SOLTA_YARD.AUTONUM` e coluna IDENTITY (forte indicio: insert sem autonum + leitura via `MAX`).
+  - Hipotese: Funcao `FC_VALIDA_SAIDA_CARGA` consolida regras de bloqueio de saida (free-time, GLME, SISCARGA, SEFAZ, DI, BL bloqueado etc.) - a tela apenas confia no retorno textual.
+  - Hipotese: `TB_HIST_SHIFTING_CS` tem `ARMAZEM` `INT` (gravado com `0`) e `YARD` `VARCHAR` ('CAM' aqui).
+  - Hipotese: `MOTIVO=8` (literal) representa "carregamento por bipagem de marcante" no dicionario de motivos da `TB_CARGA_SOLTA_YARD`.
+  - Hipotese: `tb_temp_marcante` e a mesma tabela usada em "Associacao de Marcantes" (chave por `MARCANTE` string) - aqui apenas e atualizada quantidade quando o carregamento e parcial.
