@@ -1,0 +1,241 @@
+@model Romaneio.Models.ViewModels.MovimentacaoContainerPatioViewModel
+
+@{
+    ViewBag.Title = "Movimentacao Container Patio";
+}
+
+<h3 class="page-title">
+    <i class="glyphicon glyphicon-transfer"></i>
+    Movimentacao Container - Patio @Model.DESCR_PATIO
+</h3>
+
+<div id="alert-container"></div>
+
+<ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active"><a href="#tab-mov" data-toggle="tab">Movimentacao</a></li>
+    <li role="presentation"><a href="#tab-hist" data-toggle="tab">Historico</a></li>
+    <li role="presentation"><a href="#tab-dados" data-toggle="tab">Dados CNTR</a></li>
+    @if (Model.PERMISSOES_AVARIAS.ABA_AVARIAS_HABILITADA)
+    {
+        <li role="presentation"><a href="#tab-av" data-toggle="tab">Avarias</a></li>
+    }
+</ul>
+
+<div class="tab-content card-custom" style="padding:15px;">
+    <div role="tabpanel" class="tab-pane active" id="tab-mov">
+        <div class="row">
+            <div class="col-md-3">
+                <label>Patio</label>
+                <input type="text" class="form-control" readonly value="@Model.DESCR_PATIO" />
+            </div>
+            <div class="col-md-3">
+                <label>Final sigla</label>
+                <input type="text" id="txtFinal" class="form-control" maxlength="11" autocomplete="off" />
+            </div>
+            <div class="col-md-4">
+                <label>ID conteiner completo</label>
+                <input type="text" id="txtIdCompleto" class="form-control" maxlength="15" autocomplete="off" />
+            </div>
+            <div class="col-md-2">
+                <label style="color:#fff">.</label>
+                <button type="button" id="btnBuscar" class="btn btn-primary btn-block">Buscar</button>
+            </div>
+        </div>
+
+        <div class="row" style="margin-top:8px;">
+            <div class="col-md-12">
+                <span id="badges"></span>
+            </div>
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+            <div class="col-md-3">
+                <label>Yard atual</label>
+                <input type="text" id="txtYardAtual" class="form-control" readonly />
+            </div>
+            <div class="col-md-3">
+                <label>Destino</label>
+                <input type="text" id="txtDestino" class="form-control" maxlength="10" autocomplete="off" />
+            </div>
+            <div class="col-md-4">
+                <label>Motivo</label>
+                <select id="ddlMotivo" class="form-control">
+                    <option value="">Selecione</option>
+                    @foreach (var m in Model.MOTIVOS)
+                    {
+                        <option value="@m.AUTONUM" data-camera="@(m.FLAG_CAMERA ? "1" : "0")">@m.DESCRICAO</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label style="color:#fff">.</label>
+                <div class="checkbox" style="margin-top:8px;">
+                    <label><input type="checkbox" id="chkLacresConf" /> Lacres conferidos</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" style="margin-top:8px;">
+            <div class="col-md-2"><label>Lacre IPA</label><input type="text" id="txtLacreIpa" class="form-control" /></div>
+            <div class="col-md-2"><label>Lacre Gate 1</label><input type="text" id="txtLacre1" class="form-control" /></div>
+            <div class="col-md-2"><label>Lacre Gate 2</label><input type="text" id="txtLacre2" class="form-control" /></div>
+            <div class="col-md-2"><label>Lacre Gate 3</label><input type="text" id="txtLacre3" class="form-control" /></div>
+            <div class="col-md-2"><label>Lacre lona</label><input type="text" id="txtLacreLona" class="form-control" /></div>
+            <div class="col-md-2"><label>Tara</label><input type="text" id="txtTara" class="form-control" /></div>
+        </div>
+
+        <div class="row" style="margin-top:8px;">
+            <div class="col-md-12">
+                <label>Contexto</label>
+                <textarea id="txtContexto" class="form-control" rows="4" readonly></textarea>
+            </div>
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+            <div class="col-md-6">
+                <label><input type="radio" name="modoPilha" value="atual" checked /> Pilha referencia: atual</label>
+                <label style="margin-left:15px;"><input type="radio" name="modoPilha" value="destino" /> destino (prefixo)</label>
+                <div class="table-responsive" style="max-height:220px;overflow:auto;">
+                    <table class="table table-condensed table-striped" id="tblProximos">
+                        <thead><tr><th>Motivo</th><th>Data</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="table-responsive" style="max-height:220px;overflow:auto;">
+                    <table class="table table-condensed table-striped" id="tblVizinhos">
+                        <thead><tr><th>CNTR</th><th>Yard</th><th>Data</th><th>Motivo</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" style="margin-top:12px;">
+            <div class="col-md-2">
+                <button type="button" id="btnSalvar" class="btn btn-success btn-block">Salvar movimentacao</button>
+            </div>
+            <div class="col-md-2">
+                <button type="button" id="btnLimpar" class="btn btn-default btn-block">Limpar</button>
+            </div>
+        </div>
+    </div>
+
+    <div role="tabpanel" class="tab-pane" id="tab-hist">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="tblHistShift">
+                <thead>
+                    <tr><th>Data</th><th>De</th><th>Para</th><th>Usuario</th><th>Motivo</th></tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <h5>Historico avarias</h5>
+        <div class="table-responsive">
+            <table class="table table-bordered" id="tblHistAv">
+                <thead><tr><th>Data</th><th>Avaria</th><th>Usuario</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div role="tabpanel" class="tab-pane" id="tab-dados">
+        <div class="row">
+            <div class="col-md-3"><label>EF</label><input type="text" id="d_EF" class="form-control" readonly /></div>
+            <div class="col-md-3"><label>Tipo</label><input type="text" id="d_Tipo" class="form-control" readonly /></div>
+            <div class="col-md-3"><label>Tamanho</label><input type="text" id="d_Tam" class="form-control" readonly /></div>
+            <div class="col-md-3"><label>IMO</label><input type="text" id="d_IMO" class="form-control" readonly /></div>
+        </div>
+        <div class="row" style="margin-top:8px;">
+            <div class="col-md-6"><label>Navio / viagem</label><input type="text" id="d_Navio" class="form-control" readonly /></div>
+            <div class="col-md-6"><label>SIGVIG</label><input type="text" id="d_Sigvig" class="form-control" readonly /></div>
+        </div>
+        <div class="table-responsive" style="margin-top:10px;">
+            <table class="table table-bordered" id="tblBL">
+                <thead><tr><th>Lote</th><th>BL</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    @if (Model.PERMISSOES_AVARIAS.ABA_AVARIAS_HABILITADA)
+    {
+        <div role="tabpanel" class="tab-pane" id="tab-av">
+            <div class="row">
+                <div class="col-md-4">
+                    <label>Local</label>
+                    <select id="ddlAvLocal" class="form-control"></select>
+                </div>
+                <div class="col-md-4">
+                    <label>Tipo (multiplo)</label>
+                    <select id="ddlAvTipo" class="form-control" multiple size="6"></select>
+                </div>
+                <div class="col-md-4">
+                    <label style="color:#fff">.</label>
+                    @if (Model.PERMISSOES_AVARIAS.PODE_INCLUIR_AVARIA)
+                    {
+                        <button type="button" id="btnAvIncluir" class="btn btn-primary btn-block">Incluir</button>
+                    }
+                    @if (Model.PERMISSOES_AVARIAS.PODE_EXCLUIR_AVARIA)
+                    {
+                        <button type="button" id="btnAvExcluir" class="btn btn-warning btn-block" style="margin-top:6px;">Excluir selecionada</button>
+                    }
+                    @if (Model.PERMISSOES_AVARIAS.PODE_FINALIZAR_AVARIA)
+                    {
+                        <button type="button" id="btnAvFinalizar" class="btn btn-danger btn-block" style="margin-top:6px;">Finalizar avarias</button>
+                    }
+                </div>
+            </div>
+            <div class="table-responsive" style="margin-top:10px;">
+                <table class="table table-bordered" id="tblAvAbertas">
+                    <thead><tr><th>Local</th><th>Tipo</th><th>Autonum</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="modal fade" id="modalCamera" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header"><h4 class="modal-title">Camera posicionamento</h4></div>
+            <div class="modal-body">
+                <select id="ddlCamera" class="form-control">
+                    <option value="">Selecione</option>
+                    @foreach (var c in Model.CAMERAS)
+                    {
+                        <option value="@c.AUTONUM">@c.DESCR</option>
+                    }
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                <button type="button" id="btnConfirmarCamera" class="btn btn-primary">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var mcpUrls = {
+        buscarFinal: '@Url.Action("BuscarPorFinal", "MovimentacaoContainerPatio")',
+        detalhe: '@Url.Action("CarregarDetalhe", "MovimentacaoContainerPatio")',
+        proximos: '@Url.Action("ProximosMovimentos", "MovimentacaoContainerPatio")',
+        vizinhos: '@Url.Action("VizinhancaPilha", "MovimentacaoContainerPatio")',
+        cameraPadrao: '@Url.Action("CameraPadrao", "MovimentacaoContainerPatio")',
+        confirmar: '@Url.Action("ConfirmarMovimentacao", "MovimentacaoContainerPatio")',
+        histShift: '@Url.Action("HistoricoShifting", "MovimentacaoContainerPatio")',
+        avGrid: '@Url.Action("AvariasGrid", "MovimentacaoContainerPatio")',
+        avHist: '@Url.Action("AvariasHistorico", "MovimentacaoContainerPatio")',
+        avOpcoes: '@Url.Action("OpcoesAvarias", "MovimentacaoContainerPatio")',
+        avIncluir: '@Url.Action("AvariasIncluir", "MovimentacaoContainerPatio")',
+        avExcluir: '@Url.Action("AvariasExcluir", "MovimentacaoContainerPatio")',
+        avFinalizar: '@Url.Action("AvariasFinalizar", "MovimentacaoContainerPatio")'
+    };
+    var mcpPerm = {
+        avarias: @Model.PERMISSOES_AVARIAS.ABA_AVARIAS_HABILITADA.ToString().ToLowerInvariant()
+    };
+</script>
+<script src="~/Content/js/movimentacao-container-patio.js"></script>

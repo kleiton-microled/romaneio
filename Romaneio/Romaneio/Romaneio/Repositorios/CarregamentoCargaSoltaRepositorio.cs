@@ -467,12 +467,23 @@ namespace Romaneio.Repositorios
 
                 if (flagLtl == 1)
                 {
+                    int? idLtl = con.QueryFirstOrDefault<int?>(
+                        @"SELECT TOP 1 A.ID
+                          FROM SGIPA..TB_SOLICITACAO_LTL A
+                          WHERE A.LOTE = @LOTE
+                          ORDER BY A.ID DESC",
+                        new { LOTE = loteBl },
+                        commandTimeout: Config.QueryTimeoutInSeconds());
+
                     return new DocumentoOcResult
                     {
                         SUCESSO = true,
                         LTL = true,
                         LOTE_BL = loteBl,
-                        MENSAGEM = "Documentos LTL disponiveis para o lote " + loteBl
+                        ID_SOLICITACAO_LTL = idLtl,
+                        MENSAGEM = idLtl.HasValue
+                            ? "Documentos LTL (solicitacao " + idLtl.Value + ") para o lote " + loteBl
+                            : "Documentos LTL para o lote " + loteBl
                     };
                 }
 

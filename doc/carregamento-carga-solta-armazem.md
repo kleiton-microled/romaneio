@@ -90,8 +90,10 @@ Permitir ao operador de armazem realizar o carregamento de marcantes de carga so
 > Observacao: no ambiente web, atalhos podem variar por navegador/politica local. Sempre use os botoes como fallback.
 
 ## Botao Documentos (F2)
-- O endpoint identifica se o lote da OC tem solicitacao LTL ativa (`TB_SOLICITACAO_LTL.flag_ltl = 1`) ou retorna o `MAX(AUTONUM)` de `TB_AG_CS` para o lote.
-- A impressao em si depende de integracao externa (no legado VB6 era feita por executavel local). A tela MVC apenas localiza o documento e informa o operador.
+- O endpoint `CarregamentoCargaSolta/Documento` identifica se o lote da OC tem solicitacao LTL ativa (`TB_SOLICITACAO_LTL.flag_ltl = 1`) ou retorna o `MAX(AUTONUM)` de `TB_AG_CS` para o lote, e devolve `idSolicitacaoLtl` quando for LTL.
+- No legado VB6 (`ProjetoReferencia/Coletor/CarregaCS.frm`, `cmdF2_Click`), apos essas consultas o sistema chama `Shell` com `ConsultaDocumentos\ConsultaDocColetor.exe` (projeto fonte em `Band .NET\ConsultaDocColetor`).
+- No **Romaneio MVC**, o botao `[F2] Documentos` abre em nova aba o modulo compartilhado **`ConsultaDocumentosAgendamento/Index`** (`doc/consulta-documentos-agendamento.md`), que lista documentos e exibe PDF/imagem quando o blob existe em `TB_AG_DOCUMENTOS`.
+- Arquivos obtidos apenas via servico **Bandeirantes.AnexoDiretorio** (sem blob na tabela) ainda nao sao exibidos no web ate integrar esse servico.
 
 ## Boas praticas de uso
 - Sempre verificar a coluna `Carregada` na grid de OCs antes de iniciar a bipagem.
@@ -133,8 +135,8 @@ Estas pendencias foram identificadas durante a migracao (Agente 07) e estao list
    - O MVC atualmente protege apenas pela sessao (`Session["Logado"]`). Definir se a matriz de permissao deve ser aplicada e onde (filter MVC, decorator no controller etc.).
 
 5. **`[F2] Documentos` em ambiente web**
-   - O legado chamava o executavel local `Funcionalidade_VARIA.exe` para imprimir os documentos da OC.
-   - O endpoint atual apenas resolve o destino (LTL ou `TB_AG_CS`) e informa o operador. Definir o destino real da impressao no web (PDF inline, fila de impressao, redirecionamento para outro modulo).
+   - No `ProjetoReferencia`, o `[F2] DOC` em `CarregaCS.frm` dispara `ConsultaDocumentos\ConsultaDocColetor.exe` (fonte em `Band .NET\ConsultaDocColetor`).
+   - **Implementado:** modulo `ConsultaDocumentosAgendamento` no Romaneio (ver `doc/consulta-documentos-agendamento.md`). Pendente: integrar **Bandeirantes.AnexoDiretorio** quando `DOCUMENTO` na tabela for nulo (comportamento do WinForms).
 
 6. **Disponibilidade de `dbo.FC_VALIDA_SAIDA_CARGA`**
    - A funcao escalar e chamada em todo `[F4] Carregar`. Confirmar a presenca dessa function no banco do ambiente alvo (homologacao e producao). Em caso de ausencia, o carregamento ira falhar com erro de SQL.

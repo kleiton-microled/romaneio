@@ -163,6 +163,7 @@ namespace Romaneio.Controllers
                 success = resultado.SUCESSO,
                 ltl = resultado.LTL,
                 autonumAgCs = resultado.AUTONUM_AG_CS,
+                idSolicitacaoLtl = resultado.ID_SOLICITACAO_LTL,
                 loteBl = resultado.LOTE_BL,
                 message = resultado.MENSAGEM
             });

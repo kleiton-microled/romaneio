@@ -309,15 +309,17 @@
                 return;
             }
 
-            var detalhe = res.ltl
-                ? "Documento LTL para o lote " + res.loteBl
-                : "Agendamento " + res.autonumAgCs + " para o lote " + res.loteBl;
+            var baseUrl = urls.consultaDocumentosAgenda || "";
+            if (!baseUrl) {
+                alerta("URL do modulo de documentos nao configurada.", "danger");
+                return;
+            }
 
-            alerta(
-                "Funcionalidade de impressao depende de integracao externa (legado VB6 chamava executavel local). "
-                + detalhe + " - validar na homologacao tecnica.",
-                "info"
-            );
+            var q = res.ltl
+                ? ("ltl=1&lote=" + encodeURIComponent(res.loteBl) + (res.idSolicitacaoLtl ? ("&idLtl=" + encodeURIComponent(res.idSolicitacaoLtl)) : ""))
+                : ("ltl=0&lote=" + encodeURIComponent(res.loteBl) + "&ag=" + encodeURIComponent(res.autonumAgCs || ""));
+
+            window.open(baseUrl + (baseUrl.indexOf("?") >= 0 ? "&" : "?") + q, "_blank", "noopener");
         });
     }
 

@@ -103,6 +103,7 @@ namespace Romaneio.Models.ViewModels
         public bool SUCESSO { get; set; }
         public bool LTL { get; set; }
         public int? AUTONUM_AG_CS { get; set; }
+        public int? ID_SOLICITACAO_LTL { get; set; }
         public int? LOTE_BL { get; set; }
         public string MENSAGEM { get; set; }
     }

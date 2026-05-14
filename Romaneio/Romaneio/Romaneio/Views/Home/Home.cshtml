@@ -127,6 +127,22 @@
         </button>
     </div>
 
+    <div class="col-md-2 link menu-item" id="divMovimentacaoContainerPatio">
+        <button type="button" class="menu-card">
+            <div class="icon">
+                <i class="fa fa-exchange-alt"></i>
+            </div>
+
+            <div class="title">
+                Movimentacao Container Patio
+            </div>
+
+            <div class="action">
+                <i class="fa fa-sign-in-alt"></i> Acessar
+            </div>
+        </button>
+    </div>
+
 </div>
 
 
@@ -165,6 +181,10 @@
 
     $('#divLocalizacaoCarregamentos').click(function () {
         location.href = "@Url.Content("~/LocalizacaoCarregamentos/Index")";
+    });
+
+    $('#divMovimentacaoContainerPatio').click(function () {
+        location.href = "@Url.Content("~/MovimentacaoContainerPatio/Index")";
     });
 
 </script>
