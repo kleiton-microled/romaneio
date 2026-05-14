@@ -35,6 +35,7 @@ namespace Romaneio
             container.RegisterType<IRomaneioRepositorio, RomaneioRepositorio>(new HierarchicalLifetimeManager());
             container.RegisterType<ICompartilhaScannerRepositorio, CompartilhaScannerRepositorio>(new HierarchicalLifetimeManager());
             container.RegisterType<IAssociacaoMarcantesRepositorio, AssociacaoMarcantesRepositorio>(new HierarchicalLifetimeManager());
+            container.RegisterType<IManutencaoMarcantesArmazemRepositorio, ManutencaoMarcantesArmazemRepositorio>(new HierarchicalLifetimeManager());
             container.RegisterType<IConsultaLiberacaoCarregamentoRepositorio, ConsultaLiberacaoCarregamentoRepositorio>(new HierarchicalLifetimeManager());
             container.RegisterType<ICarregamentoCargaSoltaRepositorio, CarregamentoCargaSoltaRepositorio>(new HierarchicalLifetimeManager());
             container.RegisterType<IConsultaDocumentosAgendamentoRepositorio, ConsultaDocumentosAgendamentoRepositorio>(new HierarchicalLifetimeManager());

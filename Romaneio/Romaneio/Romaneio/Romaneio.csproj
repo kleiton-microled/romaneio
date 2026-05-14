@@ -204,6 +204,7 @@
     <Compile Include="Controllers\FotosController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManutencaoCLAController.cs" />
+    <Compile Include="Controllers\ManutencaoMarcantesArmazemController.cs" />
     <Compile Include="Controllers\MovimentacaoCSController.cs" />
     <Compile Include="Extensions\BooleanExtensions.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
@@ -220,6 +221,7 @@
     <Compile Include="Interfaces\Repositories\IAssociacaoMarcantesRepositorio.cs" />
     <Compile Include="Interfaces\Repositories\IMovimentacaoCSRepositorio.cs" />
     <Compile Include="Interfaces\Repositories\IManutencaoCLARepositorio.cs" />
+    <Compile Include="Interfaces\Repositories\IManutencaoMarcantesArmazemRepositorio.cs" />
     <Compile Include="Interfaces\Repositories\ICompartilhaScannerRepositorio.cs" />
     <Compile Include="Interfaces\Repositories\IRomaneioRepositorio.cs" />
     <Compile Include="Interfaces\Repositories\IFechamentosRepositorio.cs" />
@@ -245,6 +247,7 @@
     <Compile Include="Models\FotosRomaneio.cs" />
     <Compile Include="Models\Posicionamento.cs" />
     <Compile Include="Models\ViewModels\AssociacaoMarcantesViewModel.cs" />
+    <Compile Include="Models\ViewModels\ManutencaoMarcantesArmazemViewModel.cs" />
     <Compile Include="Models\ViewModels\AvariasRomaneioViewModel.cs" />
     <Compile Include="Models\ViewModels\CompartilhaScannerViewModel.cs" />
     <Compile Include="Models\ViewModels\ConsultaViewModel.cs" />
@@ -277,6 +280,7 @@
     <Compile Include="Repositorios\MovimentacaoCSRepositorio.cs" />
     <Compile Include="Repositorios\FechamentosRepositorio.cs" />
     <Compile Include="Repositorios\ManutencaoCLARepositorio.cs" />
+    <Compile Include="Repositorios\ManutencaoMarcantesArmazemRepositorio.cs" />
     <Compile Include="Repositorios\RomaneioRepositorio.cs" />
     <Compile Include="Repositorios\DadosRepositorio.cs" />
     <Compile Include="Repositorios\ConsultaLiberacaoCarregamentoRepositorio.cs" />
@@ -311,6 +315,7 @@
     <Content Include="Content\imagens\plus.png" />
     <Content Include="Content\imagens\search.png" />
     <Content Include="Content\js\associacao-marcantes.js" />
+    <Content Include="Content\js\manutencao-marcantes-armazem.js" />
     <Content Include="Content\js\barCode.js" />
     <Content Include="Content\js\bootstrap-datepicker.js" />
     <Content Include="Content\js\bootstrap.js" />
@@ -464,6 +469,7 @@
     <Content Include="Views\Avarias\Avarias.cshtml" />
     <Content Include="Views\Home\Home.cshtml" />
     <Content Include="Views\ManutencaoCLA\Index.cshtml" />
+    <Content Include="Views\ManutencaoMarcantesArmazem\Index.cshtml" />
     <Content Include="Views\Estufagem\Index.cshtml" />
     <Content Include="Views\MovimentacaoCS\Index.cshtml" />
     <Content Include="Views\MovimentacaoCS\Historico.cshtml" />
