@@ -127,6 +127,22 @@
         </button>
     </div>
 
+    <div class="col-md-2 link menu-item" id="divInventarioCargaSoltaArmazem">
+        <button type="button" class="menu-card">
+            <div class="icon">
+                <i class="fa fa-clipboard-list"></i>
+            </div>
+
+            <div class="title">
+                Inventario Carga Solta - Armazem
+            </div>
+
+            <div class="action">
+                <i class="fa fa-sign-in-alt"></i> Acessar
+            </div>
+        </button>
+    </div>
+
     <div class="col-md-2 link menu-item" id="divLocalizacaoCarregamentos">
         <button type="button" class="menu-card">
             <div class="icon">
@@ -213,6 +229,10 @@
 
     $('#divCarregamentoCargaSolta').click(function () {
         location.href = "@Url.Content("~/CarregamentoCargaSolta/Index")";
+    });
+
+    $('#divInventarioCargaSoltaArmazem').click(function () {
+        location.href = "@Url.Content("~/InventarioCargaSoltaArmazem/Index")";
     });
 
     $('#divLocalizacaoCarregamentos').click(function () {

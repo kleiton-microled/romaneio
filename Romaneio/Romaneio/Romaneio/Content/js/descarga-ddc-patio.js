@@ -13,6 +13,53 @@
         $('#alert-container').html(html);
     }
 
+    function swalOk() {
+        return window.Swal && typeof window.Swal.fire === 'function';
+    }
+
+    function swalLoading(abrir) {
+        if (!swalOk()) return;
+        if (abrir) {
+            window.Swal.fire({
+                title: 'Consultando placa...',
+                allowOutsideClick: false,
+                didOpen: function () { window.Swal.showLoading(); }
+            });
+        } else if (typeof window.Swal.close === 'function') {
+            window.Swal.close();
+        }
+    }
+
+    function swalPlacaResposta(r) {
+        var msg = (r && r.message) ? String(r.message) : '';
+        if (!r || !r.success) {
+            if (swalOk()) {
+                window.Swal.fire({
+                    icon: 'error',
+                    title: 'Placa',
+                    text: msg || 'Nao consta entrada para o veiculo informado',
+                    confirmButtonText: 'OK'
+                });
+            } else {
+                alerta(msg || 'Erro ao consultar placa', 'danger');
+            }
+            return false;
+        }
+        var lotes = r.lotes || r.LOTES || [];
+        var texto = lotes.length > 0
+            ? ('Entrada localizada. ' + lotes.length + ' lote(s) disponivel(is).')
+            : 'Entrada localizada. Nenhum lote encontrado.';
+        if (swalOk()) {
+            window.Swal.fire({
+                icon: 'success',
+                title: 'Placa',
+                text: texto,
+                confirmButtonText: 'OK'
+            });
+        }
+        return true;
+    }
+
     function esc(s) {
         if (s == null || s === undefined) return '';
         return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -96,9 +143,12 @@
         painelItensVisivel(false);
         if (reg <= 0) return;
 
+        swalLoading(true);
         $.post(ddpUrls.gateLotes, { autonumRegistroSaida: reg }).done(function (r) {
-            if (!r.success) {
-                alerta(r.message || 'Erro', 'danger');
+            swalLoading(false);
+            if (!swalPlacaResposta(r)) {
+                $('#selPlaca').val('');
+                state.autonumRegistroSaida = 0;
                 return;
             }
             var lotes = r.lotes || r.LOTES || [];
@@ -108,8 +158,22 @@
                 var id = l.AUTONUM_LOTE || l.autonum_lote;
                 sel.append('<option value="' + esc(id) + '">Lote ' + esc(id) + '</option>');
             });
-            sel.prop('disabled', false);
-        }).fail(function () { alerta('Falha de rede', 'danger'); });
+            sel.prop('disabled', lotes.length === 0);
+        }).fail(function () {
+            swalLoading(false);
+            $('#selPlaca').val('');
+            state.autonumRegistroSaida = 0;
+            if (swalOk()) {
+                window.Swal.fire({
+                    icon: 'error',
+                    title: 'Placa',
+                    text: 'Falha de rede ao consultar o veiculo.',
+                    confirmButtonText: 'OK'
+                });
+            } else {
+                alerta('Falha de rede', 'danger');
+            }
+        });
     }
 
     function carregarOperacao() {

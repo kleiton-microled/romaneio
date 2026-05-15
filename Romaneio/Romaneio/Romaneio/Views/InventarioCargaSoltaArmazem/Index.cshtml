@@ -1,0 +1,170 @@
+@model Romaneio.Models.ViewModels.InventarioCargaSoltaArmazemViewModel
+
+@{
+    ViewBag.Title = "Inventario Carga Solta - Armazem";
+}
+
+<h3 class="page-title">
+    <i class="glyphicon glyphicon-inbox"></i>
+    Inventario Carga Solta - Armazem
+</h3>
+
+<div id="alert-container"></div>
+
+<div class="card-custom">
+
+    <div class="row">
+        <div class="col-md-3">
+            <label>Marcante</label>
+            <input type="text" id="txtMarcante" maxlength="9" class="form-control" autocomplete="off" placeholder="000000000" />
+        </div>
+        <div class="col-md-2">
+            <label>Lote</label>
+            <input type="text" id="txtLote" class="form-control" readonly />
+        </div>
+        <div class="col-md-2">
+            <label id="lblExp" style="display:none" class="label label-success">EXP</label>
+        </div>
+        <div class="col-md-5">
+            <label id="lblTituloStatus" class="text-muted">INVENTARIO DE CARGA SOLTA</label>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="row">
+        <div class="col-md-4"><label>Mercadoria</label><input type="text" id="txtMercadoria" class="form-control" readonly /></div>
+        <div class="col-md-2"><label>BL</label><input type="text" id="txtBL" class="form-control" readonly /></div>
+        <div class="col-md-3"><label>Importador</label><input type="text" id="txtCliente" class="form-control" readonly /></div>
+        <div class="col-md-3"><label>Embalagem</label><input type="text" id="txtEmbalagem" class="form-control" readonly /></div>
+    </div>
+    <div class="row" style="margin-top:8px">
+        <div class="col-md-3"><label>Marca</label><input type="text" id="txtMarca" class="form-control" readonly /></div>
+        <div class="col-md-3"><label>Entrada / Desova</label><input type="text" id="txtEntrada" class="form-control" readonly /></div>
+        <div class="col-md-3"><label>Conteiner</label><input type="text" id="txtConteiner" class="form-control" readonly /></div>
+        <div class="col-md-3"><label>IMO</label><input type="text" id="txtIMO" class="form-control" readonly /></div>
+    </div>
+    <div class="row" style="margin-top:8px">
+        <div class="col-md-3"><label>DOC / Canal</label><input type="text" id="txtDocCanal" class="form-control" readonly /></div>
+        <div class="col-md-3"><label>Mov. agend.</label><input type="text" id="txtMOV" class="form-control" readonly /></div>
+        <div class="col-md-3"><label>NVOCC</label><input type="text" id="txtNVOCC" class="form-control" readonly /></div>
+        <div class="col-md-3"><label>Local atual</label><input type="text" id="txtLocalAtual" class="form-control" readonly /></div>
+    </div>
+
+    <hr />
+
+    <div class="row">
+        <div class="col-md-3">
+            <label>Item</label>
+            <select id="ddlItem" class="form-control"></select>
+        </div>
+        <div class="col-md-2">
+            <label>Qtde disponivel</label>
+            <input type="number" id="txtQtde" class="form-control" readonly />
+        </div>
+        <div class="col-md-2">
+            <label>Qtde marcante</label>
+            <input type="number" id="txtQtdeM" class="form-control" readonly />
+        </div>
+        <div class="col-md-2">
+            <label>Qtde posicao</label>
+            <input type="number" id="txtQtdePos" class="form-control" min="1" />
+        </div>
+        <div class="col-md-3">
+            <label>Autonum CS Yard</label>
+            <input type="text" id="txtAutonumCsYard" class="form-control" readonly />
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="row">
+        <div class="col-md-4">
+            <label>Etq. Prateleira</label>
+            <input type="text" id="txtPrateleira" maxlength="30" class="form-control" autocomplete="off" />
+        </div>
+        <div class="col-md-4">
+            <label>Armazem</label>
+            <select id="ddlArmazem" class="form-control"></select>
+        </div>
+        <div class="col-md-2">
+            <label>Local (yard)</label>
+            <input type="text" id="txtLocalPos" class="form-control" maxlength="20" />
+        </div>
+        <div class="col-md-2">
+            <label>Motivo</label>
+            <select id="ddlMotivo" class="form-control"></select>
+        </div>
+    </div>
+
+    <div id="painelConteiner" style="display:none;margin-top:10px">
+        <div class="row">
+            <div class="col-md-3"><label><input type="checkbox" id="chkFrente" /> FRENTE</label></div>
+            <div class="col-md-3"><label><input type="checkbox" id="chkFundo" /> FUNDO</label></div>
+            <div class="col-md-3"><label><input type="checkbox" id="chkLe" /> LE</label></div>
+            <div class="col-md-3"><label><input type="checkbox" id="chkLd" /> LD</label></div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <label>Ocup. CT (%)</label>
+                <input type="number" id="txtPercentCt" class="form-control" min="0" max="100" value="0" />
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="margin-top:12px">
+        <div class="col-md-12">
+            <div id="txtCritica" class="alert alert-info" style="display:none;"></div>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="row">
+        <div class="col-md-2"><button type="button" id="btnHistorico" class="btn btn-default btn-block">[F1] Historico</button></div>
+        <div class="col-md-2"><button type="button" id="btnLimpar" class="btn btn-warning btn-block">[F2] Limpa</button></div>
+        <div class="col-md-2"><button type="button" id="btnSalvar" class="btn btn-success btn-block">[F5] Salva</button></div>
+        <div class="col-md-2"><button type="button" id="btnSair" class="btn btn-default btn-block">[ESC] Sair</button></div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalHistorico" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Historico da Movimentacao</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered table-condensed" id="tblHistorico">
+                    <thead>
+                        <tr><th>Armazem</th><th>Local</th><th>Data</th><th>Usuario</th></tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    window.inventarioCsArmazemConfig = {
+        patio: @Model.PATIO,
+        codUsuario: @Model.COD_USUARIO,
+        urls: {
+            combos: '@Url.Action("ObterCombos", "InventarioCargaSoltaArmazem")',
+            marcante: '@Url.Action("ObterPorMarcante", "InventarioCargaSoltaArmazem")',
+            item: '@Url.Action("ObterItem", "InventarioCargaSoltaArmazem")',
+            historico: '@Url.Action("Historico", "InventarioCargaSoltaArmazem")',
+            resolverPrateleira: '@Url.Action("ResolverPrateleira", "InventarioCargaSoltaArmazem")',
+            salvar: '@Url.Action("Salvar", "InventarioCargaSoltaArmazem")',
+            home: '@Url.Action("Home", "Home")'
+        }
+    };
+</script>
+<script language="JavaScript" type="text/javascript" src="~/Content/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="~/Content/js/inventario-carga-solta-armazem.js"></script>
