@@ -19,15 +19,12 @@ namespace Romaneio.Repositorios
         {
             using (SqlConnection con = new SqlConnection(Config.StringConexao()))
             {
-                StringBuilder sb = new StringBuilder();
+                var sql = @"
+                    SELECT AUTONUM, AUTONUM_CARGA, AUTONUM_CARGA_AC, VOLUMES, AUTONUM_CS_YARD, AUTONUM_CS_YARD_AC,
+                           ID_CONTEINER_IMPRESSO, ARMAZEM_REC, YARD_REC, AUTONUM_CEXP, PATIO, FLAG_RECONHECIMENTO, LOTE_IMPRESSO
+                    FROM sgipa.dbo.fnInvent_Sistemas_Arm_Col_patio('" + marcante + "')";
 
-
-                sb.Clear();
-                sb.Append(" SELECT AUTONUM,AUTONUM_CARGA,AUTONUM_CARGA_AC,VOLUMES,AUTONUM_CS_YARD,AUTONUM_CS_YARD_AC, ");
-                sb.Append(" ID_CONTEINER_IMPRESSO, ARMAZEM_REC, YARD_REC, AUTONUM_CEXP, PATIO,FLAG_RECONHECIMENTO,LOTE_IMPRESSO ");
-                sb.Append(" FROM sgipa.dbo.fnInvent_Sistemas_Arm_Col_patio('" + marcante + "')");
-                 return con.Query<Marcante>(sb.ToString(), commandTimeout: Config.QueryTimeoutInSeconds()).FirstOrDefault();
-
+                return con.Query<Marcante>(sql, commandTimeout: Config.QueryTimeoutInSeconds()).FirstOrDefault();
             }
         }
         public Marcante ConsultarMarcanteInventArmazem(string marcante)

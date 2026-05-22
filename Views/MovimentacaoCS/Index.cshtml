@@ -30,9 +30,14 @@
 
         <!-- ================= CABEÇALHO ================= -->
         <div class="row">
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label>Marcante</label>
-                @Html.EditorFor(model => model.MARCANTE, new { htmlAttributes = new { @class = "form-control", id = "txtMarcante" } })
+                @Html.EditorFor(model => model.MARCANTE, new { htmlAttributes = new { @class = "form-control", id = "txtMarcante", autocomplete = "off" } })
+            </div>
+
+            <div class="col-md-1">
+                <label style="color:#fff">.</label>
+                <button type="button" id="btnBuscarMarcante" class="btn btn-primary btn-block">Buscar</button>
             </div>
 
             <div class="col-md-2">
@@ -197,8 +202,15 @@
 
 <script>
 
-    $('#txtMarcante').change(function () {
+    $('#btnBuscarMarcante').click(function () {
         CarregaDadosMarcante();
+    });
+
+    $('#txtMarcante').on('keypress', function (e) {
+        if (e.which === 13) {
+            e.preventDefault();
+            CarregaDadosMarcante();
+        }
     });
 
     $('#ddlItem').change(function () {
@@ -206,9 +218,12 @@
     });
 
     function CarregaDadosMarcante() {
-        var Marcante = document.getElementById('txtMarcante').value;
-        var url = '/MovimentacaoCS/Index?MARCANTE=' + Marcante;
-        window.location.href = url
+        var Marcante = document.getElementById('txtMarcante').value.trim();
+        if (!Marcante) {
+            return;
+        }
+        var url = '/MovimentacaoCS/Index?MARCANTE=' + encodeURIComponent(Marcante);
+        window.location.href = url;
     }
 
     function CarregaDadosItem() {
