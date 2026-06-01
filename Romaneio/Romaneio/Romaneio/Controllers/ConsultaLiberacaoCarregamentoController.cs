@@ -81,7 +81,9 @@ namespace Romaneio.Controllers
             return Json(new
             {
                 success = resultado.SUCESSO,
-                message = resultado.MENSAGEM
+                message = resultado.MENSAGEM,
+                requerConfirmacaoJanela = resultado.REQUER_CONFIRMACAO_JANELA,
+                mensagemConfirmacaoJanela = resultado.MENSAGEM_CONFIRMACAO_JANELA
             });
         }
 

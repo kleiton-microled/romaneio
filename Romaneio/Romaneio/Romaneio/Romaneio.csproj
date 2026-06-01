@@ -312,6 +312,7 @@
     <Content Include="Content\css\select2.css" />
     <Content Include="Content\css\select2.min.css" />
     <Content Include="Content\css\signup.css" />
+    <Content Include="Content\css\movimentacao-container-patio.css" />
     <Content Include="Content\css\site.css" />
     <Content Include="Content\css\smart_wizard.css" />
     <Content Include="Content\css\smart_wizard_theme_dots.css" />

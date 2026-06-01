@@ -163,6 +163,7 @@ namespace Romaneio.Models.ViewModels
         public string NMUSUARIO { get; set; }
         public string IDENTIFICACAO { get; set; }
         public string DESC_MOTIVO { get; set; }
+        public string VEICULO { get; set; }
     }
 
     public class AvariaCntrGridDto
