@@ -4,25 +4,57 @@
     ViewBag.Title = "Movimentacao Container Patio";
 }
 
+<link href="~/Content/css/movimentacao-container-patio.css" rel="stylesheet" />
+<style>
+    /* SweetAlert acima do layout da aplicacao */
+    .swal2-container {
+        z-index: 20000 !important;
+    }
+</style>
+
 <h3 class="page-title">
     <i class="glyphicon glyphicon-transfer"></i>
     Movimentacao Container - Patio @Model.DESCR_PATIO
 </h3>
 
 <div id="alert-container"></div>
+<div id="alertTransporteInterno" class="alert alert-info" style="display:none;">
+    <strong>Transporte interno:</strong> unidade vinculada a parceiro com flag de transporte interno.
+</div>
 
-<ul class="nav nav-tabs" role="tablist">
-    <li role="presentation" class="active"><a href="#tab-mov" data-toggle="tab">Movimentacao</a></li>
-    <li role="presentation"><a href="#tab-hist" data-toggle="tab">Historico</a></li>
-    <li role="presentation"><a href="#tab-dados" data-toggle="tab">Dados CNTR</a></li>
-    @if (Model.PERMISSOES_AVARIAS.ABA_AVARIAS_HABILITADA)
-    {
-        <li role="presentation"><a href="#tab-av" data-toggle="tab">Avarias</a></li>
-    }
-</ul>
+<div class="mcp-tabs-wrapper">
+    <ul class="nav nav-tabs mcp-nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+            <a href="#tab-mov" data-toggle="tab" aria-controls="tab-mov">
+                <i class="glyphicon glyphicon-transfer" aria-hidden="true"></i>
+                <span>Movimentacao</span>
+            </a>
+        </li>
+        <li role="presentation">
+            <a href="#tab-hist" data-toggle="tab" aria-controls="tab-hist">
+                <i class="glyphicon glyphicon-time" aria-hidden="true"></i>
+                <span>Historico</span>
+            </a>
+        </li>
+        <li role="presentation">
+            <a href="#tab-dados" data-toggle="tab" aria-controls="tab-dados">
+                <i class="glyphicon glyphicon-list-alt" aria-hidden="true"></i>
+                <span>Dados CNTR</span>
+            </a>
+        </li>
+        @if (Model.PERMISSOES_AVARIAS.ABA_AVARIAS_HABILITADA)
+        {
+            <li role="presentation">
+                <a href="#tab-av" data-toggle="tab" aria-controls="tab-av">
+                    <i class="glyphicon glyphicon-warning-sign" aria-hidden="true"></i>
+                    <span>Avarias</span>
+                </a>
+            </li>
+        }
+    </ul>
 
-<div class="tab-content card-custom" style="padding:15px;">
-    <div role="tabpanel" class="tab-pane active" id="tab-mov">
+    <div class="tab-content mcp-tab-content">
+    <div role="tabpanel" class="tab-pane fade show active" id="tab-mov">
         <div class="row">
             <div class="col-md-3">
                 <label>Patio</label>
@@ -93,20 +125,26 @@
 
         <div class="row" style="margin-top:10px;">
             <div class="col-md-6">
-                <label><input type="radio" name="modoPilha" value="atual" checked /> Pilha referencia: atual</label>
-                <label style="margin-left:15px;"><input type="radio" name="modoPilha" value="destino" /> destino (prefixo)</label>
+                <h5 class="text-muted" style="margin-top:0;">Proximos movimentos</h5>
                 <div class="table-responsive" style="max-height:220px;overflow:auto;">
                     <table class="table table-condensed table-striped" id="tblProximos">
-                        <thead><tr><th>Motivo</th><th>Data</th></tr></thead>
+                        <thead><tr><th>Motivo</th><th>Data prev.</th></tr></thead>
                         <tbody></tbody>
                     </table>
                 </div>
             </div>
             <div class="col-md-6">
+                <h5 class="text-muted" style="margin-top:0;">
+                    <span id="lblPilhaRef">FIADA ATUAL</span>
+                    <small class="text-normal" style="font-weight:normal;margin-left:8px;">
+                        <label style="font-weight:normal;"><input type="radio" name="modoPilha" value="atual" checked /> Atual</label>
+                        <label style="font-weight:normal;margin-left:6px;"><input type="radio" name="modoPilha" value="destino" /> Destino</label>
+                    </small>
+                </h5>
                 <div class="table-responsive" style="max-height:220px;overflow:auto;">
                     <table class="table table-condensed table-striped" id="tblVizinhos">
                         <thead><tr><th>CNTR</th><th>Yard</th><th>Data</th><th>Motivo</th></tr></thead>
-                        <tbody></tbody>
+                        <tbody><tr class="text-muted"><td colspan="4">Carregue um conteiner</td></tr></tbody>
                     </table>
                 </div>
             </div>
@@ -122,79 +160,138 @@
         </div>
     </div>
 
-    <div role="tabpanel" class="tab-pane" id="tab-hist">
-        <div class="table-responsive">
-            <table class="table table-bordered" id="tblHistShift">
-                <thead>
-                    <tr><th>Data</th><th>De</th><th>Para</th><th>Usuario</th><th>Motivo</th></tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+    <div role="tabpanel" class="tab-pane fade" id="tab-hist">
+        <div id="histPlaceholder" class="alert alert-info mcp-placeholder">
+            Carregue um conteiner na aba Movimentacao para consultar o historico.
         </div>
-        <h5>Historico avarias</h5>
-        <div class="table-responsive">
-            <table class="table table-bordered" id="tblHistAv">
-                <thead><tr><th>Data</th><th>Avaria</th><th>Usuario</th></tr></thead>
-                <tbody></tbody>
-            </table>
+        <div id="histConteudo" style="display:none;">
+            <p class="mcp-subtitle" id="histCntrTitulo"></p>
+            <h5 class="mcp-section-heading">Historico de movimentacoes (shifting)</h5>
+            <div class="table-responsive" style="max-height:280px;overflow:auto;">
+                <table class="table table-bordered table-condensed table-striped" id="tblHistShift">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>De</th>
+                            <th>Para</th>
+                            <th>Usuario</th>
+                            <th>Equipamento</th>
+                            <th>Motivo</th>
+                            <th>Veiculo</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <h5 class="mcp-section-heading">Historico de avarias</h5>
+            <div class="table-responsive" style="max-height:220px;overflow:auto;">
+                <table class="table table-bordered table-condensed table-striped" id="tblHistAv">
+                    <thead><tr><th>Data</th><th>Avaria</th><th>Usuario</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
         </div>
     </div>
 
-    <div role="tabpanel" class="tab-pane" id="tab-dados">
-        <div class="row">
-            <div class="col-md-3"><label>EF</label><input type="text" id="d_EF" class="form-control" readonly /></div>
-            <div class="col-md-3"><label>Tipo</label><input type="text" id="d_Tipo" class="form-control" readonly /></div>
-            <div class="col-md-3"><label>Tamanho</label><input type="text" id="d_Tam" class="form-control" readonly /></div>
-            <div class="col-md-3"><label>IMO</label><input type="text" id="d_IMO" class="form-control" readonly /></div>
+    <div role="tabpanel" class="tab-pane fade" id="tab-dados">
+        <div id="dadosPlaceholder" class="alert alert-info mcp-placeholder">
+            Carregue um conteiner na aba Movimentacao para visualizar os dados da unidade.
         </div>
-        <div class="row" style="margin-top:8px;">
-            <div class="col-md-6"><label>Navio / viagem</label><input type="text" id="d_Navio" class="form-control" readonly /></div>
-            <div class="col-md-6"><label>SIGVIG</label><input type="text" id="d_Sigvig" class="form-control" readonly /></div>
-        </div>
-        <div class="table-responsive" style="margin-top:10px;">
-            <table class="table table-bordered" id="tblBL">
-                <thead><tr><th>Lote</th><th>BL</th></tr></thead>
-                <tbody></tbody>
-            </table>
+        <div id="dadosConteudo" style="display:none;">
+            <p class="mcp-subtitle"><strong id="d_IdCntr"></strong> <span id="d_SistemaBadge" class="label label-default"></span></p>
+
+            <div class="row">
+                <div class="col-md-2"><label>EF</label><input type="text" id="d_EF" class="form-control" readonly /></div>
+                <div class="col-md-2"><label>Tipo</label><input type="text" id="d_Tipo" class="form-control" readonly /></div>
+                <div class="col-md-2"><label>Tamanho</label><input type="text" id="d_Tam" class="form-control" readonly /></div>
+                <div class="col-md-2"><label>IMO</label><input type="text" id="d_IMO" class="form-control" readonly /></div>
+                <div class="col-md-2"><label>Gate IN</label><input type="text" id="d_GateIn" class="form-control" readonly /></div>
+                <div class="col-md-2"><label>Yard atual</label><input type="text" id="d_Yard" class="form-control" readonly /></div>
+            </div>
+            <div class="row" style="margin-top:8px;">
+                <div class="col-md-4"><label>Navio / viagem</label><input type="text" id="d_Navio" class="form-control" readonly /></div>
+                <div class="col-md-2"><label>POD</label><input type="text" id="d_POD" class="form-control" readonly /></div>
+                <div class="col-md-2"><label>Bruto</label><input type="text" id="d_Bruto" class="form-control" readonly /></div>
+                <div class="col-md-4"><label>SIGVIG</label><input type="text" id="d_Sigvig" class="form-control" readonly /></div>
+            </div>
+
+            <fieldset class="well well-sm" style="margin-top:12px;">
+                <legend class="text-primary" style="font-size:14px;border:none;margin-bottom:8px;">Dados de entrada</legend>
+                <div class="row">
+                    <div class="col-md-2"><label>ISO</label><input type="text" id="d_ISO" class="form-control" readonly /></div>
+                    <div class="col-md-2"><label>Tara</label><input type="text" id="d_Tara" class="form-control" readonly /></div>
+                    <div class="col-md-2"><label>Max gross</label><input type="text" id="d_MaxGross" class="form-control" readonly /></div>
+                    <div class="col-md-2"><label>GMCI</label><input type="text" id="d_GMCI" class="form-control" readonly /></div>
+                    <div class="col-md-4"><label>Lacres (manifesto)</label><input type="text" id="d_LacresManifesto" class="form-control" readonly /></div>
+                </div>
+                <div class="row" id="d_ReeferRow" style="margin-top:8px;display:none;">
+                    <div class="col-md-4"><label>Setpoint</label><input type="text" id="d_TempSet" class="form-control" readonly /></div>
+                    <div class="col-md-4"><label>Temp. max</label><input type="text" id="d_TempMax" class="form-control" readonly /></div>
+                    <div class="col-md-4"><label>Temp. min</label><input type="text" id="d_TempMin" class="form-control" readonly /></div>
+                </div>
+            </fieldset>
+
+            <h5 style="margin-top:12px;">BLs vinculados</h5>
+            <div class="table-responsive" style="max-height:220px;overflow:auto;">
+                <table class="table table-bordered table-condensed table-striped" id="tblBL">
+                    <thead><tr><th>Lote</th><th>BL</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
         </div>
     </div>
 
     @if (Model.PERMISSOES_AVARIAS.ABA_AVARIAS_HABILITADA)
     {
-        <div role="tabpanel" class="tab-pane" id="tab-av">
-            <div class="row">
-                <div class="col-md-4">
-                    <label>Local</label>
-                    <select id="ddlAvLocal" class="form-control"></select>
-                </div>
-                <div class="col-md-4">
-                    <label>Tipo (multiplo)</label>
-                    <select id="ddlAvTipo" class="form-control" multiple size="6"></select>
-                </div>
-                <div class="col-md-4">
-                    <label style="color:#fff">.</label>
-                    @if (Model.PERMISSOES_AVARIAS.PODE_INCLUIR_AVARIA)
-                    {
-                        <button type="button" id="btnAvIncluir" class="btn btn-primary btn-block">Incluir</button>
-                    }
-                    @if (Model.PERMISSOES_AVARIAS.PODE_EXCLUIR_AVARIA)
-                    {
-                        <button type="button" id="btnAvExcluir" class="btn btn-warning btn-block" style="margin-top:6px;">Excluir selecionada</button>
-                    }
-                    @if (Model.PERMISSOES_AVARIAS.PODE_FINALIZAR_AVARIA)
-                    {
-                        <button type="button" id="btnAvFinalizar" class="btn btn-danger btn-block" style="margin-top:6px;">Finalizar avarias</button>
-                    }
-                </div>
+        <div role="tabpanel" class="tab-pane fade" id="tab-av">
+            <div id="avPlaceholder" class="alert alert-info mcp-placeholder">
+                Carregue um conteiner na aba Movimentacao para registrar ou consultar avarias.
             </div>
-            <div class="table-responsive" style="margin-top:10px;">
-                <table class="table table-bordered" id="tblAvAbertas">
-                    <thead><tr><th>Local</th><th>Tipo</th><th>Autonum</th></tr></thead>
-                    <tbody></tbody>
-                </table>
+            <div id="avConteudo" style="display:none;">
+                <p class="text-muted" id="avCntrTitulo"></p>
+                <div id="avAlertaFinalizada" class="alert alert-warning" style="display:none;">
+                    Ja consta finalizacao do Patio para esta unidade. Inclusao, exclusao e nova finalizacao estao bloqueadas.
+                </div>
+                <div class="row" id="avPainelAcoes">
+                    <div class="col-md-4">
+                        <label>Local</label>
+                        <select id="ddlAvLocal" class="form-control">
+                            <option value="">Selecione</option>
+                        </select>
+                        <p class="help-block" style="margin-top:4px;">Apenas um local por inclusao (legado).</p>
+                    </div>
+                    <div class="col-md-4">
+                        <label>Tipo (multiplo)</label>
+                        <select id="ddlAvTipo" class="form-control" multiple size="6"></select>
+                    </div>
+                    <div class="col-md-4">
+                        <label style="color:#fff">.</label>
+                        @if (Model.PERMISSOES_AVARIAS.PODE_INCLUIR_AVARIA)
+                        {
+                            <button type="button" id="btnAvIncluir" class="btn btn-primary btn-block">Incluir</button>
+                        }
+                        @if (Model.PERMISSOES_AVARIAS.PODE_EXCLUIR_AVARIA)
+                        {
+                            <button type="button" id="btnAvExcluir" class="btn btn-warning btn-block" style="margin-top:6px;">Excluir selecionada</button>
+                        }
+                        @if (Model.PERMISSOES_AVARIAS.PODE_FINALIZAR_AVARIA)
+                        {
+                            <button type="button" id="btnAvFinalizar" class="btn btn-danger btn-block" style="margin-top:6px;">Finalizar avarias</button>
+                        }
+                    </div>
+                </div>
+                <h5 class="mcp-section-heading">Avarias abertas</h5>
+                <p class="text-muted small">Linhas destacadas: avaria apontada pelo operador (nao excluivel).</p>
+                <div class="table-responsive" style="max-height:260px;overflow:auto;">
+                    <table class="table table-bordered table-condensed table-striped" id="tblAvAbertas">
+                        <thead><tr><th>Localizacao</th><th>Tipo</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
             </div>
         </div>
     }
+    </div>
 </div>
 
 <div class="modal fade" id="modalCamera" tabindex="-1">
@@ -235,7 +332,12 @@
         avFinalizar: '@Url.Action("AvariasFinalizar", "MovimentacaoContainerPatio")'
     };
     var mcpPerm = {
-        avarias: @Model.PERMISSOES_AVARIAS.ABA_AVARIAS_HABILITADA.ToString().ToLowerInvariant()
+        avarias: @Model.PERMISSOES_AVARIAS.ABA_AVARIAS_HABILITADA.ToString().ToLowerInvariant(),
+        avIncluir: @Model.PERMISSOES_AVARIAS.PODE_INCLUIR_AVARIA.ToString().ToLowerInvariant(),
+        avExcluir: @Model.PERMISSOES_AVARIAS.PODE_EXCLUIR_AVARIA.ToString().ToLowerInvariant(),
+        avFinalizar: @Model.PERMISSOES_AVARIAS.PODE_FINALIZAR_AVARIA.ToString().ToLowerInvariant()
     };
 </script>
+<script language="JavaScript" type="text/javascript" src="~/Content/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="~/Content/js/movimentacao-container-patio.js"></script>

@@ -137,7 +137,12 @@ namespace Romaneio.Controllers
                 return Json(new { success = false, message = "Sessao caiu" }, JsonRequestBehavior.AllowGet);
 
             var list = _repositorio.ListarAvariasAbertas(autonumCntr);
-            return Json(new { success = true, dados = list }, JsonRequestBehavior.AllowGet);
+            return Json(new
+            {
+                success = true,
+                dados = list,
+                finalizada = _repositorio.AvariasFinalizadas(autonumCntr)
+            }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]

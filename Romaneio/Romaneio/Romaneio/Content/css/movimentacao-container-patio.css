@@ -1,0 +1,157 @@
+/* Movimentacao Container Patio — abas e paineis */
+
+.mcp-tabs-wrapper {
+    margin-top: 8px;
+}
+
+.mcp-nav-tabs.nav-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 12px;
+    padding: 0;
+    margin: 0 0 18px 0;
+    list-style: none;
+    border: none;
+}
+
+.mcp-nav-tabs > li {
+    float: none;
+    margin: 0;
+}
+
+.mcp-nav-tabs > li > a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 22px;
+    margin: 0;
+    border: 1px solid #dde3ea;
+    border-radius: 10px;
+    background: #f4f6f9;
+    color: #4a5568;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    line-height: 1.3;
+    text-decoration: none;
+    transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+.mcp-nav-tabs > li > a .glyphicon {
+    font-size: 14px;
+    opacity: 0.75;
+    transition: opacity 0.2s ease;
+}
+
+.mcp-nav-tabs > li > a:hover,
+.mcp-nav-tabs > li > a:focus {
+    background: #fff;
+    color: #138496;
+    border-color: #b8dfe8;
+    box-shadow: 0 3px 12px rgba(23, 162, 184, 0.15);
+    outline: none;
+}
+
+.mcp-nav-tabs > li > a:hover .glyphicon,
+.mcp-nav-tabs > li > a:focus .glyphicon {
+    opacity: 1;
+}
+
+.mcp-nav-tabs > li.active > a,
+.mcp-nav-tabs > li.active > a:hover,
+.mcp-nav-tabs > li.active > a:focus {
+    background: linear-gradient(145deg, #1ab0c9 0%, #138496 100%);
+    color: #fff;
+    border-color: #138496;
+    box-shadow: 0 6px 18px rgba(19, 132, 150, 0.35);
+    transform: translateY(-1px);
+}
+
+.mcp-nav-tabs > li.active > a .glyphicon {
+    opacity: 1;
+}
+
+.mcp-tab-content {
+    padding: 24px 26px;
+    border: 1px solid #e4e9ef;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 4px 24px rgba(15, 23, 42, 0.06);
+}
+
+/* Bootstrap 4: .fade exige .show (BS3 usava .in) */
+.mcp-tab-content > .tab-pane.fade.active.show,
+.mcp-tab-content > .tab-pane.fade.active.in {
+    opacity: 1;
+}
+
+.mcp-tab-content > .tab-pane.active.show {
+    animation: mcpTabFadeIn 0.25s ease;
+}
+
+@keyframes mcpTabFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.mcp-section-heading {
+    font-size: 15px;
+    font-weight: 600;
+    color: #2f3640;
+    margin: 22px 0 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #eef2f6;
+}
+
+.mcp-section-heading:first-child {
+    margin-top: 0;
+}
+
+.mcp-subtitle {
+    color: #64748b;
+    font-size: 13px;
+    margin-bottom: 16px;
+}
+
+.mcp-placeholder {
+    border: 1px dashed #cbd5e1;
+    border-radius: 10px;
+    background: #f8fafc;
+    color: #475569;
+    padding: 18px 20px;
+    margin: 0;
+}
+
+.mcp-tab-content .table thead th {
+    background: #f1f5f9;
+    color: #334155;
+    font-weight: 600;
+    font-size: 12px;
+    border-bottom-width: 2px;
+}
+
+@media (max-width: 768px) {
+    .mcp-nav-tabs {
+        gap: 8px;
+    }
+
+    .mcp-nav-tabs > li > a {
+        padding: 10px 14px;
+        font-size: 12px;
+    }
+
+    .mcp-nav-tabs > li > a span {
+        display: none;
+    }
+
+    .mcp-tab-content {
+        padding: 16px;
+    }
+}
