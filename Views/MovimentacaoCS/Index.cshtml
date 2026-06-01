@@ -217,6 +217,26 @@
         CarregaDadosItem();
     });
 
+    $(function () {
+        selecionarItemUnicoSeAplicavel();
+    });
+
+    function selecionarItemUnicoSeAplicavel() {
+        var $ddl = $('#ddlItem');
+        var $options = $ddl.find('option').filter(function () {
+            return this.value !== '';
+        });
+        if ($options.length !== 1) {
+            return;
+        }
+        var valorUnico = $options.first().val();
+        if ($ddl.val() === valorUnico) {
+            return;
+        }
+        $ddl.val(valorUnico);
+        CarregaDadosItem();
+    }
+
     function CarregaDadosMarcante() {
         var Marcante = document.getElementById('txtMarcante').value.trim();
         if (!Marcante) {

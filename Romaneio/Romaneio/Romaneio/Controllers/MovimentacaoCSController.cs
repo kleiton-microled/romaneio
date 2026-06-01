@@ -49,6 +49,7 @@ namespace Romaneio.Controllers
                     view.LOCAL = _MovimentacaoCSRepositorio.ConsultarArmazem(DadosMarcante.ARMAZEM_REC);
                     view.ARMAZEM = DadosMarcante.ARMAZEM_REC;
                     view.LISTA_ITENS = _MovimentacaoCSRepositorio.ConsultarItens(DadosMarcante.LOTE_IMPRESSO, MARCANTE, DadosMarcante.AUTONUM_CS_YARD).ToList();
+                    AplicarSelecaoItemUnico(view);
 
                     Dados = _MovimentacaoCSRepositorio.ConsultarLote(DadosMarcante.LOTE_IMPRESSO, MARCANTE);
                     if (Dados != null)
@@ -94,6 +95,35 @@ namespace Romaneio.Controllers
             return View(view);
         }
 
+        private void AplicarSelecaoItemUnico(MovimentacaoCSViewModel view)
+        {
+            if (view.LISTA_ITENS == null || view.LISTA_ITENS.Count != 1)
+                return;
+
+            var unicoItem = view.LISTA_ITENS[0];
+            if (string.IsNullOrEmpty(unicoItem.ID_GRAVACAO))
+                return;
+
+            view.ITEM = unicoItem.ID_GRAVACAO;
+
+            var dadosItem = _MovimentacaoCSRepositorio.CarregaDadosItem(unicoItem.ID_GRAVACAO);
+            if (dadosItem == null)
+                return;
+
+            if (dadosItem.QTD_EMBALAGEM > 0)
+                view.QTD_EMBALAGEM = dadosItem.QTD_EMBALAGEM;
+
+            if (!string.IsNullOrWhiteSpace(dadosItem.LOCAL))
+                view.LOCAL = dadosItem.LOCAL;
+
+            if (!string.IsNullOrWhiteSpace(dadosItem.EMBALAGEM) && view.TIPOS_EMBALAGENS != null)
+            {
+                var embalagem = view.TIPOS_EMBALAGENS.FirstOrDefault(e =>
+                    string.Equals(e.DESCRICAO?.Trim(), dadosItem.EMBALAGEM.Trim(), StringComparison.OrdinalIgnoreCase));
+                if (embalagem != null)
+                    view.EMBALAGEM = embalagem.AUTONUM.ToString();
+            }
+        }
 
         [HttpPost]
         public ActionResult SalvarDados(MovimentacaoCSViewModel DadosEntrada)
