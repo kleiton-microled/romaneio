@@ -28,36 +28,20 @@ namespace Romaneio.Repositorios
         {
             request = request ?? new ConsultaLiberacaoFiltroRequest();
             var protocoloNumerico = SomenteNumeros(request.PROTOCOLO);
-            var placa = (request.PLACA ?? string.Empty).Trim().ToUpperInvariant();
-            var cntr = (request.CNTR ?? string.Empty).Trim().ToUpperInvariant();
-            var bl = (request.BL ?? string.Empty).Trim();
-
-            if (string.IsNullOrWhiteSpace(protocoloNumerico) && string.IsNullOrWhiteSpace(placa) && string.IsNullOrWhiteSpace(bl))
-            {
-                return Falha("Informe o BL, placa ou protocolo");
-            }
 
             if (string.IsNullOrWhiteSpace(protocoloNumerico))
             {
-                if (string.IsNullOrWhiteSpace(placa))
-                {
-                    return Falha("Informe a placa");
-                }
-
-                if (string.IsNullOrWhiteSpace(cntr) && string.IsNullOrWhiteSpace(bl))
-                {
-                    return Falha("Informe o conteiner ou o BL");
-                }
+                return Falha("Informe o protocolo");
             }
 
             var protocoloFormatado = FormatarProtocolo(protocoloNumerico);
 
             using (SqlConnection con = new SqlConnection(Config.StringConexao()))
             {
-                var dados = ConsultarAgendaPrincipal(con, protocoloFormatado, placa, bl);
+                var dados = ConsultarAgendaPrincipal(con, protocoloFormatado);
                 if (dados == null)
                 {
-                    dados = ConsultarFallbackCntr(con, protocoloFormatado, placa, cntr, bl);
+                    dados = ConsultarFallbackCntr(con, protocoloFormatado);
                 }
 
                 if (dados == null)
@@ -157,11 +141,75 @@ namespace Romaneio.Repositorios
                             return new RegistrarLiberacaoResultDto { SUCESSO = false, MENSAGEM = "Atencao, Existe Carga sem Liberacao GLME ." };
                         }
 
+                        if (OrdemJaRegistrada(con, request.ORDEM_CARREGAMENTO, transaction))
+                        {
+                            transaction.Rollback();
+                            return new RegistrarLiberacaoResultDto { SUCESSO = false, MENSAGEM = "Ordem de carregamento ja registrada." };
+                        }
+
+                        var validacaoPrecalc = ValidarPreCalculo(con, request.AUTONUM_LOTE, transaction);
+                        if (!validacaoPrecalc.SUCESSO)
+                        {
+                            transaction.Rollback();
+                            return validacaoPrecalc;
+                        }
+
+                        var validacaoFreeTime = ValidarFreeTime(con, request.AUTONUM_LOTE, transaction);
+                        if (!validacaoFreeTime.SUCESSO)
+                        {
+                            transaction.Rollback();
+                            return validacaoFreeTime;
+                        }
+
                         var flagPatio = ConsultaFlagLiberacaoPatio(con, request.AUTONUM_LOTE, transaction);
                         if (!flagPatio)
                         {
                             transaction.Rollback();
                             return new RegistrarLiberacaoResultDto { SUCESSO = false, MENSAGEM = "Patio parametrizado para nao realizar consultas!" };
+                        }
+
+                        var validacaoPrecalcPosPatio = ValidarPreCalculoPosPatio(con, request.AUTONUM_LOTE, transaction);
+                        if (!validacaoPrecalcPosPatio.SUCESSO)
+                        {
+                            transaction.Rollback();
+                            return validacaoPrecalcPosPatio;
+                        }
+
+                        var reservaAgendamento = ObterReservaAgendamento(con, request.ORDEM_CARREGAMENTO, transaction);
+                        if (reservaAgendamento != null)
+                        {
+                            con.Execute(
+                                @"UPDATE SGIPA..TB_ORDEM_CARREGAMENTO
+                                  SET USUARIO_REGISTRO_CAM = @USUARIO,
+                                      AUTONUM_GD_PERIODO = @AUTONUM_GD_RESERVA
+                                  WHERE AUTONUM = @ORDEM",
+                                new
+                                {
+                                    USUARIO = usuarioId,
+                                    AUTONUM_GD_RESERVA = reservaAgendamento.AUTONUM_GD_RESERVA,
+                                    ORDEM = request.ORDEM_CARREGAMENTO
+                                },
+                                transaction,
+                                Config.QueryTimeoutInSeconds());
+                        }
+
+                        var validacaoJanela = ValidarJanela(
+                            reservaAgendamento,
+                            usuarioId,
+                            request.CONFIRMAR_FORA_JANELA,
+                            con,
+                            transaction);
+
+                        if (!validacaoJanela.SUCESSO)
+                        {
+                            transaction.Rollback();
+                            return new RegistrarLiberacaoResultDto
+                            {
+                                SUCESSO = false,
+                                MENSAGEM = validacaoJanela.MENSAGEM,
+                                REQUER_CONFIRMACAO_JANELA = validacaoJanela.REQUER_CONFIRMACAO_JANELA,
+                                MENSAGEM_CONFIRMACAO_JANELA = validacaoJanela.MENSAGEM_CONFIRMACAO_JANELA
+                            };
                         }
 
                         if (!string.IsNullOrWhiteSpace(request.PLACA_CAVALO) && !string.IsNullOrWhiteSpace(request.PLACA_CARRETA))
@@ -177,6 +225,17 @@ namespace Romaneio.Repositorios
                                     PLACA_CAVALO = request.PLACA_CAVALO,
                                     PLACA_CARRETA = request.PLACA_CARRETA
                                 },
+                                transaction,
+                                Config.QueryTimeoutInSeconds());
+                        }
+
+                        if (validacaoJanela.MARCAR_FORA_PERIODO)
+                        {
+                            con.Execute(
+                                @"UPDATE SGIPA..TB_ORDEM_CARREGAMENTO
+                                  SET FLAG_FORA_PERIODO = 1
+                                  WHERE AUTONUM = @ORDEM",
+                                new { ORDEM = request.ORDEM_CARREGAMENTO },
                                 transaction,
                                 Config.QueryTimeoutInSeconds());
                         }
@@ -386,9 +445,271 @@ namespace Romaneio.Repositorios
             return con.QuerySingleOrDefault<int>(sql, new { LOTE = lote }, transaction, Config.QueryTimeoutInSeconds()) > 0;
         }
 
-        private static AgendaConsultaDto ConsultarAgendaPrincipal(SqlConnection con, string protocolo, string placa, string bl)
+        private static bool OrdemJaRegistrada(SqlConnection con, int ordem, IDbTransaction transaction = null)
         {
-            var sql = @"SELECT TOP 1
+            const string sql = @"SELECT DATA_ORDEM
+                                 FROM SGIPA..TB_ORDEM_CARREGAMENTO
+                                 WHERE AUTONUM = @ORDEM";
+            var dataOrdem = con.QuerySingleOrDefault<DateTime?>(sql, new { ORDEM = ordem }, transaction, Config.QueryTimeoutInSeconds());
+            return dataOrdem.HasValue;
+        }
+
+        private static RegistrarLiberacaoResultDto ValidarPreCalculo(SqlConnection con, int lote, IDbTransaction transaction = null)
+        {
+            if (VerificaFormaPagamento(con, lote, transaction) == 3)
+            {
+                return Ok();
+            }
+
+            if (VerificaPendenteVista(con, lote, transaction) > 0)
+            {
+                return FalhaRegistro("Existe Pre Calculo Iniciado SEM PAGAMENTO - Pagamento a Vista");
+            }
+
+            return Ok();
+        }
+
+        private static RegistrarLiberacaoResultDto ValidarPreCalculoPosPatio(SqlConnection con, int lote, IDbTransaction transaction = null)
+        {
+            if (VerificaFormaPagamento(con, lote, transaction) == 3)
+            {
+                return Ok();
+            }
+
+            if (VerificaPendenteVista(con, lote, transaction) > 0)
+            {
+                return FalhaRegistro("Existe Pre Calculo Iniciado - Pagamento a Vista");
+            }
+
+            return Ok();
+        }
+
+        private static RegistrarLiberacaoResultDto ValidarFreeTime(SqlConnection con, int lote, IDbTransaction transaction = null)
+        {
+            if (VerificaFormaPagamento(con, lote, transaction) == 3)
+            {
+                return Ok();
+            }
+
+            const string sqlCount = @"SELECT COUNT(1)
+                                      FROM SGIPA..TB_GR_BL
+                                      WHERE BL = @LOTE
+                                        AND STATUS_GR IN ('IM','GE')";
+
+            var possuiGr = con.QuerySingleOrDefault<int>(sqlCount, new { LOTE = lote }, transaction, Config.QueryTimeoutInSeconds()) > 0;
+            if (!possuiGr)
+            {
+                return Ok();
+            }
+
+            const string sql = @"SELECT MAX(ISNULL(DT_BASE_CALCULO_REEFER, VALIDADE_GR)) AS FREE_TIME
+                                 FROM SGIPA..TB_GR_BL
+                                 WHERE BL = @LOTE
+                                   AND STATUS_GR IN ('IM','GE')";
+
+            var freeTime = con.QueryFirstOrDefault<DateTime?>(sql, new { LOTE = lote }, transaction, Config.QueryTimeoutInSeconds());
+            if (!freeTime.HasValue)
+            {
+                return FalhaRegistro("Atencao: Nao Consta Data de Free-Time. Por Favor, Verifique Antes De Prosseguir.");
+            }
+
+            if (DateTime.Today > freeTime.Value.Date)
+            {
+                return FalhaRegistro("Data de Registro e Maior do Que a Data de Free-Time. Por Favor, Verifique Antes De Prosseguir.");
+            }
+
+            return Ok();
+        }
+
+        private static ValidacaoJanelaResultado ValidarJanela(
+            ReservaAgendamentoDto reserva,
+            int usuarioId,
+            bool confirmarForaJanela,
+            SqlConnection con,
+            IDbTransaction transaction = null)
+        {
+            if (reserva == null)
+            {
+                return new ValidacaoJanelaResultado { SUCESSO = true };
+            }
+
+            var janelaHoras = reserva.JANELA ?? 0;
+            var foraDaJanela = DateDiffHoras(DateTime.Now, reserva.PERIODO_INICIAL) > janelaHoras
+                || DateDiffHoras(reserva.PERIODO_FINAL, DateTime.Now) > janelaHoras;
+
+            if (!foraDaJanela)
+            {
+                return new ValidacaoJanelaResultado { SUCESSO = true };
+            }
+
+            if (!confirmarForaJanela)
+            {
+                var periodoInicial = reserva.PERIODO_INICIAL.ToString("dd/MM/yyyy HH:mm");
+                var periodoFinal = reserva.PERIODO_FINAL.ToString("dd/MM/yyyy HH:mm");
+                return new ValidacaoJanelaResultado
+                {
+                    SUCESSO = false,
+                    REQUER_CONFIRMACAO_JANELA = true,
+                    MENSAGEM_CONFIRMACAO_JANELA = $"Atencao !! Periodo de Agendamento fora da janela estabelecida => Janela {janelaHoras} hora(s), Periodo Agendamento {periodoInicial} - {periodoFinal}. Deseja continuar?"
+                };
+            }
+
+            if (!UsuarioPodeLiberarForaJanela(con, usuarioId, transaction))
+            {
+                return new ValidacaoJanelaResultado
+                {
+                    SUCESSO = false,
+                    MENSAGEM = "Atencao !! Usuario nao tem permissao para Liberar o registro de saida"
+                };
+            }
+
+            return new ValidacaoJanelaResultado
+            {
+                SUCESSO = true,
+                MARCAR_FORA_PERIODO = true
+            };
+        }
+
+        private static ReservaAgendamentoDto ObterReservaAgendamento(SqlConnection con, int ordem, IDbTransaction transaction = null)
+        {
+            const string sqlCntr = @"SELECT TOP 1
+                                        GD.AUTONUM_GD_RESERVA,
+                                        GD.PERIODO_INICIAL,
+                                        GD.PERIODO_FINAL,
+                                        GD.JANELA
+                                     FROM SGIPA..TB_REGISTRO_SAIDA_CNTR A
+                                     INNER JOIN SGIPA..TB_CNTR_BL B ON B.AUTONUM = A.CNTR
+                                     INNER JOIN OPERADOR..TB_GD_RESERVA GD ON GD.AUTONUM_GD_RESERVA = B.AUTONUM_GD_RESERVA
+                                     WHERE A.ORDEM_CARREG = @ORDEM";
+
+            var reserva = con.QueryFirstOrDefault<ReservaAgendamentoDto>(sqlCntr, new { ORDEM = ordem }, transaction, Config.QueryTimeoutInSeconds());
+            if (reserva != null)
+            {
+                return reserva;
+            }
+
+            const string sqlCs = @"SELECT TOP 1
+                                      GD.AUTONUM_GD_RESERVA,
+                                      GD.PERIODO_INICIAL,
+                                      GD.PERIODO_FINAL,
+                                      GD.JANELA
+                                   FROM SGIPA..TB_ORDEM_CARREGAMENTO OC
+                                   INNER JOIN SGIPA..TB_AG_CS AG ON AG.AUTONUM = OC.ID_AGENDAMENTO
+                                   INNER JOIN OPERADOR..TB_GD_RESERVA GD ON GD.AUTONUM_GD_RESERVA = AG.AUTONUM_GD_RESERVA
+                                   WHERE OC.AUTONUM = @ORDEM";
+
+            return con.QueryFirstOrDefault<ReservaAgendamentoDto>(sqlCs, new { ORDEM = ordem }, transaction, Config.QueryTimeoutInSeconds());
+        }
+
+        private static int VerificaFormaPagamento(SqlConnection con, int lote, IDbTransaction transaction = null)
+        {
+            const string sqlLista = @"SELECT ISNULL(FORMA_PAGAMENTO, 0)
+                                      FROM TB_LISTAS_PRECOS
+                                      WHERE AUTONUM = (SELECT ISNULL(AUTONUM_LISTA, 0) FROM SGIPA..TB_BL WHERE AUTONUM = @LOTE)";
+
+            var formaPagamento = con.QuerySingleOrDefault<int>(sqlLista, new { LOTE = lote }, transaction, Config.QueryTimeoutInSeconds());
+
+            const string sqlFlags = @"SELECT B.FLAG_COND_IMPORTADOR,
+                                             C.FLAG_COND_DESPACHANTE,
+                                             D.FLAG_COND_INDICADOR,
+                                             D.FLAG_COND_NVOCC,
+                                             B.FLAG_IMPORTADOR,
+                                             C.FLAG_DESPACHANTE,
+                                             D.FLAG_CAPTADOR,
+                                             D.FLAG_NVOCC
+                                      FROM SGIPA..TB_BL A
+                                      LEFT JOIN SGIPA..TB_CAD_PARCEIROS B ON A.IMPORTADOR = B.AUTONUM
+                                      LEFT JOIN SGIPA..TB_CAD_PARCEIROS C ON A.DESPACHANTE = C.AUTONUM
+                                      LEFT JOIN SGIPA..TB_CAD_PARCEIROS D ON A.CAPTADOR = D.AUTONUM
+                                      WHERE A.AUTONUM = @LOTE";
+
+            var flags = con.QueryFirstOrDefault(sqlFlags, new { LOTE = lote }, transaction, Config.QueryTimeoutInSeconds());
+            if (flags != null)
+            {
+                if (flags.FLAG_IMPORTADOR == 1 && flags.FLAG_COND_IMPORTADOR != 0)
+                {
+                    formaPagamento = flags.FLAG_COND_IMPORTADOR;
+                }
+                else if (flags.FLAG_DESPACHANTE == 1 && flags.FLAG_COND_DESPACHANTE != 0)
+                {
+                    formaPagamento = flags.FLAG_COND_DESPACHANTE;
+                }
+                else if (flags.FLAG_NVOCC == 1 && flags.FLAG_COND_NVOCC != 0)
+                {
+                    formaPagamento = flags.FLAG_COND_NVOCC;
+                }
+                else if (flags.FLAG_CAPTADOR == 1 && flags.FLAG_COND_INDICADOR != 0)
+                {
+                    formaPagamento = flags.FLAG_COND_INDICADOR;
+                }
+            }
+
+            const string sqlGr = @"SELECT TOP 1 FORMA_PAGAMENTO
+                                   FROM SGIPA..TB_GR_BL
+                                   WHERE BL = @LOTE
+                                     AND FORMA_PAGAMENTO = 2
+                                     AND STATUS_GR IN ('IM','GE')
+                                   ORDER BY AUTONUM DESC";
+
+            var formaGr = con.QueryFirstOrDefault<int?>(sqlGr, new { LOTE = lote }, transaction, Config.QueryTimeoutInSeconds());
+            if (formaGr.HasValue)
+            {
+                formaPagamento = formaGr.Value;
+            }
+
+            return formaPagamento;
+        }
+
+        private static int VerificaPendenteVista(SqlConnection con, int lote, IDbTransaction transaction = null)
+        {
+            const string sqlBrascenter = @"SELECT ISNULL(FLAG_BRASCENTER, 0) FROM SGIPA..TB_BL WHERE AUTONUM = @LOTE";
+            if (con.QuerySingleOrDefault<int>(sqlBrascenter, new { LOTE = lote }, transaction, Config.QueryTimeoutInSeconds()) == 1)
+            {
+                return 0;
+            }
+
+            const string sql = @"SELECT COUNT(1)
+                                 FROM SGIPA..TB_SERVICOS_FATURADOS A
+                                 INNER JOIN (
+                                     SELECT BL
+                                     FROM SGIPA..TB_GR_PRE_CALCULO
+                                     WHERE FORMAPAGAMENTO = 2
+                                     GROUP BY BL
+                                 ) B ON A.BL = B.BL
+                                 WHERE A.BL = @LOTE
+                                   AND ISNULL(A.SEQ_GR, 0) = 0";
+
+            return con.QuerySingleOrDefault<int>(sql, new { LOTE = lote }, transaction, Config.QueryTimeoutInSeconds());
+        }
+
+        private static bool UsuarioPodeLiberarForaJanela(SqlConnection con, int usuarioId, IDbTransaction transaction = null)
+        {
+            const string sql = @"SELECT NOME
+                                 FROM SGIPA..TB_CAD_USUARIOS
+                                 WHERE ISNULL(FLAG_LIBERA_JANELA, 0) = 0
+                                   AND AUTONUM = @USUARIO";
+
+            return con.QueryFirstOrDefault<string>(sql, new { USUARIO = usuarioId }, transaction, Config.QueryTimeoutInSeconds()) != null;
+        }
+
+        private static int DateDiffHoras(DateTime inicio, DateTime fim)
+        {
+            return (int)Math.Floor((fim - inicio).TotalHours);
+        }
+
+        private static RegistrarLiberacaoResultDto Ok()
+        {
+            return new RegistrarLiberacaoResultDto { SUCESSO = true };
+        }
+
+        private static RegistrarLiberacaoResultDto FalhaRegistro(string mensagem)
+        {
+            return new RegistrarLiberacaoResultDto { SUCESSO = false, MENSAGEM = mensagem };
+        }
+
+        private static AgendaConsultaDto ConsultarAgendaPrincipal(SqlConnection con, string protocolo)
+        {
+            const string sql = @"SELECT TOP 1
                             AG.PROTOCOLO,
                             AG.PERIODO,
                             AG.LOTE,
@@ -411,32 +732,13 @@ namespace Romaneio.Repositorios
                         INNER JOIN OPERADOR..TB_CAD_TRANSPORTADORAS C ON AG.COD_TRANSPORTADORA = C.AUTONUM
                         INNER JOIN SGIPA..TB_BL BL ON AG.LOTE = BL.AUTONUM
                         LEFT JOIN OPERADOR..TB_MOTORISTAS B ON AG.CNH = B.CNH
-                        WHERE 1=1";
+                        WHERE AG.PROTOCOLO = @PROTOCOLO
+                        ORDER BY AG.PERIODO DESC";
 
-            var parametros = new DynamicParameters();
-            if (!string.IsNullOrWhiteSpace(protocolo))
-            {
-                sql += " AND AG.PROTOCOLO = @PROTOCOLO";
-                parametros.Add("PROTOCOLO", protocolo);
-            }
-
-            if (!string.IsNullOrWhiteSpace(placa))
-            {
-                sql += " AND AG.PLACA_CAVALO = @PLACA";
-                parametros.Add("PLACA", placa);
-            }
-
-            if (!string.IsNullOrWhiteSpace(bl))
-            {
-                sql += " AND BL.NUM_DOCUMENTO LIKE '%' + @BL + '%'";
-                parametros.Add("BL", bl);
-            }
-
-            sql += " ORDER BY AG.PERIODO DESC";
-            return con.QueryFirstOrDefault<AgendaConsultaDto>(sql, parametros, commandTimeout: Config.QueryTimeoutInSeconds());
+            return con.QueryFirstOrDefault<AgendaConsultaDto>(sql, new { PROTOCOLO = protocolo }, commandTimeout: Config.QueryTimeoutInSeconds());
         }
 
-        private static AgendaConsultaDto ConsultarFallbackCntr(SqlConnection con, string protocolo, string placa, string cntr, string bl)
+        private static AgendaConsultaDto ConsultarFallbackCntr(SqlConnection con, string protocolo)
         {
             var sql = @"SELECT TOP 1
                             CONVERT(VARCHAR, C.NUM_PROTOCOLO) + '/' + CONVERT(VARCHAR, C.ANO_PROTOCOLO) AS PROTOCOLO,
@@ -466,37 +768,33 @@ namespace Romaneio.Repositorios
                         WHERE BL.FLAG_ATIVO = 1";
 
             var parametros = new DynamicParameters();
-            if (!string.IsNullOrWhiteSpace(protocolo))
+            var partes = protocolo.Split('/');
+            if (partes.Length == 2)
             {
-                var partes = protocolo.Split('/');
-                if (partes.Length == 2)
-                {
-                    sql += " AND C.NUM_PROTOCOLO = @NUM_PROTOCOLO AND C.ANO_PROTOCOLO = @ANO_PROTOCOLO";
-                    parametros.Add("NUM_PROTOCOLO", Convert.ToInt32(partes[0]));
-                    parametros.Add("ANO_PROTOCOLO", Convert.ToInt32(partes[1]));
-                }
-            }
-
-            if (!string.IsNullOrWhiteSpace(placa))
-            {
-                sql += " AND OC.PLACA_C = @PLACA";
-                parametros.Add("PLACA", placa);
-            }
-
-            if (!string.IsNullOrWhiteSpace(cntr))
-            {
-                sql += " AND SUBSTRING(C.ID_CONTEINER,5,8) = @CNTR";
-                parametros.Add("CNTR", cntr.Replace("-", string.Empty));
-            }
-
-            if (!string.IsNullOrWhiteSpace(bl))
-            {
-                sql += " AND BL.NUM_DOCUMENTO LIKE '%' + @BL + '%'";
-                parametros.Add("BL", bl);
+                sql += " AND C.NUM_PROTOCOLO = @NUM_PROTOCOLO AND C.ANO_PROTOCOLO = @ANO_PROTOCOLO";
+                parametros.Add("NUM_PROTOCOLO", Convert.ToInt32(partes[0]));
+                parametros.Add("ANO_PROTOCOLO", Convert.ToInt32(partes[1]));
             }
 
             sql += " ORDER BY GD.PERIODO_INICIAL DESC";
             return con.QueryFirstOrDefault<AgendaConsultaDto>(sql, parametros, commandTimeout: Config.QueryTimeoutInSeconds());
+        }
+
+        private class ValidacaoJanelaResultado
+        {
+            public bool SUCESSO { get; set; }
+            public string MENSAGEM { get; set; }
+            public bool REQUER_CONFIRMACAO_JANELA { get; set; }
+            public string MENSAGEM_CONFIRMACAO_JANELA { get; set; }
+            public bool MARCAR_FORA_PERIODO { get; set; }
+        }
+
+        private class ReservaAgendamentoDto
+        {
+            public int AUTONUM_GD_RESERVA { get; set; }
+            public DateTime PERIODO_INICIAL { get; set; }
+            public DateTime PERIODO_FINAL { get; set; }
+            public int? JANELA { get; set; }
         }
 
         private class AgendaConsultaDto

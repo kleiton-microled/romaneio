@@ -62,17 +62,23 @@
         window.Swal.close();
     }
 
+    function aplicarEstadoFiltros() {
+        $("#txtProtocolo").prop("disabled", false);
+        $("#txtPlaca,#txtCntr,#txtBlFiltro").prop("disabled", true).val("");
+    }
+
     function limparTela() {
         limparAlerta();
         estado.dados = null;
-        $("#txtProtocolo,#txtPlaca,#txtCntr,#txtBlFiltro").val("");
+        $("#txtProtocolo").val("");
         $("#txtPeriodo,#txtLote,#txtDocumento,#txtTransportadora,#txtMotorista,#txtPlacas,#txtLocalizacao,#txtSiscarga,#txtSefaz,#txtCpfMot,#txtProtocoloFormatado").val("");
-        $("#ddlTipoVeiculo").val("0");
+        $("#ddlTipoVeiculo").val("0").prop("disabled", true);
         $("#tblCargas tbody").empty();
         $("#lstSimultaneos").empty();
         $("#badgeBloqueioBl,#badgeBloqueioCntr,#badgeGlme").hide();
         $("#btnRegistrar,#btnDocumentos").prop("disabled", true);
-        $("#txtPlaca").focus();
+        aplicarEstadoFiltros();
+        $("#txtProtocolo").focus();
     }
 
     function render(dados) {
@@ -88,7 +94,7 @@
         $("#txtSefaz").val(dados.STATUS_SEFAZ || "");
         $("#txtCpfMot").val(dados.CPF_MOTORISTA || "");
         $("#txtProtocoloFormatado").val(dados.PROTOCOLO || "");
-        $("#ddlTipoVeiculo").val((dados.TIPO_CAMINHAO || 0).toString());
+        $("#ddlTipoVeiculo").val((dados.TIPO_CAMINHAO || 0).toString()).prop("disabled", !dados.PODE_REGISTRAR);
 
         var tbody = $("#tblCargas tbody");
         tbody.empty();
@@ -111,6 +117,13 @@
     }
 
     function filtrar() {
+        var protocolo = ($("#txtProtocolo").val() || "").trim();
+        if (!protocolo) {
+            alerta("Informe o protocolo", false);
+            $("#txtProtocolo").focus();
+            return;
+        }
+
         limparAlerta();
         mostrarLoadingFiltro();
 
@@ -118,10 +131,7 @@
             url: urls.filtrar,
             type: "POST",
             data: {
-                PROTOCOLO: $("#txtProtocolo").val(),
-                PLACA: $("#txtPlaca").val(),
-                CNTR: $("#txtCntr").val(),
-                BL: $("#txtBlFiltro").val()
+                PROTOCOLO: protocolo
             },
             success: function (res) {
                 if (!res.success) {
@@ -142,14 +152,7 @@
         });
     }
 
-    function registrar() {
-        if (!estado.dados) {
-            alerta("Carga nao selecionada", false);
-            return;
-        }
-
-        limparAlerta();
-        mostrarLoadingRegistro();
+    function enviarRegistro(confirmarForaJanela, callback) {
         var placas = ($("#txtPlacas").val() || "").split("-");
         var placaCavalo = (placas[0] || "").trim();
         var placaCarreta = (placas[1] || "").trim();
@@ -165,9 +168,36 @@
                 TIPO_CAMINHAO: $("#ddlTipoVeiculo").val(),
                 PLACA_CAVALO: placaCavalo,
                 PLACA_CARRETA: placaCarreta,
-                CPF_MOTORISTA: $("#txtCpfMot").val()
+                CPF_MOTORISTA: $("#txtCpfMot").val(),
+                CONFIRMAR_FORA_JANELA: !!confirmarForaJanela
             },
             success: function (res) {
+                if (res.requerConfirmacaoJanela) {
+                    esconderLoadingRegistro();
+                    if (!window.Swal || typeof window.Swal.fire !== "function") {
+                        if (window.confirm(res.mensagemConfirmacaoJanela || "Periodo fora da janela. Deseja continuar?")) {
+                            mostrarLoadingRegistro();
+                            enviarRegistro(true, callback);
+                        }
+                        return;
+                    }
+
+                    window.Swal.fire({
+                        title: "Registro de Saida",
+                        text: res.mensagemConfirmacaoJanela,
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonText: "Sim",
+                        cancelButtonText: "Nao"
+                    }).then(function (result) {
+                        if (result.isConfirmed) {
+                            mostrarLoadingRegistro();
+                            enviarRegistro(true, callback);
+                        }
+                    });
+                    return;
+                }
+
                 if (!res.success) {
                     alerta(res.message || "Nao foi possivel registrar a saida da carga!", false);
                     return;
@@ -180,9 +210,22 @@
                 alerta("Erro ao registrar a saida da carga!", false);
             },
             complete: function () {
-                esconderLoadingRegistro();
+                if (typeof callback === "function") {
+                    callback();
+                }
             }
         });
+    }
+
+    function registrar() {
+        if (!estado.dados) {
+            alerta("Carga nao selecionada", false);
+            return;
+        }
+
+        limparAlerta();
+        mostrarLoadingRegistro();
+        enviarRegistro(false, esconderLoadingRegistro);
     }
 
     function abrirDocumentos() {
@@ -199,11 +242,12 @@
         $("#txtProtocolo").on("input", function () {
             this.value = this.value.replace(/[^\d/]/g, "").substring(0, 11);
         });
-        $("#txtPlaca").on("input", function () {
-            this.value = this.value.toUpperCase().substring(0, 8);
-        });
-        $("#txtCntr").on("input", function () {
-            this.value = this.value.toUpperCase().substring(0, 8);
+
+        $("#txtProtocolo").on("keydown", function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                filtrar();
+            }
         });
 
         $(document).on("keydown", function (event) {
