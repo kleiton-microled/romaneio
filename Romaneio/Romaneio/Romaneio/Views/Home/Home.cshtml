@@ -63,16 +63,141 @@
         </button>
     </div>
 
+    <div class="col-md-2 link menu-item" id="divAssociacaoMarcantes">
+        <button type="button" class="menu-card">
+            <div class="icon">
+                <i class="fa fa-link"></i>
+            </div>
+
+            <div class="title">
+                Associacao de Marcantes
+            </div>
+
+            <div class="action">
+                <i class="fa fa-sign-in-alt"></i> Acessar
+            </div>
+        </button>
+    </div>
+
+    <div class="col-md-2 link menu-item" id="divManutencaoMarcantesArmazem">
+        <button type="button" class="menu-card">
+            <div class="icon">
+                <i class="fa fa-warehouse"></i>
+            </div>
+
+            <div class="title">
+                Manutencao Marcantes Armazem
+            </div>
+
+            <div class="action">
+                <i class="fa fa-sign-in-alt"></i> Acessar
+            </div>
+        </button>
+    </div>
+
+    <div class="col-md-2 link menu-item" id="divConsultaLiberacaoCarregamento">
+        <button type="button" class="menu-card">
+            <div class="icon">
+                <i class="fa fa-check-square"></i>
+            </div>
+
+            <div class="title">
+                Consulta Lib. Carregamento
+            </div>
+
+            <div class="action">
+                <i class="fa fa-sign-in-alt"></i> Acessar
+            </div>
+        </button>
+    </div>
+
+    <div class="col-md-2 link menu-item" id="divCarregamentoCargaSolta">
+        <button type="button" class="menu-card">
+            <div class="icon">
+                <i class="fa fa-truck"></i>
+            </div>
+
+            <div class="title">
+                Carregamento Carga Solta
+            </div>
+
+            <div class="action">
+                <i class="fa fa-sign-in-alt"></i> Acessar
+            </div>
+        </button>
+    </div>
+
+    <div class="col-md-2 link menu-item" id="divInventarioCargaSoltaArmazem">
+        <button type="button" class="menu-card">
+            <div class="icon">
+                <i class="fa fa-clipboard-list"></i>
+            </div>
+
+            <div class="title">
+                Inventario Carga Solta - Armazem
+            </div>
+
+            <div class="action">
+                <i class="fa fa-sign-in-alt"></i> Acessar
+            </div>
+        </button>
+    </div>
+
+    <div class="col-md-2 link menu-item" id="divLocalizacaoCarregamentos">
+        <button type="button" class="menu-card">
+            <div class="icon">
+                <i class="fa fa-map-marker"></i>
+            </div>
+
+            <div class="title">
+                Localizacao Carregamentos
+            </div>
+
+            <div class="action">
+                <i class="fa fa-sign-in-alt"></i> Acessar
+            </div>
+        </button>
+    </div>
+
+    <div class="col-md-2 link menu-item" id="divMovimentacaoContainerPatio">
+        <button type="button" class="menu-card">
+            <div class="icon">
+                <i class="fa fa-exchange-alt"></i>
+            </div>
+
+            <div class="title">
+                Movimentacao Container Patio
+            </div>
+
+            <div class="action">
+                <i class="fa fa-sign-in-alt"></i> Acessar
+            </div>
+        </button>
+    </div>
+
+    <div class="col-md-2 link menu-item" id="divDescargaDdcPatio">
+        <button type="button" class="menu-card">
+            <div class="icon">
+                <i class="glyphicon glyphicon-import"></i>
+            </div>
+
+            <div class="title">
+                Descarga DDC - Patio
+            </div>
+
+            <div class="action">
+                <i class="fa fa-sign-in-alt"></i> Acessar
+            </div>
+        </button>
+    </div>
+
+
 </div>
 
 
 <script>
     $('#divRomaneio').click(function () {
         location.href = "@Url.Content("~/Consultar/Consultar")";
-    });
-
-    $('#divEstufagem').click(function () {
-        location.href = "@Url.Content("~/Estufagem/Index")";
     });
 
     $('#divMovimentacaoCS').click(function () {
@@ -85,6 +210,42 @@
 
     $('#divCompartilhaScannerSaída').click(function () {
         location.href = "@Url.Content("~/CompartilhaScanner/AutorizacaoSaida")";
+    });
+
+     $('#divAssociacaoMarcantes').click(function () {
+        location.href = "@Url.Content("~/AssociacaoMarcantes/Index")";
+    });
+
+    $('#divManutencaoMarcantesArmazem').click(function () {
+        location.href = "@Url.Content("~/ManutencaoMarcantesArmazem/Index")";
+    });
+
+    $('#divConsultaLiberacaoCarregamento').click(function () {
+        location.href = "@Url.Content("~/ConsultaLiberacaoCarregamento/Index")";
+    });
+
+    $('#divCarregamentoCargaSolta').click(function () {
+        location.href = "@Url.Content("~/CarregamentoCargaSolta/Index")";
+    });
+
+    $('#divInventarioCargaSoltaArmazem').click(function () {
+        location.href = "@Url.Content("~/InventarioCargaSoltaArmazem/Index")";
+    });
+
+    $('#divLocalizacaoCarregamentos').click(function () {
+        location.href = "@Url.Content("~/LocalizacaoCarregamentos/Index")";
+    });
+
+    $('#divMovimentacaoContainerPatio').click(function () {
+        location.href = "@Url.Content("~/MovimentacaoContainerPatio/Index")";
+    });
+
+    $('#divContainerReeferPatio').click(function () {
+        location.href = "@Url.Content("~/ContainerReeferPatio/Index")";
+    });
+
+    $('#divDescargaDdcPatio').click(function () {
+        location.href = "@Url.Content("~/DescargaDdcPatio/Index")";
     });
 
 </script>

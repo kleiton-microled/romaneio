@@ -61,6 +61,8 @@ namespace Romaneio.Controllers
                         Session["Logado"] = 1;
                         Session["NomeUsuario"] = usuario.NOME;
                         Session["Patio"] = DadosEntrada.PATIO;
+                        Session["UsuarioId"] = usuario.AUTONUM;
+                        Session["FlagCarregamentoMarcanteBip"] = usuario.FLAG_CARREGAMENTO_MARCANTE_BIP;
 
                         //return RedirectToAction("Consultar", "Consultar", new { PATIO = DadosEntrada.PATIO });
                         return RedirectToAction("Home", "Home", new { PATIO = DadosEntrada.PATIO });
