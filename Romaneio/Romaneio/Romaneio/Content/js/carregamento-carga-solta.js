@@ -422,6 +422,30 @@
         });
     }
 
+    var MSG_SEM_VEICULOS = "Nao foram encontrados veiculos!";
+
+    function preencherDropdownVeiculos(veiculos) {
+        var ddl = $("#ddlVeiculo");
+        var anterior = ddl.val();
+        var lista = veiculos || [];
+
+        ddl.empty().append('<option value="">Selecione</option>');
+
+        if (lista.length === 0) {
+            alerta(MSG_SEM_VEICULOS, "warning");
+            ddl.val("");
+            return;
+        }
+
+        limparAlerta();
+        $.each(lista, function (_, v) {
+            var placa = v.PLACA_C || v.placa_C || v.Placa_C || "";
+            var display = v.DISPLAY || v.display || v.Display || placa;
+            ddl.append('<option value="' + placa + '">' + display + "</option>");
+        });
+        ddl.val(anterior || "");
+    }
+
     function atualizarVeiculos() {
         loadingAbrir("Atualizando veiculos...");
 
@@ -433,13 +457,8 @@
                 return;
             }
 
-            var ddl = $("#ddlVeiculo");
-            var anterior = ddl.val();
-            ddl.empty().append('<option value="">Selecione</option>');
-            $.each(res.veiculos, function (_, v) {
-                ddl.append('<option value="' + v.PLACA_C + '">' + v.DISPLAY + "</option>");
-            });
-            ddl.val(anterior || "");
+            var lista = res.veiculos || res.Veiculos || [];
+            preencherDropdownVeiculos(lista);
         });
     }
 
@@ -549,6 +568,9 @@
     $(function () {
         bind();
         limparTela();
+        if ($("#ddlVeiculo option").length <= 1) {
+            alerta(MSG_SEM_VEICULOS, "warning");
+        }
         $("#ddlVeiculo").focus();
     });
 })();

@@ -64,11 +64,14 @@ namespace Romaneio.Models.ViewModels
         public string PLACA_CAVALO { get; set; }
         public string PLACA_CARRETA { get; set; }
         public string CPF_MOTORISTA { get; set; }
+        public bool CONFIRMAR_FORA_JANELA { get; set; }
     }
 
     public class RegistrarLiberacaoResultDto
     {
         public bool SUCESSO { get; set; }
         public string MENSAGEM { get; set; }
+        public bool REQUER_CONFIRMACAO_JANELA { get; set; }
+        public string MENSAGEM_CONFIRMACAO_JANELA { get; set; }
     }
 }

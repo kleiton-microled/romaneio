@@ -997,10 +997,17 @@ WHERE ISNULL(C.LIMITE_MOVIMENTOS,0)>ISNULL(D.AG,0) AND AUTONUM=@A";
             idConteiner = (idConteiner ?? "").Trim().ToUpperInvariant();
             sistema = (sistema ?? "").Trim().ToUpperInvariant();
             string sql;
+            const string selectCols = @"
+                        RTRIM(CONVERT(CHAR(8), hs.data, 3)) + ' ' + LEFT(CONVERT(CHAR(8), hs.data, 8), 5) AS DATA,
+                        hs.origem AS ORIGEM, hs.destino AS DESTINO,
+                        ISNULL(usu.usuario, '') AS NMUSUARIO,
+                        CAST('' AS VARCHAR(50)) AS IDENTIFICACAO,
+                        ISNULL(cm.descricao, '') AS DESC_MOTIVO,
+                        CAST('' AS VARCHAR(50)) AS VEICULO";
+
             if (sistema == "R")
             {
-                sql = @"SELECT CONVERT(VARCHAR(19), hs.data, 120) AS DATA, hs.origem AS ORIGEM, hs.destino AS DESTINO,
-                        usu.usuario AS NMUSUARIO, cm.descricao AS DESC_MOTIVO, '' AS IDENTIFICACAO
+                sql = @"SELECT " + selectCols + @"
                         FROM redex..tb_patio cc
                         INNER JOIN operador..tb_hist_shifting hs ON cc.autonum_patio = hs.cntr AND hs.tipo='R'
                         LEFT JOIN redex..tb_cad_usuarios usu ON hs.usuario = usu.autonum_usu
@@ -1009,8 +1016,7 @@ WHERE ISNULL(C.LIMITE_MOVIMENTOS,0)>ISNULL(D.AG,0) AND AUTONUM=@A";
             }
             else if (sistema == "A")
             {
-                sql = @"SELECT CONVERT(VARCHAR(19), hs.data, 120) AS DATA, hs.origem AS ORIGEM, hs.destino AS DESTINO,
-                        usu.usuario AS NMUSUARIO, cm.descricao AS DESC_MOTIVO, '' AS IDENTIFICACAO
+                sql = @"SELECT " + selectCols + @"
                         FROM sgipa..tb_armazens_ipa cc
                         INNER JOIN operador..tb_hist_shifting hs ON cc.autonum = hs.cntr AND hs.tipo='A'
                         LEFT JOIN sgipa..tb_cad_usuarios usu ON hs.usuario = usu.autonum
@@ -1019,8 +1025,7 @@ WHERE ISNULL(C.LIMITE_MOVIMENTOS,0)>ISNULL(D.AG,0) AND AUTONUM=@A";
             }
             else
             {
-                sql = @"SELECT CONVERT(VARCHAR(19), hs.data, 120) AS DATA, hs.origem AS ORIGEM, hs.destino AS DESTINO,
-                        usu.usuario AS NMUSUARIO, cm.descricao AS DESC_MOTIVO, '' AS IDENTIFICACAO
+                sql = @"SELECT " + selectCols + @"
                         FROM sgipa..tb_cntr_bl cc
                         INNER JOIN operador..tb_hist_shifting hs ON cc.autonum = hs.cntr AND hs.tipo='I'
                         LEFT JOIN sgipa..tb_cad_usuarios usu ON hs.usuario = usu.autonum
@@ -1046,7 +1051,8 @@ FROM sgipa.dbo.tb_avarias_conteiner a
 INNER JOIN sgipa.dbo.dte_tb_avarias b ON a.local=b.code AND B.ident='L'
 INNER JOIN sgipa.dbo.dte_tb_avarias c ON a.tipo=c.code AND C.IDENT='T'
 LEFT JOIN sgipa.dbo.tb_cad_usuarios u ON a.usu_cad_avaria=u.autonum
-WHERE a.CNTR = @C";
+WHERE a.CNTR = @C
+ORDER BY A.DT_CAD_AVARIA DESC";
                 return con.Query<AvariaHistDto>(sql, new { C = autonumCntr }, commandTimeout: Config.QueryTimeoutInSeconds()).ToList();
             }
         }
