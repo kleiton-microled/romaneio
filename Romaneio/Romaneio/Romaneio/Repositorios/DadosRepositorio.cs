@@ -41,7 +41,7 @@ namespace Romaneio.Repositorios
             {
                 var parametros = new DynamicParameters();
                 parametros.Add("usuario", usuario, direction: ParameterDirection.Input);
-                return con.Query<Login>(@"SELECT AUTONUM, USUARIO, SENHA, NOME, CPF, ISNULL(flag_carregamento_marcante_bip, 0) AS FLAG_CARREGAMENTO_MARCANTE_BIP FROM SGIPA..TB_CAD_USUARIOS WHERE USUARIO = @usuario", parametros, commandTimeout: Config.QueryTimeoutInSeconds()).FirstOrDefault();
+                return con.Query<Login>(@"SELECT USUARIO, SENHA, NOME, CPF FROM SGIPA..TB_CAD_USUARIOS WHERE USUARIO = @usuario", parametros, commandTimeout: Config.QueryTimeoutInSeconds()).FirstOrDefault();
             }
         }
 
@@ -229,8 +229,7 @@ namespace Romaneio.Repositorios
 
 
                 sb.Clear();
-                //sb.Append(" SELECT DISTINCT CONVERT(VARCHAR,PATIO)+'-'+DESCR AS DESCRICAO , AUTONUM FROM SGIPA..TB_ARMAZENS_IPA  WHERE PATIO= " + patio + " ORDER BY DESCRICAO  ");
-                sb.Append(" SELECT DISTINCT DESCR AS DESCRICAO , AUTONUM, FLAG_CT FROM SGIPA..TB_ARMAZENS_IPA  WHERE PATIO= " + patio + " ORDER BY DESCRICAO  ");
+                 sb.Append(" SELECT DISTINCT DESCR AS DESCRICAO , AUTONUM, FLAG_CT FROM SGIPA..TB_ARMAZENS_IPA  WHERE PATIO= " + patio + " ORDER BY DESCRICAO  ");
 
                 var query = con.Query<Armazens>(sb.ToString()).AsEnumerable();
 
@@ -240,7 +239,24 @@ namespace Romaneio.Repositorios
             }
 
         }
+        public IEnumerable<Armazens> ListaArmazensAbertos(string patio)
+        {
+            using (SqlConnection con = new SqlConnection(Config.StringConexao()))
+            {
+                StringBuilder sb = new StringBuilder();
 
+
+                sb.Clear();
+                sb.Append(" SELECT DISTINCT DESCR AS DESCRICAO , AUTONUM, FLAG_CT FROM SGIPA..TB_ARMAZENS_IPA  WHERE PATIO= " + patio + " AND AUTONUM NOT IN (SELECT ISNULL(AUTONUM_ARMAZENS_IPA,0) FROM TB_LACRES_ARMAZENS_IPA WHERE FLAG_ATIVO = 1) ORDER BY DESCRICAO  ");
+
+                var query = con.Query<Armazens>(sb.ToString()).AsEnumerable();
+
+                return query;
+
+
+            }
+
+        }
         public IEnumerable<Itens> ListaItens(int lote, int cntr)
         {
             using (SqlConnection con = new SqlConnection(Config.StringConexao()))
@@ -470,5 +486,19 @@ namespace Romaneio.Repositorios
 
             }
         }
+
+        public LotesDTO ObterDadosHubLote(int lote)
+        {
+            using (SqlConnection con = new SqlConnection(Config.StringConexao()))
+            {
+                var parametros = new DynamicParameters();
+                parametros.Add("lote", lote, direction: ParameterDirection.Input);
+
+                return con.Query<LotesDTO>(@"
+                      SELECT HUB, CIDADE_HUB FROM SGIPA..VW_BL_CARGA_CD WHERE LOTE = @lote ", parametros, commandTimeout: Config.QueryTimeoutInSeconds()).FirstOrDefault();
+
+            }
+        }
+
     }
 }

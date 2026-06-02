@@ -102,18 +102,12 @@ namespace Romaneio.Controllers
 
                     }
 
-                    LotesDTO DadosHUB = _RomaneioRepositorio.ObterDadosHubRomaneio(lote);
+                    LotesDTO DadosHUB = _DadosRepositorio.ObterDadosHubLote(Dados.LOTE);
                     if (DadosHUB != null)
                     {
                         view.HUB = DadosHUB.HUB;
                         view.CIDADE_HUB = DadosHUB.CIDADE_HUB;
-                        view.COMPRIMENTO = DadosHUB.COMPRIMENTO;
-                        view.LARGURA = DadosHUB.LARGURA;
-                        view.ALTURA = DadosHUB.ALTURA;
-                        view.QUANTIDADE_CLA = DadosHUB.QUANTIDADE_CLA;
-                        view.CUBAGEM = DadosHUB.CUBAGEM;
-                        view.PESO = DadosHUB.PESO;
-                        view.AUTONUM_ROMANEIO_BREAK_BULK = DadosHUB.AUTONUM_ROMANEIO_BREAK_BULK;
+                        view.FLAG_HUB = true;
                     }
 
                     if (view.INICIO == null)
@@ -225,8 +219,6 @@ namespace Romaneio.Controllers
                         _RomaneioRepositorio.ExcluirTodaAvaria(DadosEntrada.AUTONUM_ROMANEIO);
                     }
 
-
-                    //_RomaneioRepositorio.SalvarDadosHUBRomaneio(DadosEntrada);
 
 
                     if (result == "Informações salvas com sucesso!")
@@ -369,6 +361,87 @@ namespace Romaneio.Controllers
             }
             return Json(new { success = false, message = "Item não encontrado" });
         }
+
+      
+        
+
+        public ActionResult CarregaLacresRO(int autonum_romaneio, int patio, int cntr, int lote, string item, int autonum_cntr_destino)
+        { 
+
+            LoteViewModel dados = new LoteViewModel
+            {
+                LISTA_LACRES = ObterLacres(autonum_romaneio).ToList(),
+                AUTONUM_ROMANEIO = autonum_romaneio,
+                PATIO = patio,
+                LOTE = lote.ToInt(),
+                AUTONUM_CNTR = cntr.ToInt(),
+                ITEM = item,
+                TERMINO = "",
+                AUTONUM_CNTR_DESTINO = autonum_cntr_destino
+             };
+
+
+            return PartialView("Lacres", dados);
+
+        }
+        private IEnumerable<Lacres> ObterLacres(int AUTONUM_ROMANEIO)
+        {
+            return _RomaneioRepositorio.CarregaLacresRO(AUTONUM_ROMANEIO);
+        }
+
+        [HttpPost]
+        public ActionResult InsereLacreRO(LoteViewModel dados)
+        {
+            if (dados.AUTONUM_ROMANEIO == null)
+            {
+                TempData["MensagemErro"] = "Erro ao realizar salvar informações: armazem não encontrado!";
+                return RedirectToAction(nameof(CarregaLacresRO), new { autonum_romaneio = dados.AUTONUM_ROMANEIO, patio= dados.PATIO, cntr = dados.AUTONUM_CNTR, lote = dados.LOTE, item = dados.ITEM, autonum_cntr_destino = dados.AUTONUM_CNTR_DESTINO });
+            }
+            if (dados.AUTONUM_CNTR_DESTINO == null)
+            {
+                TempData["MensagemErro"] = "Erro ao realizar salvar informações: armazem não encontrado!";
+                return RedirectToAction(nameof(CarregaLacresRO), new { autonum_romaneio = dados.AUTONUM_ROMANEIO, patio = dados.PATIO, cntr = dados.AUTONUM_CNTR, lote = dados.LOTE, item = dados.ITEM, autonum_cntr_destino = dados.AUTONUM_CNTR_DESTINO });
+            }
+            if (dados.LACRE == "")
+            {
+                TempData["MensagemErro"] = "Erro ao realizar salvar informações: Lacre obrigatorio!";
+                return RedirectToAction(nameof(CarregaLacresRO), new { autonum_romaneio = dados.AUTONUM_ROMANEIO, patio = dados.PATIO, cntr = dados.AUTONUM_CNTR, lote = dados.LOTE, item = dados.ITEM, autonum_cntr_destino = dados.AUTONUM_CNTR_DESTINO });
+            }
+
+            _RomaneioRepositorio.InsereLacreRO(dados.AUTONUM_ROMANEIO, dados.AUTONUM_CNTR_DESTINO, dados.LACRE);
+
+            LoteViewModel dadosAtualizados = new LoteViewModel
+            {
+                LISTA_LACRES = ObterLacres(dados.AUTONUM_ROMANEIO).ToList(),
+                AUTONUM_ROMANEIO = dados.AUTONUM_ROMANEIO,
+                PATIO = dados.PATIO,
+                LOTE = dados.LOTE.ToInt(),
+                AUTONUM_CNTR = dados.AUTONUM_CNTR.ToInt(),
+                AUTONUM_CNTR_DESTINO = dados.AUTONUM_CNTR_DESTINO
+            };
+
+
+            return PartialView("Lacres", dadosAtualizados);
+        }
+
+        [HttpPost]
+        public JsonResult ExcluirLacreRO(int AUTONUM_LACRE)
+        {
+            if (Session["Logado"] == null)
+            {
+                return Json(new { success = false, message = "Sessao caiu" });
+            }
+            else
+            {
+                if (AUTONUM_LACRE != null)
+                {
+                    _RomaneioRepositorio.ExcluirLacreRO(AUTONUM_LACRE);
+                    return Json(new { success = true });
+                }
+                return Json(new { success = false, message = "Item não encontrado" });
+            }
+        }
+
 
     }
 }

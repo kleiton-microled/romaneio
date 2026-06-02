@@ -43,7 +43,7 @@
 
             <div class="col-md-1">
                 <label>Romaneio</label>
-                @Html.EditorFor(model => model.AUTONUM_ROMANEIO, new { htmlAttributes = new { @class = "form-control", @readonly = "@readonly" } })
+                @Html.EditorFor(model => model.AUTONUM_ROMANEIO, new { htmlAttributes = new { @class = "form-control", @readonly = "@readonly", id = "txtAutonumRomaneio" } })
             </div>
 
             <div class="col-md-2">
@@ -119,7 +119,7 @@
                 <div class="col-md-2">
                     <label>Patio</label>
                     @Html.EditorFor(model => model.EMPRESA, new { htmlAttributes = new { @class = "form-control", @readonly = "@readonly" } })
-                    @Html.EditorFor(model => model.PATIO, new { htmlAttributes = new { @class = "form-control", style = "display:none;" } })
+                    @Html.EditorFor(model => model.PATIO, new { htmlAttributes = new { @class = "form-control", style = "display:none;", id = "txtPatio" } })
                 </div>
 
                 <div class="col-md-2">
@@ -264,22 +264,21 @@
             <!-- ===== BOTÕES ===== -->
             <div class="form-actions" id="divBotoes">
                 <button type="submit" class="btn btn-success btn-block">Salvar</button>
-
                 <a class="btn btn-warning btn-block" href="@Url.Action("Cadastrar", "Cadastrar", new {lote = Model.LOTE , cntr = Model.AUTONUM_CNTR })">
                     Limpar
                 </a>
-
-                <a class="btn btn-info btn-block" href="@Url.Action("Finalizar", "Cadastrar", new {patio = Model.PATIO ,lote = Model.LOTE , termino = Model.TERMINO, autonum_romaneio = Model.AUTONUM_ROMANEIO , cntr = Model.AUTONUM_CNTR , item = Model.ITEM })">
+                <a id="btnFinalizar1" style="@(Model.FLAG_CD ? "" : "display:none;")" class="btn btn-info btn-block" href="@Url.Action("Finalizar", "Cadastrar", new { patio = Model.PATIO, lote = Model.LOTE, termino = Model.TERMINO, autonum_romaneio = Model.AUTONUM_ROMANEIO, cntr = Model.AUTONUM_CNTR, item = Model.ITEM })">
+                    Finalizar
+                </a> 
+                <a id="btnFinalizar2" style="@(!Model.FLAG_CD ? "" : "display:none;")" class="btn btn-info btn-block" onclick="abrirLacres(this)" >
                     Finalizar
                 </a>
-
                 <a class="btn btn-secondary btn-block" id="btnAvarias" href="@Url.Action("ConsultarAvarias", "Avarias", new {AUTONUM_ROMANEIO = Model.AUTONUM_ROMANEIO })">
                     Avarias
                 </a>
                 @*<div class="col-md-offset-6 col-sm-2">
             <a class="btn btn-block btn-secondary" href="@Url.Action("ConsultarFotos", "Fotos", new {AUTONUM_ROMANEIO = Model.AUTONUM_ROMANEIO })">Fotos</a>
         </div>*@
-
             </div>
 
         </div>
@@ -311,7 +310,7 @@
 
         var elementos = document.getElementById("divDados");
         elementos.style.display = "block";
-     
+
     });
 
      $('#ddlLote').change(function () {
@@ -546,6 +545,31 @@
              $('#divCntrDestino').show();
         }
 
+
+
+        //---------------------
+        const checkbox = $("#ckbCrossDocking");
+        const btn1 = $("#btnFinalizar1");
+        const btn2 = $("#btnFinalizar2");
+
+        function alternarBotoes() {
+            if (checkbox.is(":checked")) {
+                btn1.hide();
+                btn2.show();
+            } else {
+                btn1.show();
+                btn2.hide();
+            }
+        }
+
+        // estado inicial (importantíssimo)
+        alternarBotoes();
+
+        // evento ao clicar
+        checkbox.change(function () {
+            alternarBotoes();
+        });
+
     });
 
     function closeAlert(alertId) {
@@ -554,36 +578,35 @@
     }
 
 
-    @*function abrirPosicionamento(button) {
-        var romaneio = $(button).data('romaneio');
-        var inicio = $(button).data('inicio');
-        var termino = $(button).data('termino');
-        var item = $(button).data('item');
+    function abrirLacres(button) {
+        getLacres()
+    }
 
-        if (romaneio == "" || inicio == "") {
-            alert("Lote não iniciado!");
-        }
-        else if (termino != "") {
-            alert("Lote finalizado!");
-        }
-        else {
+    function getLacres() {
+        var autonum_romaneio = $('#txtAutonumRomaneio').val();
+        var patio = $('#txtPatio').val();
+        var cntr = $('#txtCntr').val();
+        var lote = $('#ddlLote').val();
+        var item = $('#ddlItem').val();
+        var autonum_cntr_destino = $('#ddlCntrDestino').val();
 
-
+        if (autonum_romaneio == 0) {
+            alert("Romaneio de desova não iniciado!");
+        } else {
+            //   public ActionResult CarregaLacresRO(int autonum_romaneio, int patio, int cntr, int lote, int item, int autonum_cntr_destino)
 
             $.ajax({
-            url: '@Url.Action("Posicionamento", "Cadastrar")', // Chama a action no controller
-            type: 'GET',
-                data: { patio: patio, cntr: cntr, lote: lote, item: item},
-            success: function (data) {
-            $('#modal-body').html(data);
-            $('#Modal').modal('show');
-            },
-            error: function () {
-            alert("Erro ao carregar dados.");
-            }
+                url: '@Url.Action("CarregaLacresRO", "Cadastrar")', 
+                type: 'GET',
+                data: { autonum_romaneio: autonum_romaneio, patio: patio, cntr: cntr, lote: lote, item: item, autonum_cntr_destino: autonum_cntr_destino },
+                success: function (data) {
+                    $('#modal-body').html(data);
+                        $('#Modal').modal('show');
+                },
+                error: function () {
+                    alert("Erro ao carregar os detalhes do produto.");
+                }
             });
-            }
-
-    }*@
-
+        }
+    }
 </script>

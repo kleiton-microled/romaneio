@@ -16,9 +16,7 @@ namespace Romaneio.Interfaces
         IEnumerable<Lotes> ListaLotes(int cntr);
         LotesDTO ObterDadosLote(int cntr = 0, int lote = 0, int item = 0);
         LotesDTO ObterDadosRomaneio(int cntr = 0, int lote = 0, int item = 0,int AUTONUM_ROMANEIO = 0);
-        LotesDTO ObterDadosHubRomaneio(int lote);
         string SalvarDados(LoteViewModel dados);
-        string SalvarDadosHUBRomaneio(LoteViewModel dados);
         string Finalizar(int romaneio);
         int VerificarCubagem(int romaneio);
 
@@ -54,6 +52,10 @@ namespace Romaneio.Interfaces
         string ExcluirTodaAvaria(int AUTONUM_ROMANEIO);
 
 
+        //LACRES
+        IEnumerable<Lacres> CarregaLacresRO(int AUTONUM_ROMANEIO);
+        string InsereLacreRO(int AUTONUM_ROMANEIO, int AUTONUM_ARMAZENS_IPA, string LACRE);
+        string ExcluirLacreRO(int AUTONUM_LACRE);
 
     }
 }

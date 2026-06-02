@@ -29,63 +29,61 @@ namespace Romaneio.Controllers
             string PATIO = Session["Patio"].ToString();
             view.TIPOS_EMBALAGENS = _DadosRepositorio.TiposEmbalagens().ToList();
             view.LISTA_MOTIVO = _MovimentacaoCSRepositorio.ConsultarMotivo().ToList();
-            view.LISTA_ARMAZEM = _DadosRepositorio.ListaArmazens(PATIO).ToList();
+            view.LISTA_ARMAZEM = _DadosRepositorio.ListaArmazensAbertos(PATIO).ToList();
 
             if (MARCANTE != "")
             {
                 Marcante DadosMarcante = _MovimentacaoCSRepositorio.ConsultarMarcante(MARCANTE);
 
-                if (DadosMarcante != null && DadosMarcante.AUTONUM_CEXP == 0 && DadosMarcante.AUTONUM_CARGA > 0)
+                if (DadosMarcante.AUTONUM_CEXP == 0 && DadosMarcante.AUTONUM_CARGA > 0)
                 {
+
                     MovimentacaoCSViewModel Dados = _MovimentacaoCSRepositorio.ConsultarCS(DadosMarcante.AUTONUM_CARGA);
 
-                    view.BL = Dados.BL;
-                    view.QTD_MARCANTE = DadosMarcante.VOLUMES;
-                    view.QTD_EMBALAGEM = DadosMarcante.VOLUMES;
-                    view.QTD_LOCAL = DadosMarcante.VOLUMES;
-                    view.AUTONUM_CS_YARD = DadosMarcante.AUTONUM_CS_YARD;
-                    view.ID_CONTEINER = DadosMarcante.ID_CONTEINER_IMPRESSO;
-                    view.LOTE = DadosMarcante.LOTE_IMPRESSO;
-                    view.LOCAL = _MovimentacaoCSRepositorio.ConsultarArmazem(DadosMarcante.ARMAZEM_REC);
-                    view.ARMAZEM = DadosMarcante.ARMAZEM_REC;
-                    view.LISTA_ITENS = _MovimentacaoCSRepositorio.ConsultarItens(DadosMarcante.LOTE_IMPRESSO, MARCANTE, DadosMarcante.AUTONUM_CS_YARD).ToList();
-
-                    Dados = _MovimentacaoCSRepositorio.ConsultarLote(DadosMarcante.LOTE_IMPRESSO, MARCANTE);
-                    if (Dados != null)
+                    if (DadosMarcante != null)
                     {
-                        view.MERCADORIA = Dados.MERCADORIA;
-                        view.MARCA = Dados.MARCA;
-                        view.ENT_DESOVA = Dados.ENT_DESOVA;
-                        view.ID_CONTEINER = Dados.ID_CONTEINER;
-                        view.IMO = Dados.IMO;
-                        view.MOV_AGEND = Dados.MOV_AGEND;
-                        view.ITEM = Dados.ITEM;
+                        view.BL = Dados.BL;
+                        view.QTD_MARCANTE = DadosMarcante.VOLUMES;
+                        view.QTD_EMBALAGEM = DadosMarcante.VOLUMES;
+                        view.QTD_LOCAL = DadosMarcante.VOLUMES;
+                        view.AUTONUM_CS_YARD = DadosMarcante.AUTONUM_CS_YARD;
+                        view.ID_CONTEINER = DadosMarcante.ID_CONTEINER_IMPRESSO;
+                        view.LOTE = DadosMarcante.LOTE_IMPRESSO;
+                        view.LOCAL = _MovimentacaoCSRepositorio.ConsultarArmazem(DadosMarcante.ARMAZEM_REC);
+                        view.ARMAZEM = DadosMarcante.ARMAZEM_REC;
+                        view.LISTA_ITENS = _MovimentacaoCSRepositorio.ConsultarItens(DadosMarcante.LOTE_IMPRESSO, MARCANTE, DadosMarcante.AUTONUM_CS_YARD).ToList();
+
+                        Dados = _MovimentacaoCSRepositorio.ConsultarLote(DadosMarcante.LOTE_IMPRESSO, MARCANTE);
+                        if (Dados != null)
+                        {
+                            view.MERCADORIA = Dados.MERCADORIA;
+                            view.MARCA = Dados.MARCA;
+                            view.ENT_DESOVA = Dados.ENT_DESOVA;
+                            view.ID_CONTEINER = Dados.ID_CONTEINER;
+                            view.IMO = Dados.IMO;
+                            view.MOV_AGEND = Dados.MOV_AGEND;
+                            view.ITEM = Dados.ITEM;
+
+                        }
                     }
                 }
-                else
+                else 
                 {
                     //CARGA DE EXPORTACAO
                     DadosMarcante = _MovimentacaoCSRepositorio.ConsultarMarcanteInventArmazem(MARCANTE);
-                    if (DadosMarcante == null)
-                    {
-                        TempData["MensagemErro"] = "Marcante não encontrado!";
-                    }
-                    else
-                    {
-                        view.BL = DadosMarcante.BL;
-                        view.LOTE = DadosMarcante.LOTE;
-                        view.MERCADORIA = DadosMarcante.MERCADORIA;
-                        view.ENT_DESOVA = DadosMarcante.DATA_ENTRADA;
-                        view.IMPORTADOR = DadosMarcante.IMPORTADOR;
-                        view.EMBALAGEM = DadosMarcante.EMBALAGEM;
-
-                        view.QTD_MARCANTE = DadosMarcante.QTDE;
-                        view.QTD_EMBALAGEM = DadosMarcante.QTDE;
-                        view.QTD_LOCAL = DadosMarcante.QTDE;
-                        view.AUTONUM_CS_YARD = DadosMarcante.AUTONUMCS;
-                        view.LOCAL = DadosMarcante.DESCR_ARMAZEM + " - " + DadosMarcante.POSICAO;
-                        view.ARMAZEM = 0;
-                    }
+                    view.BL = DadosMarcante.BL;
+                    view.LOTE = DadosMarcante.LOTE ;
+                    view.MERCADORIA = DadosMarcante.MERCADORIA;
+                    view.ENT_DESOVA = DadosMarcante.DATA_ENTRADA; 
+                    view.IMPORTADOR = DadosMarcante.IMPORTADOR;
+                    view.EMBALAGEM = DadosMarcante.EMBALAGEM;
+ 
+                    view.QTD_MARCANTE = DadosMarcante.QTDE;
+                    view.QTD_EMBALAGEM = DadosMarcante.QTDE;
+                    view.QTD_LOCAL = DadosMarcante.QTDE;
+                    view.AUTONUM_CS_YARD = DadosMarcante.AUTONUMCS;
+                    view.LOCAL = DadosMarcante.DESCR_ARMAZEM + " - " + DadosMarcante.POSICAO;
+                    view.ARMAZEM = 0;
                 }
 
             }
@@ -135,7 +133,8 @@ namespace Romaneio.Controllers
                         TempData["MensagemErro"] = "Erro ao realizar salvar informações:" + result;
                     }
 
-                    return RedirectToAction(nameof(Index), new { MARCANTE = DadosEntrada.MARCANTE });
+                    return RedirectToAction(nameof(Index));
+
                 }
 
             }

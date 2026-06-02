@@ -1,4 +1,5 @@
-﻿using Romaneio.Interfaces;
+﻿using Romaneio.Classes;
+using Romaneio.Interfaces;
 using Romaneio.Models;
 using System;
 using System.Collections.Generic;
@@ -29,6 +30,15 @@ namespace Romaneio.Controllers
             if (LOTE != 0)
             {
                 view.LISTA_ITENS = _DadosRepositorio.ListaItens(LOTE, 0).ToList();
+
+                LotesDTO DadosHUB = _DadosRepositorio.ObterDadosHubLote(LOTE);
+                if (DadosHUB != null)
+                {
+                    view.HUB = DadosHUB.HUB;
+                    view.CIDADE_HUB = DadosHUB.CIDADE_HUB;
+                    view.FLAG_HUB = true;
+                }
+
             }
             if (ITEM != 0)
             {
@@ -88,12 +98,38 @@ namespace Romaneio.Controllers
                 {
                     if (DadosEntrada.LOTE == null)
                     {
-                        TempData["MensagemErro"] = "Erro ao realizar salvar informações: informe o Lote!";
+                        TempData["MensagemErro"] = "Erro ao realizar salvar informações: informe o LOTE!";
                         return RedirectToAction(nameof(Index), new { LOTE = DadosEntrada.LOTE, ITEM = DadosEntrada.ITEM });
                     }
                     if (DadosEntrada.ITEM == null)
                     {
-                        TempData["MensagemErro"] = "Erro ao realizar salvar informações: informe o item!";
+                        TempData["MensagemErro"] = "Erro ao realizar salvar informações: informe o ITEM!";
+                        return RedirectToAction(nameof(Index), new { LOTE = DadosEntrada.LOTE, ITEM = DadosEntrada.ITEM });
+                    }
+                    if (DadosEntrada.QUANTIDADE == null || DadosEntrada.QUANTIDADE == "0")
+                    {
+                        TempData["MensagemErro"] = "Erro ao realizar salvar informações: informe QUANTIDADE!";
+                        return RedirectToAction(nameof(Index), new { LOTE = DadosEntrada.LOTE, ITEM = DadosEntrada.ITEM });
+                    }
+                    if (DadosEntrada.PESO == null || DadosEntrada.PESO == 0)
+                    {
+                        TempData["MensagemErro"] = "Erro ao realizar salvar informações: informe PESO!";
+                        return RedirectToAction(nameof(Index), new { LOTE = DadosEntrada.LOTE, ITEM = DadosEntrada.ITEM });
+
+                    }
+                    if (DadosEntrada.COMPRIMENTO == null || DadosEntrada.COMPRIMENTO == 0)
+                    {
+                        TempData["MensagemErro"] = "Erro ao realizar salvar informações: informe COMPRIMENTO!";
+                        return RedirectToAction(nameof(Index), new { LOTE = DadosEntrada.LOTE, ITEM = DadosEntrada.ITEM });
+                    }
+                    if (DadosEntrada.LARGURA == null || DadosEntrada.LARGURA ==  0 )
+                    {
+                        TempData["MensagemErro"] = "Erro ao realizar salvar informações: informe LARGURA!";
+                        return RedirectToAction(nameof(Index), new { LOTE = DadosEntrada.LOTE, ITEM = DadosEntrada.ITEM });
+                    }
+                    if (DadosEntrada.ALTURA == null || DadosEntrada.ALTURA ==  0 )
+                    {
+                        TempData["MensagemErro"] = "Erro ao realizar salvar informações: informe ALTURA!";
                         return RedirectToAction(nameof(Index), new { LOTE = DadosEntrada.LOTE, ITEM = DadosEntrada.ITEM });
                     }
                     else

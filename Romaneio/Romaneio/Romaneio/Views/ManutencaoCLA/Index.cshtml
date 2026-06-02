@@ -56,14 +56,21 @@
                     @Html.EditorFor(model => model.AUTONUM_ROMANEIO, new { htmlAttributes = new { @class = "invisivel form-control ", id = "txtRomaneio" } })
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <label>Item:</label>
                     @Html.DropDownListFor(model => model.ITEM,
                         new MultiSelectList(Model.LISTA_ITENS, "ITEM", "DESCR"),
                         string.Empty,
                         new { @class = "form-control total", id = "ddlItem" })
                 </div>
-
+                <div class="col-md-2">
+                    <label>HUB</label>
+                        @Html.EditorFor(model => model.HUB, new { htmlAttributes = new { @class = "form-control", id = "txtCidadeHub", @readonly = "@readonly" } })
+                </div>
+                <div class="col-md-2">
+                    <label>Cidade HUB</label>
+                        @Html.EditorFor(model => model.CIDADE_HUB, new { htmlAttributes = new { @class = "form-control", id = "txtCidadeHub", @readonly = "@readonly" } })
+                </div>
                 <div class="col-md-2">
                     <label>&nbsp;</label>
                     <a class="btn btn-warning btn-block"
@@ -118,7 +125,7 @@
                         <button type="submit" name="acao" value="SalvarRomaneio"
                                 id="btnSalvarCLARomaneio"
                                 class="btn btn-primary btn-block">
-                            Salvar Romaneio
+                            Salvar CLA Romaneio
                         </button>
                     </div>
                 </div>

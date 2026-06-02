@@ -103,6 +103,9 @@ namespace Romaneio.Models
         public int AUTONUM_CS { get; set; }
         public List<CLA> LISTA_CLA { get; set; } = new List<CLA>();
 
+        public string LACRE { get; set; }
+        public List<Lacres> LISTA_LACRES { get; set; }
+
 
     }
 

@@ -30,14 +30,9 @@
 
         <!-- ================= CABEÇALHO ================= -->
         <div class="row">
-            <div class="col-md-2">
+            <div class="col-md-3">
                 <label>Marcante</label>
-                @Html.EditorFor(model => model.MARCANTE, new { htmlAttributes = new { @class = "form-control", id = "txtMarcante", autocomplete = "off" } })
-            </div>
-
-            <div class="col-md-1">
-                <label style="color:#fff">.</label>
-                <button type="button" id="btnBuscarMarcante" class="btn btn-primary btn-block">Buscar</button>
+                @Html.EditorFor(model => model.MARCANTE, new { htmlAttributes = new { @class = "form-control", id = "txtMarcante" } })
             </div>
 
             <div class="col-md-2">
@@ -135,8 +130,11 @@
                 <label>Armazém</label>
                 @Html.DropDownListFor(model => model.ARMAZEM, new MultiSelectList(Model.LISTA_ARMAZEM, "AUTONUM", "DESCRICAO"), string.Empty, new { @class = "form-control total", id = "ddlArmazem" })
             </div>
-
-            <div class="col-md-8">
+            <div class="col-md-2">
+                <label>&nbsp;</label>
+                <a class="btn btn-secondary btn-block" id="btnCargasCT">Cargas CT</a>
+            </div>
+            <div class="col-md-6">
                 <label>Motivo</label>
                 @Html.DropDownListFor(model => model.MOTIVO, new MultiSelectList(Model.LISTA_MOTIVO, "AUTONUM", "DESCR"), string.Empty, new { @class = "form-control total", id = "ddlMotivo" })
             </div>
@@ -177,9 +175,7 @@
                 <a class="btn btn-warning btn-block" onclick="abrirHistorico(this)">Histórico</a>
             </div>
 
-            <div class="col-md-2">
-                <a class="btn btn-secondary btn-block" id="btnCargasCT">Cargas CT</a>
-            </div>
+           
         </div>
 
     </div>
@@ -202,15 +198,8 @@
 
 <script>
 
-    $('#btnBuscarMarcante').click(function () {
+    $('#txtMarcante').change(function () {
         CarregaDadosMarcante();
-    });
-
-    $('#txtMarcante').on('keypress', function (e) {
-        if (e.which === 13) {
-            e.preventDefault();
-            CarregaDadosMarcante();
-        }
     });
 
     $('#ddlItem').change(function () {
@@ -218,12 +207,9 @@
     });
 
     function CarregaDadosMarcante() {
-        var Marcante = document.getElementById('txtMarcante').value.trim();
-        if (!Marcante) {
-            return;
-        }
-        var url = '/MovimentacaoCS/Index?MARCANTE=' + encodeURIComponent(Marcante);
-        window.location.href = url;
+        var Marcante = document.getElementById('txtMarcante').value;
+        var url = '/MovimentacaoCS/Index?MARCANTE=' + Marcante;
+        window.location.href = url
     }
 
     function CarregaDadosItem() {
@@ -293,29 +279,41 @@
      function abrirHistorico(button) {
          var Marcante = document.getElementById('txtMarcante').value;
 
-            $.ajax({
-            url: '@Url.Action("Historico", "MovimentacaoCS")', // Chama a action no controller
-            type: 'GET',
-            data: { Marcante: Marcante },
-            success: function (data) {
-            console.log(data);
-            $('#modal-body').html(data);
-            $('#Modal').modal('show');
-            },
-            error: function () {
-            alert("Erro ao carregar os detalhes do produto.");
-            }
-            });
+         if (Marcante == "0") {
+             alert("Informe um marcante!!");
+         } else {
+
+             $.ajax({
+                 url: '@Url.Action("Historico", "MovimentacaoCS")', // Chama a action no controller
+                 type: 'GET',
+                 data: { Marcante: Marcante },
+                 success: function (data) {
+                     console.log(data);
+                     $('#modal-body').html(data);
+                     $('#Modal').modal('show');
+                 },
+                 error: function () {
+                     alert("Erro ao carregar os detalhes do produto.");
+                 }
+             });
+         }
     };
 
     $('#btnCargasCT').on('click', function () {
-    var descricao = $('#ddlArmazem option:selected').text();
-     var autonum = $('#ddlArmazem option:selected').val();
 
-    var url = '@Url.Action("CargasCT", "MovimentacaoCS")'
-        + '?autonumArmazensIpa=' + autonum + '&cntrArmazem=' + encodeURIComponent(descricao);
+        var descricao = $('#ddlArmazem option:selected').text();
+        var autonum = $('#ddlArmazem option:selected').val();
 
-        window.open(url, '_blank');
-});
+        if (autonum == 0) {
+            alert("selecione um Armazem!");
+        } else {
+            var url = '@Url.Action("CargasCT", "MovimentacaoCS")'
+             + '?autonumArmazensIpa=' + autonum + '&cntrArmazem=' + encodeURIComponent(descricao);
+
+           window.open(url, '_blank');
+        }
+
+
+    });
 
 </script>

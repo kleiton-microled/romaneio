@@ -125,18 +125,7 @@ DESCR_OUTRA_AVARIA, FL_FALTA, DESCR_FALTA, FL_ACRESCIMO, DESCR_ACRESCIMO, FL_AGU
 
             }
         }
-        public LotesDTO ObterDadosHubRomaneio(int lote)
-        {
-            using (SqlConnection con = new SqlConnection(Config.StringConexao()))
-            {
-                var parametros = new DynamicParameters();
-                parametros.Add("lote", lote, direction: ParameterDirection.Input);
-
-                return con.Query<LotesDTO>(@"
-                      SELECT AUTONUM_ROMANEIO_BREAK_BULK, AUTONUM_ROMANEIO, LOTE, HUB, CIDADE_HUB, QUANTIDADE_CLA, COMPRIMENTO, ALTURA, LARGURA, PESO, CUBAGEM FROM SGIPA..VW_ROMANEIO_BREAK_BULK WHERE LOTE = @lote ", parametros, commandTimeout: Config.QueryTimeoutInSeconds()).FirstOrDefault();
-
-            }
-        }
+        
 
         public string SalvarDados(LoteViewModel dados)
         {
@@ -193,44 +182,6 @@ DESCR_OUTRA_AVARIA, FL_FALTA, DESCR_FALTA, FL_ACRESCIMO, DESCR_ACRESCIMO, FL_AGU
                                         VOLUME_M3 = @VOLUME_M3, PESO_APURADO = @PESO_APURADO, PESO_BRUTO = @PESO_BRUTO ,IMO = @IMO, UNDG = @UNDG, GENERO = @GENERO, ITEM = @ITEM, QUANTIDADE = @QUANTIDADE, EMBALAGEM = @EMBALAGEM, MERCADORIA = @MERCADORIA, 
                                         MARCA = @MARCA, OBS = @OBS , LOCALIZACAO = @LOCALIZACAO, FL_OUTRA_AVARIA = @FL_OUTRA_AVARIA , DESCR_OUTRA_AVARIA = @DESCR_OUTRA_AVARIA , FL_FALTA = @FL_FALTA , DESCR_FALTA = @DESCR_FALTA , FL_ACRESCIMO = @FL_ACRESCIMO , DESCR_ACRESCIMO = @DESCR_ACRESCIMO , 
                                         FL_AGUARDANDO_RECONHECIMENTO = @FL_AGUARDANDO_RECONHECIMENTO , DESCR_AGUARDANDO_RECONHECIMENTO = @DESCR_AGUARDANDO_RECONHECIMENTO , FL_SEM_AVARIA = @FL_SEM_AVARIA, AUTONUM_CNTR_DESTINO = @AUTONUM_CNTR_DESTINO WHERE AUTONUM_ROMANEIO = @AUTONUM_ROMANEIO ", parametros, commandTimeout: Config.QueryTimeoutInSeconds());
-                    }
-
-
-                    return "Informações salvas com sucesso!";
-                }
-                catch (Exception erro)
-                {
-                    return erro.ToString();
-                }
-            }
-        }
-
-        public string SalvarDadosHUBRomaneio(LoteViewModel dados)
-        {
-            using (SqlConnection con = new SqlConnection(Config.StringConexao()))
-            {
-                var parametros = new DynamicParameters();
-                parametros.Add("AUTONUM_ROMANEIO", dados.AUTONUM_ROMANEIO, direction: ParameterDirection.Input);
-                parametros.Add("LOTE", dados.LOTE, direction: ParameterDirection.Input);
-                parametros.Add("COMPRIMENTO", dados.COMPRIMENTO, direction: ParameterDirection.Input);
-                parametros.Add("LARGURA", dados.LARGURA, direction: ParameterDirection.Input);
-                parametros.Add("ALTURA", dados.ALTURA, direction: ParameterDirection.Input);
-                parametros.Add("CUBAGEM", dados.CUBAGEM, direction: ParameterDirection.Input);
-                parametros.Add("PESO", dados.PESO, direction: ParameterDirection.Input);
-                parametros.Add("QUANTIDADE", dados.QUANTIDADE_CLA, direction: ParameterDirection.Input);
-                parametros.Add("AUTONUM_CNTR_DESTINO", dados.AUTONUM_CNTR_DESTINO, direction: ParameterDirection.Input);
-                parametros.Add("AUTONUM_ROMANEIO_BREAK_BULK", dados.AUTONUM_ROMANEIO_BREAK_BULK, direction: ParameterDirection.Input);
-
-
-                try
-                {
-                    if (dados.AUTONUM_ROMANEIO_BREAK_BULK == 0)
-                    {
-                        con.Execute(@"INSERT INTO SGIPA..TB_ROMANEIO_BREAK_BULK (AUTONUM_ROMANEIO, LOTE, COMPRIMENTO, LARGURA, ALTURA, CUBAGEM, PESO, QUANTIDADE ) VALUES (@AUTONUM_ROMANEIO, @LOTE, @COMPRIMENTO, @LARGURA, @ALTURA, @CUBAGEM, @PESO, @QUANTIDADE ) ", parametros, commandTimeout: Config.QueryTimeoutInSeconds());
-                    }
-                    else
-                    {
-                        con.Execute(@"UPDATE SGIPA..TB_ROMANEIO_BREAK_BULK SET COMPRIMENTO = @COMPRIMENTO, LARGURA = @LARGURA, ALTURA = @ALTURA, CUBAGEM = @CUBAGEM, PESO = @PESO, QUANTIDADE = @QUANTIDADE WHERE AUTONUM_ROMANEIO_BREAK_BULK = @AUTONUM_ROMANEIO_BREAK_BULK ", parametros, commandTimeout: Config.QueryTimeoutInSeconds());
                     }
 
 
@@ -549,6 +500,66 @@ DESCR_OUTRA_AVARIA, FL_FALTA, DESCR_FALTA, FL_ACRESCIMO, DESCR_ACRESCIMO, FL_AGU
 
 
 
+        public IEnumerable<Lacres> CarregaLacresRO(int AUTONUM_ROMANEIO)
+        {
+            using (SqlConnection con = new SqlConnection(Config.StringConexao()))
+            {
+                StringBuilder sb = new StringBuilder();
+
+                sb.Clear();
+                sb.Append(" SELECT A.AUTONUM, A.AUTONUM_ARMAZENS_IPA, A.LACRE, A.DT_LANCAMENTO, A.DT_INATIVACAO, A.FLAG_ATIVO, B.DESCR AS ID_CONTEINER ");
+                sb.Append(" FROM SGIPA..TB_ROMANEIO_LACRES A ");
+                sb.Append(" INNER JOIN SGIPA..TB_ARMAZENS_IPA B ON A.AUTONUM_ARMAZENS_IPA = B.AUTONUM ");
+                sb.Append(" WHERE A.AUTONUM_ROMANEIO = " + AUTONUM_ROMANEIO + "");
+
+                var query = con.Query<Lacres>(sb.ToString()).AsEnumerable();
+
+                return query;
+
+            }
+        }
+
+        public string InsereLacreRO(int AUTONUM_ROMANEIO, int AUTONUM_ARMAZENS_IPA, string LACRE)
+        {
+            using (SqlConnection con = new SqlConnection(Config.StringConexao()))
+            {
+                var parametros = new DynamicParameters();
+                parametros.Add("AUTONUM_ROMANEIO", AUTONUM_ROMANEIO, direction: ParameterDirection.Input);
+                parametros.Add("AUTONUM_ARMAZENS_IPA", AUTONUM_ARMAZENS_IPA, direction: ParameterDirection.Input);
+                parametros.Add("LACRE", LACRE, direction: ParameterDirection.Input);
+
+                try
+                {
+                    con.Execute(@" INSERT INTO  SGIPA..TB_ROMANEIO_LACRES (AUTONUM_ARMAZENS_IPA, LACRE, DT_LANCAMENTO, FLAG_ATIVO, AUTONUM_ROMANEIO ) VALUES ( @AUTONUM_ARMAZENS_IPA, @LACRE, GETDATE(), 1, @AUTONUM_ROMANEIO ) ", parametros, commandTimeout: Config.QueryTimeoutInSeconds());
+
+                    return "Cadastrado com sucesso!";
+                }
+                catch (Exception erro)
+                {
+                    return erro.ToString();
+                }
+            }
+        }
+
+        public string ExcluirLacreRO(int AUTONUM_LACRE)
+        {
+            using (SqlConnection con = new SqlConnection(Config.StringConexao()))
+            {
+                var parametros = new DynamicParameters();
+                parametros.Add("AUTONUM_LACRE", AUTONUM_LACRE, direction: ParameterDirection.Input);
+
+                try
+                {
+                    con.Execute(@" DELETE FROM SGIPA..TB_ROMANEIO_LACRES WHERE AUTONUM = @AUTONUM_LACRE ", parametros, commandTimeout: Config.QueryTimeoutInSeconds());
+
+                    return "Deletado com sucesso!";
+                }
+                catch (Exception erro)
+                {
+                    return erro.ToString();
+                }
+            }
+        }
 
 
 

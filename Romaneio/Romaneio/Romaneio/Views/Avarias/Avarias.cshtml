@@ -7,8 +7,6 @@
 <h2 style="color: #8a730b !important;">&nbsp;&nbsp;<i class="glyphicon glyphicon-edit"></i>&nbsp;&nbsp;Avarias</h2>
 
 <a href="@Url.Action("Cadastrar", "Cadastrar", new { AUTONUM_ROMANEIO = Model.AUTONUM_ROMANEIO})" class="btn btn-secondary btn-sm" style="float:right"> &nbsp;Voltar</a>
-<br />
-<br />
 
 @if (TempData["MensagemErro"] != null)
 {
@@ -32,6 +30,8 @@
 <br />
 @using (Html.BeginForm("SalvarAvaria", "Avarias", FormMethod.Post))
 {
+<div class="card-custom">
+
     <div class="row">
         <div class="col-md-2">
             <label>Romaneio:</label>
@@ -94,53 +94,57 @@
         </div>
 
     </div>
+</div>
+ }
+        <br />
+        <br />
+        <div class="card-custom">
 
-}
-<br />
-<br />
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>TIPO</th>
-            <th>LOCAL</th>
-            <th>PROVIDENCIA</th>
-            <th>COMPLEMENTO</th>
-            <th>QTD</th>
-            <th>PESO</th>
-            <th>COMPLEMENTO_IPA</th>
-            <th>DT_AVARIA</th>
-            <th> </th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.LISTA_AVARIAS)
-        {
-        <tr>
-            <td>@item.DESCR_TIPO</td>
-            <td>@item.DESCR_LOCAL</td>
-            <td>@item.DESCR_PROVIDENCIA</td>
-            <td>@item.DESCR_COMPLEMENTO</td>
-            <td>@item.QTD</td>
-            <td>@item.PESO</td>
-            <td>@item.COMPLEMENTO_IPA</td>
-            <td>@item.DT_AVARIA</td>
-            <td><button type="button" class="btn btn-danger" data-autonum-romaneio="@item.AUTONUM_ROMANEIO" data-autonum="@item.AUTONUM_ROMANEIO_AVARIAS" onclick="Excluir(this)">Excluir</button></td>
-        </tr>
-        }
-    </tbody>
-</table>
-
-<script language="JavaScript" type="text/javascript" src="~/Content/js/jquery-3.3.1.js"></script>
-<script language="JavaScript" type="text/javascript" src="~/Content/js/bootstrap.min.js"></script>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>TIPO</th>
+                        <th>LOCAL</th>
+                        <th>PROVIDENCIA</th>
+                        <th>COMPLEMENTO</th>
+                        <th>QTD</th>
+                        <th>PESO</th>
+                        <th>COMPLEMENTO_IPA</th>
+                        <th>DT_AVARIA</th>
+                        <th> </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.LISTA_AVARIAS)
+                    {
+                        <tr>
+                            <td>@item.DESCR_TIPO</td>
+                            <td>@item.DESCR_LOCAL</td>
+                            <td>@item.DESCR_PROVIDENCIA</td>
+                            <td>@item.DESCR_COMPLEMENTO</td>
+                            <td>@item.QTD</td>
+                            <td>@item.PESO</td>
+                            <td>@item.COMPLEMENTO_IPA</td>
+                            <td>@item.DT_AVARIA</td>
+                            <td><button type="button" class="btn btn-danger" data-autonum-romaneio="@item.AUTONUM_ROMANEIO" data-autonum="@item.AUTONUM_ROMANEIO_AVARIAS" onclick="Excluir(this)">Excluir</button></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
 
 
-<script>
+            <script language="JavaScript" type="text/javascript" src="~/Content/js/jquery-3.3.1.js"></script>
+            <script language="JavaScript" type="text/javascript" src="~/Content/js/bootstrap.min.js"></script>
+
+
+            <script>
 
     function closeAlert(alertId) {
         var alert = document.getElementById(alertId);
         alert.style.display = 'none';
     }
- 
+
 
     function Excluir(button) {
 
@@ -149,11 +153,11 @@
         // Pega o ID do item para ser excluído
         var AUTONUM_ROMANEIO_AVARIAS = $(button).data("autonum");
         var AUTONUM_ROMANEIO = $(button).data("autonum-romaneio");
- 
+
         console.log("linha: " + row);
         console.log("AUTONUM_ROMANEIO: " + AUTONUM_ROMANEIO);
         console.log("AUTONUM_ROMANEIO_AVARIAS: " + AUTONUM_ROMANEIO_AVARIAS);
- 
+
         // Faz a requisição AJAX para o controller
         $.ajax({
             url: '@Url.Action("ExcluirAvaria", "Avarias")', // Chama a ação ExcluirItem no controller Item
@@ -173,4 +177,4 @@
         });
     }
 
-</script>
+            </script>

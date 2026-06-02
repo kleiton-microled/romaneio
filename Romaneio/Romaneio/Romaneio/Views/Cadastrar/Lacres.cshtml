@@ -1,0 +1,114 @@
+﻿@model Romaneio.Models.LoteViewModel
+
+<h2>Lacres</h2>
+<h5>Necessário informar no minimo um lacre para o Container Destino!</h5>
+@using (Html.BeginForm("InsereLacreRO", "Cadastrar", FormMethod.Post, new { id = "formLacre" }))
+{
+    <br/>
+    <div class="row">
+        <div class="col-md-5">
+            <input type="text" id="txtLacre" name="LACRE" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-block btn-success">Adicionar Lacre</button>
+        </div>
+        <div class="col-md-5">
+            @Html.EditorFor(model => model.AUTONUM_ROMANEIO, new { htmlAttributes = new { @class = "form-control invisivel", @readonly = "@readonly" } })
+            @Html.EditorFor(model => model.AUTONUM_CNTR_DESTINO, new { htmlAttributes = new { @class = "form-control invisivel", @readonly = "@readonly" } })
+            @Html.EditorFor(model => model.AUTONUM_CNTR, new { htmlAttributes = new { @class = "form-control invisivel", @readonly = "@readonly" } })
+            @Html.EditorFor(model => model.LOTE, new { htmlAttributes = new { @class = "form-control invisivel", @readonly = "@readonly" } })
+            @Html.EditorFor(model => model.ITEM, new { htmlAttributes = new { @class = "form-control invisivel", @readonly = "@readonly" } })
+            @Html.EditorFor(model => model.PATIO, new { htmlAttributes = new { @class = "form-control invisivel", @readonly = "@readonly" } })
+            @Html.EditorFor(model => model.TERMINO, new { htmlAttributes = new { @class = "form-control invisivel", @readonly = "@readonly" } })
+
+        </div>
+    </div>
+
+    <br />
+
+    <div id="tabelaLacres">
+        <div class="row padding-bottom">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>AUTONUM_LACRE</th>
+                        <th>ID_CONTEINER</th>
+                        <th>LACRE</th>
+                        <th>DT_LANCAMENTO</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.LISTA_LACRES)
+                    {
+                    <tr>
+                        <td>@item.AUTONUM</td>
+                        <td>@item.ID_CONTEINER</td>
+                        <td>@item.LACRE</td>
+                        <td>@item.DT_LANCAMENTO</td>
+                        <td><button type="button" class="btn btn-danger" data-autonum="@item.AUTONUM" onclick="Excluir(this)">Excluir</button></td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <a id="btnFinalizar" class="btn btn-info btn-block" href="@Url.Action("Finalizar", "Cadastrar", new { patio = Model.PATIO, lote = Model.LOTE, termino = Model.TERMINO, autonum_romaneio = Model.AUTONUM_ROMANEIO, cntr = Model.AUTONUM_CNTR, item = Model.ITEM })">
+                Finalizar
+            </a>
+        </div>       
+    </div>
+    
+}
+
+<script>
+
+    $("#formLacre").submit(function (e) {
+        e.preventDefault(); // impede o reload da página
+
+        $.ajax({
+            url: $(this).attr("action"),
+            type: "POST",
+            data: $(this).serialize(),
+            success: function (result) {
+
+                // Atualiza só a tabela
+                $("#tabelaLacres").html($(result).find("#tabelaLacres").html());
+
+                // limpa o campo
+                $("#txtLacre").val("");
+            },
+            error: function () {
+                alert("Erro ao adicionar lacre.");
+            }
+        });
+    });
+
+         function Excluir(button) {
+
+        var row = $(button).closest("tr");
+        var AUTONUM_LACRE = $(button).data("autonum");
+
+        $.ajax({
+            url: '@Url.Action("ExcluirLacreRO", "Cadastrar")',
+            type: 'POST',
+            data: { AUTONUM_LACRE: AUTONUM_LACRE },
+            success: function(response) {
+                if (response.success) {
+                    row.remove();
+                    alert("Deletado com sucesso!");
+
+                } else {
+                    alert(response.message || "Erro ao excluir o item.");
+                }
+            },
+            error: function() {
+                alert("Erro ao comunicar com o servidor.");
+            }
+        });
+    }
+
+</script>

@@ -19,12 +19,15 @@ namespace Romaneio.Repositorios
         {
             using (SqlConnection con = new SqlConnection(Config.StringConexao()))
             {
-                var sql = @"
-                    SELECT AUTONUM, AUTONUM_CARGA, AUTONUM_CARGA_AC, VOLUMES, AUTONUM_CS_YARD, AUTONUM_CS_YARD_AC,
-                           ID_CONTEINER_IMPRESSO, ARMAZEM_REC, YARD_REC, AUTONUM_CEXP, PATIO, FLAG_RECONHECIMENTO, LOTE_IMPRESSO
-                    FROM sgipa.dbo.fnInvent_Sistemas_Arm_Col_patio('" + marcante + "')";
+                StringBuilder sb = new StringBuilder();
 
-                return con.Query<Marcante>(sql, commandTimeout: Config.QueryTimeoutInSeconds()).FirstOrDefault();
+
+                sb.Clear();
+                sb.Append(" SELECT AUTONUM,AUTONUM_CARGA,AUTONUM_CARGA_AC,VOLUMES,AUTONUM_CS_YARD,AUTONUM_CS_YARD_AC, ");
+                sb.Append(" ID_CONTEINER_IMPRESSO, ARMAZEM_REC, YARD_REC, AUTONUM_CEXP, PATIO,FLAG_RECONHECIMENTO,LOTE_IMPRESSO ");
+                sb.Append(" FROM sgipa.dbo.fnInvent_Sistemas_Arm_Col_patio('" + marcante + "')");
+                 return con.Query<Marcante>(sb.ToString(), commandTimeout: Config.QueryTimeoutInSeconds()).FirstOrDefault();
+
             }
         }
         public Marcante ConsultarMarcanteInventArmazem(string marcante)
@@ -151,6 +154,7 @@ namespace Romaneio.Repositorios
                 parametros.Add("FL_FUNDO", dados.FL_FUNDO, direction: ParameterDirection.Input);
                 parametros.Add("FL_LE", dados.FL_LE, direction: ParameterDirection.Input);
                 parametros.Add("FL_LD", dados.FL_LD, direction: ParameterDirection.Input);
+                parametros.Add("MARCANTE", dados.MARCANTE, direction: ParameterDirection.Input);
 
                 //TB_CARGA_SOLTA_YARD_AC
                 //TB_CARGA_SOLTA_YARD_CEXP
@@ -161,7 +165,15 @@ namespace Romaneio.Repositorios
                 sb.Append("VALUES ( @AUTONUM_CS, @ARMAZEM, @YARD, 'I', @QUANTIDADE, @MOTIVO, 0, @FL_FRENTE, @FL_FUNDO, @FL_LE, @FL_LD )");
 
                 con.Query<string>(sb.ToString(), parametros, commandTimeout: Config.QueryTimeoutInSeconds()).FirstOrDefault();
-               
+
+                sb.Clear();
+                sb.Append("INSERT INTO SGIPA..TB_HIST_SHIFTING_CS (MARCANTE, ARMAZEM, YARD, DT_MOV) ");
+                sb.Append("VALUES ( @MARCANTE, @ARMAZEM, @YARD, GETDATE() )");
+
+                con.Query<string>(sb.ToString(), parametros, commandTimeout: Config.QueryTimeoutInSeconds()).FirstOrDefault();
+
+
+
                 return "Informações salvas com sucesso!";
             }
         }

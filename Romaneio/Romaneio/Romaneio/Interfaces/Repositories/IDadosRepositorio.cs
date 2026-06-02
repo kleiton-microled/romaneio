@@ -24,6 +24,8 @@ namespace Romaneio.Interfaces
         IEnumerable<Posicionamento> ConsultarPosicoesItem(string patio, string cntr, string lote, string item);
         IEnumerable<ConteinersDTO> ConteinersDestino(int patio);
         IEnumerable<Armazens> ListaArmazens(string patio);
+        IEnumerable<Armazens> ListaArmazensAbertos(string patio);
+
         IEnumerable<Itens> ListaItens(int lote, int cntr);
         string ConsultarSolicitanteCNTR(string AUTONUM_ROMANEIO, string CNTR);
         string ConsultarDesovaCNTR(string AUTONUM_ROMANEIO, string CNTR);
@@ -44,6 +46,8 @@ namespace Romaneio.Interfaces
         IEnumerable<Complemento> ListaComplementoAvarias();
 
         IEnumerable<ConteinersDTO> ConsultarClasseCT(string armazem);
+
+        LotesDTO ObterDadosHubLote(int lote);
 
     }
 }
